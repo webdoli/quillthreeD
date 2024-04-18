@@ -1,0 +1,429 @@
+{
+	"asset": {
+		"generator": "Unity 2017.1.1p3",
+		"extras": {
+			"exporterVersion" : "2.2.1"
+		},
+		"version": "2.0"
+	},
+	"accessors": [
+		{
+			"bufferView": 2,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 23042,
+			"max": [ 0.2041174, 0.1539155, 1.586974E-08 ],
+			"min": [ -0.1506598, -0.151411, -0.09816024 ],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 2,
+			"byteOffset": 276504,
+			"componentType": 5126,
+			"count": 23042,
+			"max": [ 1, 1, 1 ],
+			"min": [ -1, -1, -1 ],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 23042,
+			"max": [ 175.0737, 27.23514 ],
+			"min": [ -130.4118, -23.7522 ],
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 184336,
+			"componentType": 5126,
+			"count": 23042,
+			"max": [ 0.9981457, 0.9981384 ],
+			"min": [ 0.00390625, 0.00390625 ],
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 0,
+			"componentType": 5123,
+			"count": 2706,
+			"max": [ 1090 ],
+			"min": [ 0 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 5412,
+			"componentType": 5123,
+			"count": 1947,
+			"max": [ 2126 ],
+			"min": [ 1091 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 9306,
+			"componentType": 5123,
+			"count": 444,
+			"max": [ 2299 ],
+			"min": [ 2127 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 10194,
+			"componentType": 5123,
+			"count": 180,
+			"max": [ 2383 ],
+			"min": [ 2300 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 10554,
+			"componentType": 5123,
+			"count": 15633,
+			"max": [ 10940 ],
+			"min": [ 2384 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 41820,
+			"componentType": 5123,
+			"count": 3648,
+			"max": [ 12972 ],
+			"min": [ 10941 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 49116,
+			"componentType": 5123,
+			"count": 5208,
+			"max": [ 15061 ],
+			"min": [ 12973 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 59532,
+			"componentType": 5123,
+			"count": 417,
+			"max": [ 15194 ],
+			"min": [ 15062 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 60366,
+			"componentType": 5123,
+			"count": 6078,
+			"max": [ 18806 ],
+			"min": [ 15195 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 72522,
+			"componentType": 5123,
+			"count": 11223,
+			"max": [ 23041 ],
+			"min": [ 18807 ],
+			"type": "SCALAR"
+		}
+	],
+	"buffers": [
+		{
+			"byteLength": 1016648,
+			"uri": "Unity2Skfb.bin"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 94968,
+			"target": 34963,
+			"byteOffset": 921680
+		},
+		{
+			"buffer": 0,
+			"byteLength": 368672,
+			"target": 34962,
+			"byteStride": 8,
+			"byteOffset": 0
+		},
+		{
+			"buffer": 0,
+			"byteLength": 553008,
+			"target": 34962,
+			"byteStride": 12,
+			"byteOffset": 368672
+		}
+	],
+	"images": [
+		{
+			"uri": "Assets/Decor4.fbm/mpm_vol.08_p09_keyboard_diff.jpg"
+		}
+	],
+	"materials": [
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0.8014706, 0.6484178, 0.2416197, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 0.5
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "bulb"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0.02352941, 0.02352941, 0.02352941, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 0.5
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "plastic 2 matte"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [1, 1, 1, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 0.5
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "vray ruler 2"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0, 0, 0, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 0.5
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "vray ruler 1"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0, 0, 0, 1],
+				"metallicFactor": 0.283,
+				"roughnessFactor": 0.5
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "metal 2 matte"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0.6470588, 0.6470588, 0.6470588, 1],
+				"metallicFactor": 1,
+				"roughnessFactor": 0.5
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "metal 1 glossy"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0.01176471, 0.01176471, 0.01176471, 1],
+				"metallicFactor": 0.3,
+				"roughnessFactor": 0.5
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "plastic 1 glossy"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0.2279411, 0.2279411, 0.2279411, 1],
+				"metallicFactor": 0.283,
+				"roughnessFactor": 0.5
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "roller"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0.1098039, 0.1098039, 0.1098039, 1],
+				"metallicFactor": 0.472,
+				"roughnessFactor": 0.5
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "metal 3 dark"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorTexture" : {
+					"index" : 0,
+					"texCoord" : 0
+				},
+				"baseColorFactor": [1, 1, 1, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 0.5
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "keyboard"
+		}
+	],
+	"meshes": [
+		{
+			"name": "mesh_09 Silver Reed typewriter_2734409 Silver Reed typewriter",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TEXCOORD_1": 3
+					},
+					"indices": 4,
+					"material": 0,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TEXCOORD_1": 3
+					},
+					"indices": 5,
+					"material": 1,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TEXCOORD_1": 3
+					},
+					"indices": 6,
+					"material": 2,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TEXCOORD_1": 3
+					},
+					"indices": 7,
+					"material": 3,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TEXCOORD_1": 3
+					},
+					"indices": 8,
+					"material": 4,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TEXCOORD_1": 3
+					},
+					"indices": 9,
+					"material": 5,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TEXCOORD_1": 3
+					},
+					"indices": 10,
+					"material": 6,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TEXCOORD_1": 3
+					},
+					"indices": 11,
+					"material": 7,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TEXCOORD_1": 3
+					},
+					"indices": 12,
+					"material": 8,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TEXCOORD_1": 3
+					},
+					"indices": 13,
+					"material": 9,
+					"mode": 4
+				}
+			]
+		}
+	],
+	"nodes": [
+		{
+			"name": "UnityGlTF_root",
+			"children": [
+				1
+			]
+		},
+		{
+			"name": "node_09 Silver Reed typewriter_33504",
+			"mesh": 0,
+			"matrix": [2.384186E-07, -1.192093E-07, 1, 0, -0.9999999, 1.192093E-07, 2.384186E-07, 0, -1.192093E-07, -1, -1.192093E-07, 0, -0.2036279, 0.7609607, 3.611, 1]
+		}
+	],
+	"samplers": [
+		{
+			"magFilter": 9729,
+			"minFilter": 9985,
+			"wrapS": 10497,
+			"wrapT": 10497
+		}
+	],
+	"scenes": [
+		{
+			"name":"defaultScene",
+			"nodes": [
+				0
+			]
+		}
+	],
+	"scene": 0,
+	"textures": [
+		{
+			"sampler": 0,
+			"source": 0
+		}
+	]
+}
