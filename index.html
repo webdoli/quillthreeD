@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quill_3DEditor</title>
-    <!-- Include stylesheet -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0/quill.snow.css" integrity="sha512-EWUfXp7a84rYHMk36bdFg/PE/lfJrDOMndu3ILX4yUf75+08kSdYzAiOQV7NS3hS4eNFMdLgaM47jgsABP0E2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>mogl_3DEditor</title>
     <link href="css/styles.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0/quill.min.js" integrity="sha512-JCbKR+ic1suPXjhrjk+rUAD92EHFMdlDeXJimfMZ8DrJNJclsM4K0+mgWoFT2Tz0sEWwcocijCJXqTS7BzDESw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- Three.js -->
     <script type="importmap">
         {
           "imports": {
@@ -17,12 +13,35 @@
           }
         }
     </script>
-    <script type="module" src="js/main.js"></script>  
+    <script src="lib/mogl3d.js" type="module"></script>
 </head>
 <body>
-    <div id="editor-container"></div>
-    <input type="file" id="file-input" accept=".gltf,.bin" multiple>
-    <button id="upload-btn">Upload 3D Model</button>
-    <script type="module" src="js/main.js"></script>
+    <div class="content">
+    
+        <h1>Mogl3D Editor</h1>
+
+        <div id="editor" class="mogl3d"></div>
+        <div>
+            <h3>Text output:</h3>
+            <div id="text-output"></div>
+        </div>
+        <div>
+            <h3>HTML output</h3>
+            <pre id="html-output"></pre>
+        </div>
+    
+    </div>
+    
+    <script type="module">
+      import mogl3d from './lib/mogl3d.js';
+      var editor = mogl3d.init({
+        element: document.getElementById('editor'),
+        defaultParagraphSeparator: 'div',
+        onChange: function (html) {
+          document.getElementById('text-output').innerHTML = html
+          document.getElementById('html-output').textContent = html
+        }
+      })
+    </script>
 </body>
 </html>
