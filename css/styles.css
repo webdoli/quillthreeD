@@ -11,21 +11,44 @@
     padding: 10px;
 }
 
+.mogl3d-button-selected {
+    background-color: #F0F0F0;
+}
+
+#editor {
+    border: 1px solid #555; /* 에디터 테두리 */
+    background-color: #222; /* 에디터 배경색 */
+    color: #fff; /* 텍스트 색상을 흰색으로 설정 */
+    background-color: #222;
+    caret-color: #fff;
+}
+
+#editor::selection {
+    background-color: #555;
+    color: #fff;
+}
+
 .mogl3d-actionbar {
-    background-color: #FFF;
-    border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+    background-color: #444; /* 도구 상자 배경색 */
+    padding: 8px; /* 여백 */
+    display: flex; /* 아이템을 일렬로 정렬 */
 }
 
 .mogl3d-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    height: 30px;
-    outline: 0;
-    width: 30px;
-    vertical-align: bottom;
+    background-color: #555; /* 버튼 배경색 */
+    color: #ddd; /* 버튼 텍스트 색상 */
+    margin-right: 4px; /* 버튼 간격 */
+    padding: 6px 12px; /* 버튼 안쪽 여백 */
+    border: none; /* 테두리 없음 */
+    cursor: pointer; /* 마우스 오버 시 커서 변경 */
+    border-radius: 3px;
 }
 
-.mogl3d-button-selected {
-    background-color: #F0F0F0;
+.mogl3d-button:hover {
+    background-color: #666; /* 호버 상태의 버튼 배경색 */
+}
+
+.three-scene {
+    margin: 8px 0; /* 씬 위아래 여백 */
+    border: 1px solid #555; /* 씬 테두리 */
 }
