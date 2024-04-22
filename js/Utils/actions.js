@@ -1,4 +1,4 @@
-import { exec, formatBlock, queryCommandState } from "./utilities.js";
+import { exec, formatBlock, queryCommandState, queryCommandValue } from "./utilities.js";
 import threeDFileLoader from "./threeDFileLoader.js";
 
 export const bold = {
@@ -14,17 +14,41 @@ export const code = {
     title: 'Code',
 }
 
-export const heading1 = {
-    icon: '<b>H<sub>1</sub></b>',
-    result: () => exec(formatBlock, '<h1>'),
-    title: 'Heading 1',
-}
+// export const fontColor = {
+//     icon: 'T',
+//     result: () => {
+//         const input = document.createElement('input');
+//         input.type = 'color';
+//         input.oninput = (e) => {
+//             exec( 'foreColor', e.target.value );
+//             input.remove(); // 색상 선택 후 input 요소 제거
+//         };
+//         input.click(); // 자동으로 색상 선택기 열기
+//     },
+//     title: 'Font Color'
+// }
 
-export const heading2 = {
-    icon: '<b>H<sub>2</sub></b>',
-    result: () => exec(formatBlock, '<h2>'),
-    title: 'Heading 2',
-}
+// export const highlight = {
+//     icon: '<span style="border:1px solid yellow; padding:2px 6px;">T</span>',
+//     result: () => {
+//         // 사용자가 색상을 선택할 수 있도록 input 태그 생성
+//         const input = document.createElement('input');
+//         input.type = 'color';
+//         input.oninput = (e) => {
+//             // 선택한 색상을 텍스트의 배경색으로 설정
+//             document.execCommand('backColor', false, e.target.value);
+//             input.remove(); // 색상 선택 후 input 요소 제거
+//         };
+//         input.click(); // 자동으로 색상 선택기 열기
+//     },
+//     title: 'Highlight Text'
+// }
+
+// export const removeHighlight = {
+//     icon: '<s>T</s>', // 적절한 아이콘을 선택하세요
+//     result: () => exec('backColor', 'transparent'),
+//     title: 'Remove Highlight'
+// };
 
 export const image = {
     icon: '&#128247;',
@@ -104,8 +128,9 @@ export const load3DModel = {
 export const defaultActions = {
     bold,
     code,
-    heading1,
-    heading2,
+    fontColor,
+    highlight,
+    removeHighlight,
     image,
     italic,
     line,
