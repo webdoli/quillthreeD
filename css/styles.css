@@ -52,3 +52,42 @@
     margin: 8px 0; /* 씬 위아래 여백 */
     border: 1px solid #555; /* 씬 테두리 */
 }
+
+/* Text Color DropDown */
+/* 드롭다운 버튼을 포함하는 컨테이너에 대한 스타일 */
+.dropdown {
+    position: relative; /* 상대적 위치 설정 */
+    display: inline-block; /* 인라인-블록 요소로 표시 */
+  }
+
+/* 드롭다운 메뉴 스타일 */
+.textColorMenu-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%; /* 버튼 바로 아래에 배치 */
+    left: 0;
+    background-color: #2a2a2a; /* 마야 스타일의 배경색 */
+    min-width: 160px; /* 적당한 최소 너비 설정 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 마야 스타일의 그림자 효과 */
+    z-index: 100; /* 다른 요소들 위에 표시 */
+  }
+  
+  /* 드롭다운 메뉴 버튼 스타일 */
+  .textColorMenu-dropdown button {
+    color: #fff; /* 텍스트 색상 */
+    padding: 8px 12px; /* 패딩 */
+    text-decoration: none; /* 텍스트 꾸미기 제거 */
+    display: block; /* 블록 레벨 요소로 표시 */
+    text-align: left; /* 텍스트 왼쪽 정렬 */
+    background: none; /* 기본 배경 제거 */
+    border: none; /* 기본 테두리 제거 */
+    width: 100%; /* 전체 너비 */
+    box-sizing: border-box; /* 박스 모델 설정 */
+    border-bottom: 1px solid #3a3a3a; /* 아이템 사이의 구분선 */
+  }
+  
+  /* 드롭다운 메뉴 버튼 호버 스타일 */
+  .textColorMenu-dropdown button:hover {
+    background-color: #3a3a3a; /* 호버 시 배경색 변경 */
+  }
+  
