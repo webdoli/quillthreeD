@@ -1,5 +1,7 @@
-import { exec, formatBlock, queryCommandState, createElement, queryCommandValue, appendChild } from "./utilities.js";
+import { exec, formatBlock, queryCommandState, createDropDownMenu } from "./utilities.js";
 import threeDFileLoader from "./threeDFileLoader.js";
+
+let content;
 
 export const bold = {
     icon: '<b>B</b>',
@@ -52,49 +54,55 @@ export const removeHighlight = {
 
 export const textColorMenu = {
     icon: 'T',
-    title: 'Text Color Menu',
     result: () => {
-        const dropdown = document.querySelector('.textColorMenu-dropdown');
+
+        const dropdown = document.querySelector('#TextMenu-dropdown');
         dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
 
     },
     init: ( button ) => {
-
-        let content = document.querySelector('.mogl3d-content');
-        const dropdownContainer = document.createElement('div');
-        dropdownContainer.className = 'dropdown';
-
-        // 기존 버튼을 복제하여 새로운 버튼을 만듭니다.
-        const newButton = button.cloneNode(true);
-
-        // 드롭다운 컨테이너 생성
-        const dropdown = document.createElement('div');
-        dropdown.className = 'textColorMenu-dropdown';
-        // dropdown.style.display = 'none';
-
-        Array.from([ fontColor, highlight, removeHighlight ]).forEach( action => {
-            
-            const button = createElement('button');
-            button.className = 'mogl3d-button';
-            button.innerHTML = action.icon;
-            button.title = action.title;
-            button.setAttribute('type', 'button');
-            button.onclick = () => action.result() && content.focus()
-        
-            appendChild( dropdown, button )
-
-        });
-
-        // 새로운 부모 div에 복제한 버튼과 드롭다운 메뉴를 추가
-        dropdownContainer.appendChild( newButton );
-        dropdownContainer.appendChild( dropdown );
-
-        // 기존의 버튼 위치에 새로운 부모 div를 삽입하고 기존 버튼 제거
+        content = document.querySelector('.mogl3d-content');
+        let dropdownContainer = createDropDownMenu( button, [ fontColor, highlight, removeHighlight ], content, 'TextMenu-dropdown' );
         button.parentNode.replaceChild(dropdownContainer, button);
 
     },
     title: 'TextColorDropDown',
 
+}
+
+export const leftAlign = {
+    icon: '&#x21E4;',
+    result: () => exec('justifyLeft'),
+    title: 'LeftAlign'
+}
+
+export const rightAlign = {
+    icon: '&#x21E5;',
+    result: () => exec('justifyRight'),
+    title: 'RightAlign'
+}
+
+export const centerAlign = {
+    icon: '&#x21C5;',
+    result: () => exec('justifyCenter'),
+    title: 'CenterAlign'
+}
+
+export const alignMenu = {
+    icon: 'Ξ', //정렬 유니코드 필요
+    result: () => {
+        
+        const dropdown = document.querySelector('#AlignMenu-dropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+
+    },
+    init: ( button ) => {
+        content = document.querySelector('.mogl3d-content');
+        let dropdownContainer = createDropDownMenu( button, [ leftAlign, rightAlign, centerAlign ], content, 'AlignMenu-dropdown' );
+        button.parentNode.replaceChild(dropdownContainer, button);
+
+    },
+    title: 'TextAlignDropDown'
 }
 
 export const image = {
@@ -104,6 +112,24 @@ export const image = {
         if (url) exec('insertImage', url)
     },
     title: 'Image',
+}
+
+export const filesMenu = {
+
+    icon: '<icon>&#x1F4C1;</icon><icon style="font-size:7px;margin-left:2px;">&#x25BC;</icon>',
+    result: () => {
+
+        const dropdown = document.querySelector('#FileMenu-dropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+
+    },
+    init: ( button ) => {
+        content = document.querySelector('.mogl3d-content');
+        let dropdownContainer = createDropDownMenu( button, [ image ], content, 'FileMenu-dropdown' );
+        button.parentNode.replaceChild(dropdownContainer, button);
+    },
+    title: 'FilesDropDown'
+
 }
 
 export const italic = {
@@ -173,21 +199,20 @@ export const load3DModel = {
 };
 
 export const defaultActions = {
-    bold,
-    code,
-    textColorMenu,
-    // fontColor,
-    // highlight,
-    // removeHighlight,
-    image,
     italic,
+    bold,
+    underline,
+    strikethrough,
+    textColorMenu,
+    alignMenu,
+    // image,
     line,
     link,
     olist,
     paragraph,
     quote,
-    strikethrough,
     ulist,
-    underline,
-    load3DModel
+    filesMenu,
+    load3DModel,
+    code
 }
