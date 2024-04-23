@@ -48,18 +48,13 @@ export const highlight = {
 
 export const removeHighlight = {
     icon: '<s>T</s>', // 적절한 아이콘을 선택하세요
-    result: () => { console.log('벡 삭제'); exec('backColor', 'transparent') },
+    result: () => { exec('backColor', 'transparent') },
     title: 'Remove Highlight'
 };
 
 export const textColorMenu = {
     icon: 'T',
-    result: () => {
-
-        const dropdown = document.querySelector('#TextMenu-dropdown');
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-
-    },
+    result: () => {},
     init: ( button ) => {
         content = document.querySelector('.mogl3d-content');
         let dropdownContainer = createDropDownMenu( button, [ fontColor, highlight, removeHighlight ], content, 'TextMenu-dropdown' );
@@ -90,12 +85,7 @@ export const centerAlign = {
 
 export const alignMenu = {
     icon: 'Ξ', //정렬 유니코드 필요
-    result: () => {
-        
-        const dropdown = document.querySelector('#AlignMenu-dropdown');
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-
-    },
+    result: () => {},
     init: ( button ) => {
         content = document.querySelector('.mogl3d-content');
         let dropdownContainer = createDropDownMenu( button, [ leftAlign, rightAlign, centerAlign ], content, 'AlignMenu-dropdown' );
@@ -106,7 +96,7 @@ export const alignMenu = {
 }
 
 export const image = {
-    icon: '&#128247;',
+    icon: '<icon style="font-size:16px;">🖼️</icon>',
     result: () => {
         const url = window.prompt('Enter the image URL')
         if (url) exec('insertImage', url)
@@ -114,18 +104,29 @@ export const image = {
     title: 'Image',
 }
 
+export const files = {
+    icon: '<icon style="font-size:16px;">🗃️</icon>',
+    result: () => {
+        
+    },
+    title: 'file',
+}
+
+export const video = {
+    icon: '<icon style="font-size:16px;">🎬</icon>',
+    result: () => {
+        
+    },
+    title: 'video',
+}
+
 export const filesMenu = {
 
     icon: '<icon>&#x1F4C1;</icon><icon style="font-size:7px;margin-left:2px;">&#x25BC;</icon>',
-    result: () => {
-
-        const dropdown = document.querySelector('#FileMenu-dropdown');
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-
-    },
+    result: () => {},
     init: ( button ) => {
         content = document.querySelector('.mogl3d-content');
-        let dropdownContainer = createDropDownMenu( button, [ image ], content, 'FileMenu-dropdown' );
+        let dropdownContainer = createDropDownMenu( button, [ image, files, video ], content, 'FileMenu-dropdown' );
         button.parentNode.replaceChild(dropdownContainer, button);
     },
     title: 'FilesDropDown'
@@ -216,3 +217,22 @@ export const defaultActions = {
     load3DModel,
     code
 }
+
+
+// export const textColorMenu = {
+//     icon: 'T',
+//     result: () => {
+
+//         const dropdown = document.querySelector('#TextMenu-dropdown');
+//         dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+
+//     },
+//     init: ( button ) => {
+//         content = document.querySelector('.mogl3d-content');
+//         let dropdownContainer = createDropDownMenu( button, [ fontColor, highlight, removeHighlight ], content, 'TextMenu-dropdown' );
+//         button.parentNode.replaceChild(dropdownContainer, button);
+
+//     },
+//     title: 'TextColorDropDown',
+
+// }
