@@ -147,7 +147,6 @@ export const files = {
             const file = e.target.files[0];
         
             if (file) {
-                // ZIP 파일에 대한 참조를 에디터 내에 삽입
                 
                 // 컨테이너 div를 생성합니다.
                 const container = document.createElement('div');
