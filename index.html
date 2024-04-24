@@ -34,32 +34,32 @@
     
     <script type="module">
       
-      import mogl3d from './lib/mogl3d.js';
+        import mogl3d from './lib/mogl3d.js';
 
-      let titleName = [
-        'TextColorDropDown',
-        'TextAlignDropDown',
-        'FilesDropDown'
-      ];
+        let titleName = [
+            'TextColorDropDown',
+            'TextAlignDropDown',
+            'FilesDropDown'
+        ];
 
-      var editor = mogl3d.init({
+        var editor = mogl3d.init({
 
-          element: document.getElementById('editor'),
-          defaultParagraphSeparator: 'div',
-          
-          onChange: function (html) {
-              document.getElementById('text-output').innerHTML = html
-              document.getElementById('html-output').textContent = html
-          }
+            element: document.getElementById('editor'),
+            defaultParagraphSeparator: 'div',
 
-      });
-     
-      titleName.map( title => {
+            onChange: function (html) {
+                document.getElementById('text-output').innerHTML = html
+                document.getElementById('html-output').textContent = html
+            }
 
-        const button = document.querySelector(`button[title=${ title }]`);
-        button.addEventListener('click', e => button.nextElementSibling.style.display = button.nextElementSibling.style.display === 'block' ? 'none' : 'block' )
+        });
 
-      })
+        titleName.map( title => {
+
+            const button = document.querySelector(`button[title=${ title }]`);
+            button.addEventListener('click', e => button.nextElementSibling.style.display = button.nextElementSibling.style.display === 'block' ? 'none' : 'block' )
+
+        })
       
     </script>
 </body>

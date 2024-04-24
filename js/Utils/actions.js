@@ -1,4 +1,4 @@
-import { exec, formatBlock, queryCommandState, createDropDownMenu } from "./utilities.js";
+import { exec, formatBlock, queryCommandState, createDropDownMenu, createColorInput, closeDropDown, initMenu } from "./utilities.js";
 import threeDFileLoader from "./threeDFileLoader.js";
 
 let content;
@@ -25,41 +25,21 @@ export const code = {
 
 export const fontColor = {
     icon: 'T',
-    result: () => {
-        const input = document.createElement('input');
-        input.type = 'color';
-        input.oninput = (e) => {
-            exec( 'foreColor', e.target.value );
-            input.remove(); // 색상 선택 후 input 요소 제거
-        };
-        input.click(); // 자동으로 색상 선택기 열기
-        closeDropdowns();
-    },
+    result: () => createColorInput( 'color', 'foreColor', 'Menu-dropdown' ),
     title: 'Font Color'
 }
 
 export const highlight = {
     icon: '<span style="border:1px solid yellow; padding:2px 6px;">T</span>',
-    result: () => {
-        // 사용자가 색상을 선택할 수 있도록 input 태그 생성
-        const input = document.createElement('input');
-        input.type = 'color';
-        input.oninput = (e) => {
-            // 선택한 색상을 텍스트의 배경색으로 설정
-            document.execCommand('backColor', false, e.target.value);
-            input.remove(); // 색상 선택 후 input 요소 제거
-        };
-        input.click(); // 자동으로 색상 선택기 열기
-        closeDropdowns();
-    },
+    result: () => createColorInput( 'color', 'backColor', 'Menu-dropdown' ),
     title: 'Highlight Text'
 }
 
 export const removeHighlight = {
-    icon: '<s>T</s>', // 적절한 아이콘을 선택하세요
+    icon: '<s>T</s>',
     result: () => { 
         exec('backColor', 'transparent')
-        closeDropdowns();
+        closeDropDown( 'Menu-dropdown' );
     },
     title: 'Remove Highlight'
 };
@@ -68,9 +48,10 @@ export const textColorMenu = {
     icon: 'T',
     result: () => {},
     init: ( button ) => {
-        content = document.querySelector('.mogl3d-content');
-        let dropdownContainer = createDropDownMenu( button, [ fontColor, highlight, removeHighlight ], content, 'TextMenu-dropdown' );
-        button.parentNode.replaceChild(dropdownContainer, button);
+        initMenu( button, 'mogl3d-content', [fontColor, highlight, removeHighlight], 'TextMenu-dropdown' );
+        // content = document.querySelector('.mogl3d-content');
+        // let dropdownContainer = createDropDownMenu( button, [ fontColor, highlight, removeHighlight ], content, 'TextMenu-dropdown' );
+        // button.parentNode.replaceChild(dropdownContainer, button);
 
     },
     title: 'TextColorDropDown',
@@ -105,14 +86,9 @@ export const centerAlign = {
 }
 
 export const alignMenu = {
-    icon: 'Ξ', //정렬 유니코드 필요
+    icon: 'Ξ',
     result: () => {},
-    init: ( button ) => {
-        content = document.querySelector('.mogl3d-content');
-        let dropdownContainer = createDropDownMenu( button, [ leftAlign, rightAlign, centerAlign ], content, 'AlignMenu-dropdown' );
-        button.parentNode.replaceChild(dropdownContainer, button);
-
-    },
+    init: ( button ) => initMenu( button, 'mogl3d-content', [leftAlign, rightAlign, centerAlign], 'AlignMenu-dropdown' ),
     title: 'TextAlignDropDown'
 }
 
@@ -336,11 +312,7 @@ export const filesMenu = {
 
     icon: '<icon>&#x1F4C1;</icon><icon style="font-size:7px;margin-left:2px;">&#x25BC;</icon>',
     result: () => {},
-    init: ( button ) => {
-        content = document.querySelector('.mogl3d-content');
-        let dropdownContainer = createDropDownMenu( button, [ image, files, video ], content, 'FileMenu-dropdown' );
-        button.parentNode.replaceChild(dropdownContainer, button);
-    },
+    init: ( button ) => initMenu( button, 'mogl3d-content', [image, files, video], 'FileMenu-dropdown' ),
     title: 'FilesDropDown'
 
 }
@@ -418,7 +390,6 @@ export const defaultActions = {
     strikethrough,
     textColorMenu,
     alignMenu,
-    // image,
     line,
     link,
     olist,

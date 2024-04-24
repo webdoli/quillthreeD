@@ -14,6 +14,35 @@ export const queryCommandState = command => document.queryCommandState(command)
 
 export const queryCommandValue = command => document.queryCommandValue(command)
 
+export const createColorInput = ( type, execName, closeNodeName ) => {
+
+    const input = document.createElement('input');
+    input.type = type;
+    input.oninput = (e) => {
+        exec( execName, e.target.value );
+        input.remove(); // 색상 선택 후 input 요소 제거
+    };
+    input.click(); // 자동으로 색상 선택기 열기
+    closeDropDown( closeNodeName );
+}
+
+export const closeDropDown = ( elName ) => {
+    
+    const dropdowns = document.querySelectorAll(`.${elName}`);
+    dropdowns.forEach( dropdown => {
+        dropdown.style.display = 'none'; // 모든 드랍다운 숨기기
+    });
+
+}
+
+export const initMenu = ( button, editor, execArray, name ) => {
+    
+    let content = document.querySelector(`.${ editor }`);
+    let dropdownContainer = createDropDownMenu( button, execArray, content, name );
+    button.parentNode.replaceChild(dropdownContainer, button);
+
+}
+
 export const createDropDownMenu = ( button, itemsArray, content, id ) => {
 
     const dropdownContainer = document.createElement('div');
