@@ -3,6 +3,13 @@ import threeDFileLoader from "./threeDFileLoader.js";
 
 let content;
 
+function closeDropdowns() {
+    const dropdowns = document.querySelectorAll('.Menu-dropdown');
+    dropdowns.forEach(dropdown => {
+        dropdown.style.display = 'none'; // 모든 드랍다운 숨기기
+    });
+}
+
 export const bold = {
     icon: '<b>B</b>',
     result: () => exec('bold'),
@@ -26,6 +33,7 @@ export const fontColor = {
             input.remove(); // 색상 선택 후 input 요소 제거
         };
         input.click(); // 자동으로 색상 선택기 열기
+        closeDropdowns();
     },
     title: 'Font Color'
 }
@@ -42,13 +50,17 @@ export const highlight = {
             input.remove(); // 색상 선택 후 input 요소 제거
         };
         input.click(); // 자동으로 색상 선택기 열기
+        closeDropdowns();
     },
     title: 'Highlight Text'
 }
 
 export const removeHighlight = {
     icon: '<s>T</s>', // 적절한 아이콘을 선택하세요
-    result: () => { exec('backColor', 'transparent') },
+    result: () => { 
+        exec('backColor', 'transparent')
+        closeDropdowns();
+    },
     title: 'Remove Highlight'
 };
 
@@ -67,19 +79,28 @@ export const textColorMenu = {
 
 export const leftAlign = {
     icon: '&#x21E4;',
-    result: () => exec('justifyLeft'),
+    result: () => { 
+        exec('justifyLeft'); 
+        closeDropdowns(); 
+    },
     title: 'LeftAlign'
 }
 
 export const rightAlign = {
     icon: '&#x21E5;',
-    result: () => exec('justifyRight'),
+    result: () => {
+        exec('justifyRight')
+        closeDropdowns();
+    },
     title: 'RightAlign'
 }
 
 export const centerAlign = {
     icon: '&#x21C5;',
-    result: () => exec('justifyCenter'),
+    result: () => {
+        exec('justifyCenter')
+        closeDropdowns();
+    },
     title: 'CenterAlign'
 }
 
@@ -127,6 +148,7 @@ export const image = {
         };
 
         fileInput.click(); // 파일 선택기 열기
+        closeDropdowns(); // 드랍다운 닫기
 
     },
     title: 'Image',
@@ -189,6 +211,7 @@ export const files = {
         };
 
         fileInput.click(); // 파일 선택기 열기
+        closeDropdowns();
 
     },
 
@@ -200,12 +223,20 @@ export const video = {
     icon: '<icon style="font-size:16px;">🎬</icon>',
     result: () => {
         createVideoModal();
+        let closeButton = document.querySelector('.close');
+        let videoFileModal = document.querySelector('.modal');
+        closeButton.onclick = function() {
+            document.querySelector('.modal').removeEventListener('click', closeButton.onclick);
+            videoFileModal.style.display = "none";
+            videoFileModal.remove();
+        };
     },
     title: 'Video'
 };
 
 function createVideoModal() {
     // 모달 요소 생성
+    closeDropdowns();
     const modal = document.createElement('div');
     modal.setAttribute('class', 'modal');
 
@@ -218,10 +249,7 @@ function createVideoModal() {
     const closeButton = document.createElement('span');
     closeButton.setAttribute('class', 'close');
     closeButton.innerHTML = '&times;';
-    closeButton.onclick = function() {
-        modal.style.display = "none";
-        modal.remove();
-    };
+    
     modalContent.appendChild(closeButton);
 
     // 입력 폼
@@ -281,13 +309,26 @@ function insertVideoIframe(url) {
 }
 
 function insertVideoFile(file) {
+    const editorContent = document.querySelector('.mogl3d-content');
+
+    const beforeSpace = document.createElement('p');
+    beforeSpace.contentEditable = true;
+    beforeSpace.innerHTML = "<br>";  // 비디오 위에 텍스트 입력 공간
+
     const video = document.createElement('video');
     video.controls = true;
     const source = document.createElement('source');
     source.src = URL.createObjectURL(file);
     source.type = file.type;
     video.appendChild(source);
-    document.querySelector('.mogl3d-content').appendChild(video);
+
+    const afterSpace = document.createElement('p');
+    afterSpace.contentEditable = true;
+    afterSpace.innerHTML = "<br>";  // 비디오 아래에 텍스트 입력 공간
+
+    editorContent.appendChild(beforeSpace);
+    editorContent.appendChild(video);
+    editorContent.appendChild(afterSpace);
 }
 
 
