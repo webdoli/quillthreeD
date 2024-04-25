@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Three Log Editor</title>
+    <link rel="stylesheet" href="../css/editor.css">
+</head>
+<body>
+    <!-- <img src="https://picsum.photos/seed/picsum/200/300" alt="test_img" id="tempImage" style="cursor: pointer;" /> -->
+
+    <!-- 상단 툴바 영역 -->
+    <div class="editor-container">
+        
+        <div class="toolbar">
+            <div class="tabs">
+                <button class="tab active">Tab 1</button>
+                <button class="tab">Tab 2</button>
+                <!-- 여기에 더 많은 탭 추가 가능 -->
+            </div>
+            <div class="tools">
+                <!-- 상단 툴바 버튼들 -->
+                <button class="button">Button 1</button>
+                <button class="button">Button 2</button>
+                <!-- 여기에 더 많은 버튼 추가 가능 -->
+            </div>
+        </div>
+    
+        <!-- 메인 콘텐츠 영역 (사이드바, 콘텐츠, 디테일 패널 포함) -->
+        <div class="main-container">
+    
+            <div class="main-content">
+    
+                <!-- 사이드바 영역 -->
+                <div class="sidebar">
+                    <!-- 카테고리 또는 네비게이션 아이템들 -->
+                    <div class="item">Item 1</div>
+                    <div class="item">Item 2</div>
+                    <!-- 여기에 더 많은 아이템 추가 가능 -->
+                </div>
+        
+                <!-- 중앙 콘텐츠 영역 -->
+                <div class="content">
+                    <!-- 이곳에 콘텐츠 아이템들을 표시 -->
+                </div>
+        
+            </div>
+    
+            <div class="resizer"></div> <!-- 추가된 크기 조절 바 -->
+    
+            <!-- 디테일/프로퍼티 패널 영역 -->
+            <div class="details">
+                <!-- 이곳에 입력 필드, 버튼 등 세부 설정 컨트롤 추가 -->
+                <input type="text" class="input-field" placeholder="Input Field 1">
+                <input type="text" class="input-field" placeholder="Input Field 2">
+                <!-- 여기에 더 많은 입력 필드 추가 가능 -->
+            </div>
+    
+        </div>
+    </div>
+
+    <script>
+        // 이미지 클릭 시 메인 윈도우에 메시지 전송
+        // document.getElementById('tempImage').addEventListener('click', () => {
+
+        //     const imageUrl = document.getElementById('tempImage').src;
+        //     window.opener.postMessage({
+
+        //         action: 'insertImage',
+        //         imageUrl: imageUrl
+            
+        //     }, "*"); // '*'는 모든 출처를 나타내지만, 보안을 위해 실제 사용 시 메인 윈도우의 출처를 명시하는 것이 좋습니다.
+        // });
+        const resizer = document.querySelector('.resizer');
+        const mainContent = document.querySelector('.main-content');
+        const details = document.querySelector('.details');
+        const minimumSize = 100; // .main-content와 .details의 최소 너비
+        let isResizing = false;
+
+        // 마우스를 누른 상태에서 드래그 시작
+        resizer.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            isResizing = true;
+        
+            // mousemove 이벤트와 mouseup 이벤트를 문서에 바인딩
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', stopResize);
+        });
+
+        function handleMouseMove(e) {
+            if (!isResizing) return;
+            console.log('마우스 무브');
+            const mainContentRect = mainContent.getBoundingClientRect();
+            const resizerRect = resizer.getBoundingClientRect();
+
+            // 마우스의 x 위치에 따라 .main-content의 너비 조절
+            let newWidth = e.clientX - mainContentRect.left;
+        
+            // 최소 크기 설정
+            if (newWidth > minimumSize && (window.innerWidth - e.clientX) > minimumSize) {
+                mainContent.style.width = `${newWidth}px`;
+                details.style.width = `${window.innerWidth - e.clientX - resizerRect.width}px`;
+            }
+        }
+
+        function stopResize() {
+            isResizing = false;
+            // mousemove 이벤트와 mouseup 이벤트의 문서 바인딩 해제
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', stopResize);
+        }
+
+
+    </script>
+</body>
+</html>

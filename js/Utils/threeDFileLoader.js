@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { Loader } from '../../lib/Loader.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.159.0/examples/jsm/controls/OrbitControls.js';
+import { closeDropDown } from './utilities.js';
 
 export default function() {
 
@@ -30,6 +31,7 @@ export default function() {
     }
 
     fileInput.click();
+    closeDropDown( 'Menu-dropdown' );
     
 }
 

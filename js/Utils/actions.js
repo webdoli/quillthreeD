@@ -1,13 +1,6 @@
 import { exec, formatBlock, queryCommandState, createIMGFileBox, createZipFile, createModal, createColorInput, closeDropDown, initMenu } from "./utilities.js";
 import threeDFileLoader from "./threeDFileLoader.js";
 
-function closeDropdowns() {
-    const dropdowns = document.querySelectorAll('.Menu-dropdown');
-    dropdowns.forEach(dropdown => {
-        dropdown.style.display = 'none';
-    });
-}
-
 export const bold = {
     icon: '<b>B</b>',
     result: () => exec('bold'),
@@ -54,7 +47,7 @@ export const leftAlign = {
     icon: '&#x21E4;',
     result: () => { 
         exec('justifyLeft'); 
-        closeDropdowns(); 
+        closeDropDown( 'Menu-dropdown' );
     },
     title: 'LeftAlign'
 }
@@ -63,7 +56,7 @@ export const rightAlign = {
     icon: '&#x21E5;',
     result: () => {
         exec('justifyRight')
-        closeDropdowns();
+        closeDropDown( 'Menu-dropdown' );
     },
     title: 'RightAlign'
 }
@@ -72,7 +65,7 @@ export const centerAlign = {
     icon: '&#x21C5;',
     result: () => {
         exec('justifyCenter')
-        closeDropdowns();
+        closeDropDown( 'Menu-dropdown' );
     },
     title: 'CenterAlign'
 }
@@ -89,7 +82,7 @@ export const image = {
     icon: '<icon style="font-size:16px;">🖼️</icon>',
     result: () => {
         createIMGFileBox( 'image/*' )
-        closeDropdowns(); // 드랍다운 닫기
+        closeDropDown( 'Menu-dropdown' );
     },
     title: 'Image',
 
@@ -99,7 +92,7 @@ export const files = {
     icon: '<icon style="font-size:16px;">🗃️</icon>',
     result: () => {
         createZipFile();
-        closeDropdowns();
+        closeDropDown( 'Menu-dropdown' );
     },
 
     title: 'files',
@@ -108,11 +101,7 @@ export const files = {
 
 export const video = {
     icon: '<icon style="font-size:16px;">🎬</icon>',
-    result: () => {
-        
-        createModal( 'video' );
-        
-    },
+    result: () => createModal( 'video' ),
     title: 'Video'
 };
 
@@ -120,7 +109,7 @@ export const filesMenu = {
 
     icon: '<icon>&#x1F4C1;</icon><icon style="font-size:7px;margin-left:2px;">&#x25BC;</icon>',
     result: () => {},
-    init: ( button ) => initMenu( button, 'mogl3d-content', [image, files, video], 'FileMenu-dropdown' ),
+    init: ( button ) => initMenu( button, 'mogl3d-content', [image, files, video, load3DModel], 'FileMenu-dropdown' ),
     title: 'FilesDropDown'
 
 }
@@ -135,6 +124,7 @@ export const italic = {
 export const line = {
     icon: '&#8213;',
     result: () => exec('insertHorizontalRule'),
+    divider: true,
     title: 'Horizontal Line',
 }
 
@@ -144,6 +134,7 @@ export const link = {
         const url = window.prompt('Enter the link URL')
         if (url) exec('createLink', url)
     },
+    divider: true,
     title: 'Link',
 }
 
@@ -186,10 +177,40 @@ export const underline = {
 }
 
 export const load3DModel = {
-    icon: '3D', // 적절한 아이콘을 선택하세요
+    icon: '3D',
     result: threeDFileLoader,
     title: 'Load 3D Model'
 };
+
+export const threeLogEditor = {
+    icon: '<i class="fas fa-cube"></i>',
+    result: () => {
+    
+        const logEditorWindow = window.open('popup/threeLogEditorWindow.html', 'threeLogWindow', 'width=800,height=600');
+        
+        // 메시지 이벤트 리스너를 메인 윈도우에 추가합니다.
+        window.addEventListener('message', (event) => {
+            // 올바른 출처의 메시지인지 검사합니다.
+            console.log('event origin: ', event.origin );
+            if (event.origin !== "http://127.0.0.1:5500") { // 'http://올바른-출처'는 새 창의 URL 출처와 일치해야 합니다.
+                return;
+            }
+            if (event.data.action === 'insertImage') {
+                // 이미지 URL을 에디터에 삽입하는 코드를 여기에 작성합니다.
+                const imageUrl = event.data.imageUrl;
+                insertImageToEditor(imageUrl);
+            }
+        }, false);
+
+        function insertImageToEditor(imageUrl) {
+            const imgTag = `<img src="${imageUrl}" alt="Loaded Image"/>`;
+            // 'contentEditable' 영역에 imgTag를 삽입하는 로직을 추가해야 합니다.
+            document.querySelector('.mogl3d-content').innerHTML += imgTag;
+        }
+
+    },
+    title: '3D Scene Editor'
+}
 
 export const defaultActions = {
     italic,
@@ -199,12 +220,12 @@ export const defaultActions = {
     textColorMenu,
     alignMenu,
     line,
-    link,
     olist,
     paragraph,
     quote,
     ulist,
+    link,
     filesMenu,
-    load3DModel,
+    threeLogEditor,
     code
 }

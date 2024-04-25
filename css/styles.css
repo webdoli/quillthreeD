@@ -44,8 +44,19 @@
     border-radius: 3px;
 }
 
+.mogl3d-button[title='Load 3D Model'] {
+    padding: 10px 0;
+}
+
 .mogl3d-button:hover {
     background-color: #666; /* 호버 상태의 버튼 배경색 */
+}
+
+span.divider {
+    height:28px;
+    margin-left: 10px;
+    margin-right: 14px;
+    border-left:1px solid #888;;
 }
 
 .three-scene {
