@@ -74,7 +74,7 @@ export class ThreeModules {
     }
 
     init( scn, obj ) {
-    
+		console.log(`scn: ${scn}, obj: ${obj}`);
         let scnContainer = scn;
         const scene = new THREE.Scene();
         let width = this.editor.clientWidth * .4;

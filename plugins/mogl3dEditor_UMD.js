@@ -25,6 +25,7 @@
         this.modules = null;
         this.element = element;
         this.options = options;
+        this.threeSceneNum = 0;
         
         if( this.options.plugins && this.options.plugins.length > 0 ) {
             let mogl3d = this;
@@ -244,7 +245,6 @@
         actionbar.className = this.classes.actionbar;
         this.element.appendChild( actionbar );
 
-        
         const content = document.createElement('div');
         content.contentEditable = true;
         content.className = this.classes.content;
@@ -423,7 +423,9 @@
                 modules.loadFiles( files, filesMap, ( res ) => {
     
                     this.insert3DModelAtLine( modules, res );
-    
+                    if( this.options.on3DLoad ) {
+                        this.options.on3DLoad( res, this.threeSceneNum );
+                    }
                 });
     
             } catch ( err ) {
@@ -439,6 +441,8 @@
 
     MOGL3D.prototype.insert3DModelAtLine = function( modules, res ) {
         
+        this.threeSceneNum++;
+        console.log('res: ', res );
         const editor = this.element;
         const selection = window.getSelection();
 
@@ -451,12 +455,12 @@
         // editableDivBefore.style.marginRight = '10px'; // 3D 씬과의 간격을 위한 마진
         // editableDivBefore.innerHTML = '&nbsp;'; // Non-breaking space, 커서를 위한 공간
 
-
+    
 
         // 새 div 요소를 생성하여 3D 씬을 포함하도록 설정합니다.
-        const sceneContainer = document.createElement('div');
-        // sceneContainer.style.height = '250px';
-        sceneContainer.className = 'three-scene';
+        let sceneContainer = document.createElement('div');
+        sceneContainer.title = `threeSceneNum${this.threeSceneNum}`
+        sceneContainer.className = `three-scene`;
 
         let container = modules.init( sceneContainer, res );
         // this.adjustEditorHeight(this.element, container);
@@ -480,15 +484,19 @@
         if (!selection.rangeCount) {
             // 첫 번째 텍스트 라인이 도구 상자가 아닌 경우에만 처리
             // 커서를 첫 줄로 설정
+            const editorContent = document.querySelector('.mogl3d-content');
             const range = document.createRange();
             range.selectNodeContents(emptyLineBefore);
             range.collapse(true);
             selection.removeAllRanges();
             selection.addRange(range);
-            document.querySelector('.mogl3d-content').appendChild( tempContent );
+            editorContent.appendChild( tempContent );
+            // 새로운 콘텐츠 삽입 후 input 이벤트 발생시키기
+            this.triggerInputEvent(editorContent);
             
         } else {
             // 사용자가 선택한 위치에 삽입
+            const editorContent = document.querySelector('.mogl3d-content');
             const range = selection.getRangeAt(0);
             range.deleteContents();  // 현재 선택된 컨텐츠를 제거
             range.insertNode(tempContent);
@@ -498,9 +506,21 @@
             range.collapse(true);
             selection.removeAllRanges();
             selection.addRange(range);
+            this.triggerInputEvent(editorContent);
         }
 
     }
+
+    MOGL3D.prototype.triggerInputEvent = function(element) {
+        // input 이벤트 생성
+        const event = new Event('input', {
+            bubbles: true,
+            cancelable: true,
+        });
+    
+        // 이벤트 디스패치
+        element.dispatchEvent(event);
+    };
 
     // 3D End
 
