@@ -5,10 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="./css/mogl3d_styles.css">
-    <script src="./lib/mogl3dEditor_.js" type="module"></script>
-    
+    <!-- <script src="./lib/mogl3dEditor_.js" type="module"></script> -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.159.0/build/three.module.min.js"
+            }
+        }
+    </script>
+    <script src="./lib/mogl3dEditor_UMD.js" type="module"></script>
 </head>
 <body>
+
     <div class="content">
     
         <h1>Mogl3D Editor</h1>
@@ -25,12 +33,22 @@
     
     </div>
     <script type="module">
-        import { MOGL3D } from './lib/mogl3dEditor_.js';
+        import { ThreeModules } from './lib/plugins/threeModules.js'
+
         const editorElement = document.getElementById('editor');
         const myEditor = new MOGL3D( editorElement, {
-            
-        });
+            onChange: function (html) {
+                document.getElementById('text-output').innerHTML = html
+                document.getElementById('html-output').textContent = html
+            },
+            plugins: [{
+                'threeModules': ThreeModules,
+            }]
+        });    
+    
+        
     </script>
+    
     <!-- <script type="module">
         window.mogl3d.init({
 
@@ -45,6 +63,5 @@
 
         })
     </script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pell/1.0.6/pell.js"></script> -->
 </body>
 </html>

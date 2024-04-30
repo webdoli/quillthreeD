@@ -1,0 +1,145 @@
+.mogl3d {
+    border: 1px solid rgba(10, 10, 10, 0.1);
+    box-sizing: border-box;
+}
+
+.mogl3d-content {
+    box-sizing: border-box;
+    min-height: 300px;
+    height: auto;
+    outline: 0;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.mogl3d-button-selected {
+    background-color: #F0F0F0;
+}
+
+#editor {
+    border: 1px solid #555; /* 에디터 테두리 */
+    background-color: #222; /* 에디터 배경색 */
+    color: #fff; /* 텍스트 색상을 흰색으로 설정 */
+    background-color: #222;
+    caret-color: #fff;
+}
+
+#editor::selection {
+    background-color: #555;
+    color: #fff;
+}
+
+.mogl3d-actionbar {
+    background-color: #444; /* 도구 상자 배경색 */
+    padding: 8px; /* 여백 */
+    display: flex; /* 아이템을 일렬로 정렬 */
+}
+
+.mogl3d-button {
+    background-color: #555; /* 버튼 배경색 */
+    color: #ddd; /* 버튼 텍스트 색상 */
+    margin-right: 4px; /* 버튼 간격 */
+    padding: 6px 12px; /* 버튼 안쪽 여백 */
+    border: none; /* 테두리 없음 */
+    cursor: pointer; /* 마우스 오버 시 커서 변경 */
+    border-radius: 3px;
+}
+
+.mogl3d-button[title='Load 3D Model'] {
+    padding: 10px 0;
+}
+
+.mogl3d-button:hover {
+    background-color: #666; /* 호버 상태의 버튼 배경색 */
+}
+
+span.divider {
+    height:28px;
+    margin-left: 10px;
+    margin-right: 14px;
+    border-left:1px solid #888;;
+}
+
+.three-scene {
+    /* float: left; */
+    margin: 8px 8px; /* 씬 위아래 여백 */
+    border: 1px solid #555; /* 씬 테두리 */
+    clear: both;
+    display: inline-block;
+}
+
+/* Text Color DropDown */
+/* 드롭다운 버튼을 포함하는 컨테이너에 대한 스타일 */
+.dropdown {
+    position: relative; /* 상대적 위치 설정 */
+    display: inline-block; /* 인라인-블록 요소로 표시 */
+  }
+
+/* 드롭다운 메뉴 스타일 */
+.Menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%; /* 버튼 바로 아래에 배치 */
+    left: 0;
+    width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    background-color: #2a2a2a; /* 마야 스타일의 배경색 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 마야 스타일의 그림자 효과 */
+    z-index: 100; /* 다른 요소들 위에 표시 */
+}
+  
+/* 드롭다운 메뉴 버튼 스타일 */
+.Menu-dropdown button {
+    color: #fff; /* 텍스트 색상 */
+    padding: 6px 2px; /* 패딩 */
+    text-decoration: none; /* 텍스트 꾸미기 제거 */
+    display: block;
+    /* background: none; */
+    border: none; /* 기본 테두리 제거 */
+    width: 100%; /* 전체 너비 */
+    box-sizing: border-box; /* 박스 모델 설정 */
+    border-bottom: 1px solid #3a3a3a; /* 아이템 사이의 구분선 */
+}
+  
+/* 드롭다운 메뉴 버튼 호버 스타일 */
+.Menu-dropdown button:hover {
+    background-color: #3a3a3a; /* 호버 시 배경색 변경 */
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* 모달 내용 스타일 */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+  
+/* 닫기 버튼 스타일 */
+.modalClose {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.modalClose:hover,
+.modalClose:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}  
