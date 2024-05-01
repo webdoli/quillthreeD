@@ -76,6 +76,7 @@ export class ThreeModules {
     init( scn, obj ) {
 		console.log(`scn: ${scn}, obj: ${obj}`);
         let scnContainer = scn;
+		if( scnContainer.firstChild ) scnContainer.removeChild( scnContainer.firstChild );
         const scene = new THREE.Scene();
         let width = this.editor.clientWidth * .4;
         let height = this.editor.clientHeight * .8;
