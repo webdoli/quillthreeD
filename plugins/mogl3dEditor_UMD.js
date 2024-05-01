@@ -468,6 +468,7 @@
         let sceneContainer = document.createElement('div');
         sceneContainer.title = `threeSceneNum${this.threeSceneNum}`
         sceneContainer.className = `three-scene`;
+
         
         this.uploadModels.push({
             [sceneContainer.title]: res
@@ -475,6 +476,7 @@
 
         let container = modules.init( sceneContainer, res );
         // this.adjustEditorHeight(this.element, container);
+
         wrapper.appendChild( empty_before );
         wrapper.appendChild( container );
         wrapper.appendChild( empty_after );

@@ -92,12 +92,26 @@
                         let threeModules = new ThreeModules({
                                 editor: document.querySelector('#editor')
                             });
-                            
+
                         threeModules.init( node, obj );
                     }
                 })
-            })
-        
+            });
+
+            // 전체화면 Evt
+            // document.addEventListener('fullscreenchange', () => {
+
+            // const fullscreenBtns = document.querySelectorAll('.three-scene button');
+
+            //     fullscreenBtns.forEach(btn => {
+            //         if (document.fullscreenElement) {
+            //            btn.innerText = 'Ave';
+            //         } else {
+            //            btn.innerText = 'Full';
+            //         }
+            //     });
+            // });
+
     </script>
 
 </body>

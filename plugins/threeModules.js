@@ -74,16 +74,20 @@ export class ThreeModules {
     }
 
     init( scn, obj ) {
-		console.log(`scn: ${scn}, obj: ${obj}`);
+		// console.log(`scn: ${scn}, obj: ${obj}`);
+		console.log('scn: ', scn );
+
         let scnContainer = scn;
 		if( scnContainer.firstChild ) scnContainer.removeChild( scnContainer.firstChild );
-        const scene = new THREE.Scene();
-        let width = this.editor.clientWidth * .4;
-        let height = this.editor.clientHeight * .8;
-        
-        const camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
-        camera.position.z = 5;
+		
+		const scene = new THREE.Scene();
 
+        let width = 720;
+        let height = 480;
+
+        const camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
+		camera.position.set( 1.2, .6, 1.3 );
+       
         const grid = new THREE.GridHelper(10);
         scene.add( grid );
         if( obj ) scene.add( obj );
@@ -101,6 +105,70 @@ export class ThreeModules {
 
         const controls = new OrbitControls( camera, renderer.domElement);
         controls.enableDamping = true;
+
+		// 전체화면 버튼
+		let btnWrapper = document.createElement('div');
+		btnWrapper.className = 'three-scene-btn-wrapper';
+
+        let fullscreenBtn = document.createElement('button');
+        fullscreenBtn.innerText = 'Full';
+		fullscreenBtn.id = 'fullscreen-btn'
+		fullscreenBtn.className = 'three-scene-btn';
+        
+        fullscreenBtn.addEventListener('click', () => {
+
+            if( !document.fullscreenElement ) {
+				
+				renderer.domElement.requestFullscreen().catch(err => {
+					alert(`전체 화면 모드 진입에 실패했습니다: ${err.message}`);
+				});
+
+            } else {
+				if (document.exitFullscreen) {
+            		document.exitFullscreen();
+        		}
+            }
+
+        });
+
+		let backgroundBtn = document.createElement('input');
+		backgroundBtn.type = 'color';
+		backgroundBtn.value = '#222';
+    	backgroundBtn.innerText = 'BG';
+    	backgroundBtn.className = 'three-scene-btn';
+		backgroundBtn.id = 'three-scene-btn-bg';
+		backgroundBtn.addEventListener('input', () => {
+			scene.background = new THREE.Color(backgroundBtn.value);
+		});
+
+		let customColorBtn = document.createElement('button');
+		customColorBtn.className = 'three-scene-btn';
+		customColorBtn.textContent = 'BG';
+		customColorBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.8)'; // 버튼 배경색
+		customColorBtn.style.color = '#333'; // 버튼 텍스트 색상
+		customColorBtn.addEventListener('click', () => {
+		    backgroundBtn.click(); // 실제 색상 입력 필드 트리거
+		});
+
+		// 실제 색상 입력 요소는 숨깁니다.
+		backgroundBtn.style.visibility = 'hidden';
+		backgroundBtn.style.position = 'absolute';
+		backgroundBtn.style.zIndex = '-1';
+		
+		 // 라벨을 버튼 래퍼에 추가
+		btnWrapper.appendChild( fullscreenBtn );
+		btnWrapper.appendChild(customColorBtn);
+		btnWrapper.appendChild(backgroundBtn); // 필요하지만 숨겨진 색상 입력 필드
+        scnContainer.appendChild( btnWrapper );
+		
+		// Resize
+		window.addEventListener('resize', function() {
+			let width = window.innerWidth * .72;
+			let height = window.innerHeight * .48;
+			camera.aspect = width / height;
+			camera.updateProjectionMatrix();
+			renderer.setSize(width, height);
+		});
 
         function animate() {
 

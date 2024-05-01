@@ -64,7 +64,36 @@ span.divider {
     /* float: left; */
     border: 1px solid #555; /* 씬 테두리 */
     clear: both;
-    display: inline-block;
+    /* display: inline-block; */
+    position: relative;
+    width: 100%; /* 캔버스 크기에 맞게 조정 */
+    height: 100%; /* 캔버스 크기에 맞게 조정 */
+}
+
+.three-scene-btn-wrapper {
+    /* border: 1px solid red; */
+    position: absolute;
+    
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100; /* 캔버스 위에 표시되도록 z-index 설정 */
+}
+
+.three-scene-btn {
+    /* padding: 5px 10px; */
+    padding: 10px 10px;
+    background-color: rgba(255, 255, 255, 0.8); /* 버튼 배경 반투명하게 설정 */
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    width: auto; /* 색상 선택기 크기 자동 조정 */
+}
+
+#three-scene-btn-bg {
+    height: 40px;
 }
 
 /* Text Color DropDown */
