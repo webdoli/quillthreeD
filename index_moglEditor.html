@@ -23,7 +23,8 @@
 
         <div id="editor" class="mogl3d"></div>
         <div>
-            <h3>Text output:</h3>
+            <h3>Text output: <button id='publish-button'>Publish</button></h3>
+
             <div id="text-output"></div>
         </div>
         <div>
@@ -40,33 +41,26 @@
         const editorElement = document.getElementById('editor');
         const myEditor = new MOGL3D( editorElement, {
             onChange: function ( html, models ) {
-                // console.log(`html: ${html}`);
+                
+                // let textOutput = document.getElementById('text-output');
+                // let htmlOutput = document.getElementById('html-output')
+                // textOutput.innerHTML = html
+                // htmlOutput.textContent = html
+
                 // if( models.length > 0 ) {
                 //     models.map( model => {
                 //         for( let item in model ) {
-                //             console.log(model[item])
+                //             let node = textOutput.querySelector(`[title="${item}"]`);
+                //             let obj = model[item];
+                //             let cloneObj = obj.clone();
+                //             console.log('node: ', node );
+                //             let threeModules = new ThreeModules({
+                //                 editor: document.querySelector('#editor')
+                //             });
+                //             threeModules.init( node, cloneObj );
                 //         }
                 //     })
                 // }
-                let textOutput = document.getElementById('text-output');
-                let htmlOutput = document.getElementById('html-output')
-                textOutput.innerHTML = html
-                htmlOutput.textContent = html
-
-                if( models.length > 0 ) {
-                    models.map( model => {
-                        for( let item in model ) {
-                            let node = textOutput.querySelector(`[title="${item}"]`);
-                            let obj = model[item];
-                            let cloneObj = obj.clone();
-                            console.log('node: ', node );
-                            let threeModules = new ThreeModules({
-                                editor: document.querySelector('#editor')
-                            });
-                            threeModules.init( node, cloneObj );
-                        }
-                    })
-                }
 
             },
             plugins: [{
@@ -74,71 +68,37 @@
             }],
             on3DLoad: function( obj, num ) {
                     // console.log('obj: ', obj);
-                    //title값에 맞게끔 3D씬 생성하기
-                    // let model = obj.clone();
-                    // const scnContainer = document.querySelector(`#text-output [title="threeSceneNum${num}"]`);
-                    // console.log('scnContainer: ', scnContainer );
-                    // if(scnContainer.firstChild) scnContainer.removeChild(scnContainer.firstChild );
-                    // let editor = document.querySelector('#editor')
-                    // let scene = new THREE.Scene();
-                    // let width = editor.clientWidth * .4;
-                    // let height = editor.clientHeight * .8;
-                    // const camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
-                    // camera.position.z = 5;
-
-                    // const grid = new THREE.GridHelper(10);
-                    // scene.add( grid );
-                    // if( model ) { 
-                    //     scene.add( model ) 
-                    // } else {
-                    //     const geometry = new THREE.BoxGeometry( 1, 1, 1 ); 
-                    //     const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} ); 
-                    //     const cube = new THREE.Mesh( geometry, material ); 
-                    //     scene.add( cube );
-
-                    // };
-
-                    // const light = new THREE.PointLight(0xffffff, 50)
-                    // light.position.set(0.8, 1.4, 1.0)
-                    // scene.add(light);
-
-                    // const ambientLight = new THREE.AmbientLight()
-                    // scene.add(ambientLight)
-
-                    // let renderer = new THREE.WebGLRenderer();
-                    // renderer.setSize( width, height );
-                    // scnContainer.appendChild( renderer.domElement );
-
-                    // const controls = new OrbitControls( camera, renderer.domElement);
-                    // controls.enableDamping = true;
-
-                    // function animate() {
-                    //     requestAnimationFrame(animate);
-                    //     controls.update()
-                    //     renderer.render(scene, camera);
-                    // }
-
-                    // animate();
-
                 }
             });    
     
+            const textOutputArea = document.querySelector('#text-output'); 
+            const publishBtn = document.querySelector('#publish-button');
+            const mogl3dContent = document.querySelector('.mogl3d-content');
+
+            publishBtn.addEventListener('click', e => {
+
+                let models = myEditor.getModels();
+                
+                textOutputArea.innerHTML = mogl3dContent.innerHTML;
+                
+                models.map( model => {
+
+                    for( let item in model ) {
+
+                        let node = textOutputArea.querySelector(`[title="${item}"]`);
+                        if( node.firstChild ) node.removeChild( node.firstChild );
+
+                        let obj = model[item].clone();
+                        let threeModules = new ThreeModules({
+                                editor: document.querySelector('#editor')
+                            });
+                            
+                        threeModules.init( node, obj );
+                    }
+                })
+            })
         
     </script>
-    
-    <!-- <script type="module">
-        window.mogl3d.init({
 
-            element: document.getElementById('editor'),
-            defaultParagraphSeparator: 'div',
-
-            onChange: function (html) {
-                document.getElementById('text-output').innerHTML = html
-                document.getElementById('html-output').textContent = html
-            }
-
-
-        })
-    </script> -->
 </body>
 </html>

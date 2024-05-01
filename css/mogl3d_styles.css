@@ -62,7 +62,6 @@ span.divider {
 
 .three-scene {
     /* float: left; */
-    margin: 8px 8px; /* 씬 위아래 여백 */
     border: 1px solid #555; /* 씬 테두리 */
     clear: both;
     display: inline-block;

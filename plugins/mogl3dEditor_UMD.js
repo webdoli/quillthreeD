@@ -440,6 +440,13 @@
 
     }
 
+    MOGL3D.prototype.getModels = function() {
+        
+        if( this.uploadModels.length > 0 ) {
+            return this.uploadModels
+        }
+    }
+
     MOGL3D.prototype.insert3DModelAtLine = function( modules, res ) {
         
         this.threeSceneNum++;
@@ -448,20 +455,15 @@
         const selection = window.getSelection();
         let range;
 
-        // 씬을 포함하는 컨테이너 전에 편집 가능한 div 추가
-        // const editableDivBefore = document.createElement('div');
-        // editableDivBefore.contentEditable = true;
-        // editableDivBefore.style.width = '60%'; // 또는 적절한 비율
-        // editableDivBefore.style.display = 'inline-block';
-        // editableDivBefore.style.float = 'left';
-        // editableDivBefore.style.marginRight = '10px'; // 3D 씬과의 간격을 위한 마진
-        // editableDivBefore.innerHTML = '&nbsp;'; // Non-breaking space, 커서를 위한 공간
-
-
         // 새 div 요소를 생성하여 3D 씬을 포함하도록 설정합니다.
-        let emptyNode = document.createElement('div');
-        emptyNode.textContent = 'insert ';
-        emptyNode.style.display = 'inline-block';
+        let wrapper = document.createElement('div');
+        wrapper.style.display = 'inline-block';
+
+        let empty_before = document.createElement('span');
+        empty_before.textContent = "\u00A0";
+        
+        let empty_after = document.createElement('span');
+        empty_after.textContent = "\u00A0";
 
         let sceneContainer = document.createElement('div');
         sceneContainer.title = `threeSceneNum${this.threeSceneNum}`
@@ -473,23 +475,22 @@
 
         let container = modules.init( sceneContainer, res );
         // this.adjustEditorHeight(this.element, container);
-        emptyNode.appendChild( container );
+        wrapper.appendChild( empty_before );
+        wrapper.appendChild( container );
+        wrapper.appendChild( empty_after );
 
         // 삽입 전에 커서 위치를 위한 빈 div 추가
         const emptyLineBefore = document.createElement('div');
-        // emptyLineBefore.contentEditable = true;
-        emptyLineBefore.innerHTML = '<br>';
+        emptyLineBefore.textContent = "\u00A0";
         
         // 새로운 콘텐츠를 임시 div에 추가
         const tempContent = document.createElement('div');
         tempContent.appendChild(emptyLineBefore);
-        // tempContent.appendChild(container);
-        tempContent.appendChild(emptyNode);
+        tempContent.appendChild(wrapper);
         
         // 삽입 후 커서 위치를 설정할 빈 div 추가
         const emptyLineAfter = document.createElement('div');
-        // emptyLineAfter.contentEditable = true;
-        emptyLineAfter.innerHTML = '<br>';
+        emptyLineAfter.textContent = "\u00A0";
         tempContent.appendChild(emptyLineAfter);
         
         if (!selection.rangeCount) {
