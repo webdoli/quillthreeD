@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'https://unpkg.com/three@0.159.0/examples/jsm/controls/OrbitControls.js';
+import { unzipSync, strFromU8 } from 'https://unpkg.com/three@0.159.0/examples/jsm/libs/fflate.module.js';
 
 const LoaderUtils = {
 
@@ -110,6 +111,10 @@ export class ThreeModules {
 		let btnWrapper = document.createElement('div');
 		btnWrapper.className = 'three-scene-btn-wrapper';
 
+		let tooltip = document.createElement('div');
+		tooltip.className = 'tooltip';
+		scnContainer.appendChild(tooltip);  // 툴팁을 body에 추가
+
         let fullscreenBtn = document.createElement('button');
         fullscreenBtn.innerText = 'Full';
 		fullscreenBtn.id = 'fullscreen-btn'
@@ -154,11 +159,48 @@ export class ThreeModules {
 		backgroundBtn.style.visibility = 'hidden';
 		backgroundBtn.style.position = 'absolute';
 		backgroundBtn.style.zIndex = '-1';
+
+		// 그리드 토글 버튼 생성
+		let gridToggleBtn = document.createElement('button');
+		gridToggleBtn.textContent = 'Grid';
+		gridToggleBtn.className = 'three-scene-btn';
+		gridToggleBtn.id = 'three-scene-grid-btn'
+		gridToggleBtn.addEventListener('click', () => {
+			
+			grid.visible = !grid.visible;  // 그리드 가시성 토글
+		
+		});
+
+		// 편집 모드 버튼 생성 (비활성화)
+		let editModeBtn = document.createElement('button');
+		editModeBtn.textContent = 'Edit';
+		editModeBtn.className = 'three-scene-btn';
+		editModeBtn.id = 'three-scene-edit-btn';
+		editModeBtn.addEventListener('click', () => {
+			console.log('tooltip.style.display: ', tooltip.style.display );
+			if( tooltip.style.display === '' || tooltip.style.display === 'none') {
+				let editMenuBtn = document.querySelector(`[title="3D Scene Editor"]`);
+				editMenuBtn.click();
+        		tooltip.textContent = '준비중입니다';  // 표시할 텍스트
+				// tooltip.style.left = (editModeBtn.offsetLeft + editModeBtn.offsetWidth + 10) + 'px'; // 버튼 오른쪽에 위치
+				// tooltip.style.top = editModeBtn.offsetTop + 'px';
+				tooltip.style.display = 'block';
+
+				setTimeout(() => {
+					tooltip.style.display = 'none';
+				}, 2000 );
+
+				
+			}
+			
+		});
 		
 		 // 라벨을 버튼 래퍼에 추가
 		btnWrapper.appendChild( fullscreenBtn );
 		btnWrapper.appendChild(customColorBtn);
 		btnWrapper.appendChild(backgroundBtn); // 필요하지만 숨겨진 색상 입력 필드
+		btnWrapper.appendChild(gridToggleBtn);  // 그리드 토글 버튼 추가
+    	btnWrapper.appendChild(editModeBtn);  // 편집 모드 버튼 추가
         scnContainer.appendChild( btnWrapper );
 		
 		// Resize
@@ -268,7 +310,7 @@ export class ThreeModules {
 						const scene = result.scene;
 						scene.name = filename;
 						scene.animations.push( ...result.animations );
-
+						cb( scene );
 						loader.dracoLoader.dispose();
 						// loader.ktx2Loader.dispose();
 					});
@@ -308,6 +350,7 @@ export class ThreeModules {
 
 					const object = new OBJLoader().parse( contents );
 					object.name = filename;
+					cb( object );
 
 				}, false );
 				reader.readAsText( file );
@@ -326,6 +369,7 @@ export class ThreeModules {
 
 					const mesh = new THREE.Mesh( geometry, material );
 					mesh.name = filename;
+					cb( mesh )
 
 				}, false );
 
@@ -371,6 +415,8 @@ export class ThreeModules {
 
 					}
 
+					cb( group )
+
 				}, false );
 				reader.readAsText( file );
 				break;
@@ -394,7 +440,7 @@ export class ThreeModules {
 			case 'zip':
 			{
 				reader.addEventListener( 'load', function ( event ) {
-					handleZIP( event.target.result );
+					handleZIP( event.target.result, cb );
 				}, false );
 				reader.readAsArrayBuffer( file );
 				break;
@@ -412,7 +458,7 @@ export class ThreeModules {
 }
 
 
-async function handleZIP( contents ) {
+async function handleZIP( contents, cb ) {
 
     const zip = unzipSync( new Uint8Array( contents ) );
 
@@ -451,12 +497,22 @@ async function handleZIP( contents ) {
 
             case 'fbx':
             {
-                const { FBXLoader } = await import( 'three/addons/loaders/FBXLoader.js' );
+                const { FBXLoader } = await import( 'https://unpkg.com/three@0.159.0/examples/jsm/loaders/FBXLoader.js' );
                 const loader = new FBXLoader( manager );
                 const object = loader.parse( file.buffer );
-                // editor.execute( new AddObjectCommand( editor, object ) );
+                cb( object );
                 break;
             }
+
+			case 'obj':
+			{
+			
+				const { OBJLoader } = await import( 'https://unpkg.com/three@0.159.0/examples/jsm/loaders/OBJLoader.js' );
+				const object = new OBJLoader().parse( file.buffer );
+				object.name = filename;
+				cb( object );
+				break;
+			}
 
             case 'glb':
             {
@@ -465,7 +521,7 @@ async function handleZIP( contents ) {
 
                     const scene = result.scene;
                     scene.animations.push( ...result.animations );
-                    // editor.execute( new AddObjectCommand( editor, scene ) );
+                    cb( scene )
                     loader.dracoLoader.dispose();
                     // loader.ktx2Loader.dispose();
                 } );
@@ -479,6 +535,7 @@ async function handleZIP( contents ) {
 
                     const scene = result.scene;
                     scene.animations.push( ...result.animations );
+					cb( scene );
                     // editor.execute( new AddObjectCommand( editor, scene ) );
                     loader.dracoLoader.dispose();
                     // loader.ktx2Loader.dispose();
