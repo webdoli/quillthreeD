@@ -50,17 +50,55 @@
     MOGL3D.prototype.dropdownActions = function () {
         return {
             fontColor: {
-                icon: 'T',
+                icon: '<img src="./css/icons/icons-type-color.png" class="mogl3d-icons-type">',
                 result: () => this.createColorInput( 'color', 'foreColor', 'Menu-dropdown' ),
                 title: 'Font Color'
             },
+            fontType: {
+                icon: `
+                    <label for="fontfamily">font family:</label>
+                    <select id="fontfamily">
+                        <option value="Arial">Arial</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Georgia">Georgia</option>
+                    </select>
+                `,
+                result: () => { 
+                    const select = document.getElementById('fontfamily');
+                    select.addEventListener('change', () => {
+                        this.exec('fontName', select.value);
+                    });
+                },
+                title: 'Font Color'
+            },
+            fontSize: {
+                icon: `
+                    <label for="fontsize">size:</label>
+                    <select id="fontsize">
+                        <option data-type="placeholder" selected> </option>
+                        <option value="12px">Small</option>
+                        <option value="16px">Medium</option>
+                        <option value="20px">Large</option>
+                        <option value="24px">Extra Large</option>
+                    </select>
+                `,
+                result: () => {
+                    this.initFontSizeListener()
+                    // const select = document.getElementById('fontsize');
+                    // this.wrapTextWithSpan( select );
+                    
+                },
+                title: 'Font Color'
+            },
             highlight: {
-                icon: '<span style="border:1px solid yellow; padding:2px 6px;">T</span>',
+                icon: '<img src="./css/icons/icons-type-bg.png" class="mogl3d-icons-type">',
                 result: () => this.createColorInput( 'color', 'backColor', 'Menu-dropdown' ),
                 title: 'Highlight Text'
             },
             removeHighlight: {
-                icon: '<s>T</s>',
+                icon: '<img src="./css/icons/icons-type-erase.png" class="mogl3d-icons-type">',
                 result: () => { 
                     this.exec('backColor', 'transparent')
                     this.closeDropDown( 'Menu-dropdown' );
@@ -92,7 +130,7 @@
                 title: 'CenterAlign'
             },
             image: {
-                icon: '<icon style="font-size:16px;">🖼️</icon>',
+                icon: '<img src="./css/icons/icons-image-file-add.png" class="mogl3d-icons-type">',
                 result: () => {
                     this.createIMGFileBox( 'image/*' );
                     this.closeDropDown( 'Menu-dropdown' );
@@ -100,7 +138,7 @@
                 title: 'Image',
             },
             files: {
-                icon: '<icon style="font-size:16px;">🗃️</icon>',
+                icon: '<img src="./css/icons/icons-zip.png" class="mogl3d-icons-type">',
                 result: () => {
                     this.createZipFile();
                     this.closeDropDown( 'Menu-dropdown' );
@@ -108,12 +146,12 @@
                 title: 'files',
             },
             video: {
-                icon: '<icon style="font-size:16px;">🎬</icon>',
+                icon: '<img src="./css/icons/icons-video-upload_.png" class="mogl3d-icons-type">',
                 result: () => this.createModal( 'video' ),
                 title: 'Video'
             },
             load3DModel: {
-                icon: '3D',
+                icon: '<img src="./css/icons/icons-3d_.png" class="mogl3d-icons-type">',
                 result: () => this.threeDFileLoader(),
                 title: 'Load 3D Model'
             },
@@ -146,8 +184,24 @@
                 state: () => this.queryCommandState('strikeThrough'),
                 title: 'Strike-through',
             },
+            fontMenu: {
+                icon: '<img src="./css/icons/icons-font_menus.png" class="mogl3d-icons">',
+                result: () => {},
+                init: ( button ) => {
+                    this.initMenu( 
+                        button, 
+                        'mogl3d-content', 
+                        [ 
+                            this.dropdownActions().fontType, 
+                            this.dropdownActions().fontSize, 
+                        ], 
+                        'FontMenu-dropdown' 
+                    )
+                },
+                title: 'FontDropDown',
+            },
             textColorMenu: {
-                icon: 'T',
+                icon: '<img src="./css/icons/icons-type-Menus.png" class="mogl3d-icons">',
                 result: () => {},
                 init: ( button ) => {
                     this.initMenu( 
@@ -206,17 +260,17 @@
                 result: () => this.exec('insertUnorderedList'),
                 title: 'Unordered List',
             },
-            link: {
-                icon: '&#128279;',
-                result: () => {
-                    const url = window.prompt('Enter the link URL')
-                    if (url) this.exec('createLink', url)
-                },
-                divider: true,
-                title: 'Link',
-            },
+            // link: {
+            //     icon: '&#128279;',
+            //     result: () => {
+            //         const url = window.prompt('Enter the link URL')
+            //         if (url) this.exec('createLink', url)
+            //     },
+            //     divider: true,
+            //     title: 'Link',
+            // },
             filesMenu: {
-                icon: '<icon>&#x1F4C1;</icon><icon style="font-size:7px;margin-left:2px;">&#x25BC;</icon>',
+                icon: '<img src="./css/icons/icons-upload_menus_.png" class="mogl3d-icons">',
                 result: () => {},
                 init: ( button ) => {
                     this.initMenu( 
@@ -315,11 +369,12 @@
                 
             }
 
-            if( action.divider ) {
-                const span = document.createElement('span');
-                span.className = 'divider';
-                actionbar.appendChild( span );
-            }
+            // 중간 가림막 넣기
+            // if( action.divider ) {
+            //     const span = document.createElement('span');
+            //     span.className = 'divider';
+            //     actionbar.appendChild( span );
+            // }
 
             actionbar.appendChild(button);
         });
@@ -362,10 +417,10 @@
 
                 let selectNode = document.querySelector(`#${dropID}`);
                 
-                if( selectNode.style.display === 'block' ) {
+                if( selectNode.style.display === 'flex' ) {
                     selectNode.style.display = 'none';
                 } else {
-                    selectNode.style.display = 'block';
+                    selectNode.style.display = 'flex';
                 }
 
                 e.stopPropagation(); // 이벤트 버블링 방지
@@ -375,12 +430,14 @@
         });
 
         document.addEventListener('click', (e) => {
+            
             const editor = document.querySelector('.mogl3d-content');
             let target = e.target;
             dropdownNodesID.map( id => {
-            
+                
                 let node = document.querySelector(`#${id}`);
-                if( editor.contains( target) && node.style.display === 'block' ) node.style.display = 'none';
+                
+                if( node.style.display === 'flex' ) node.style.display = 'none';
     
             })
         });
@@ -857,6 +914,161 @@
             }
             
         })
+    }
+
+    // 초기화 함수에서 이벤트 리스너 설정
+    MOGL3D.prototype.initFontSizeListener = function() {
+
+        const select = document.getElementById('fontsize');
+        if (!select) return;
+
+        select.removeEventListener('change', this.handleFontSizeChange); // 기존 리스너 제거
+        this.handleFontSizeChange = (event) => {
+            const sizeValue = select.value;
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            this.wrapTextWithSpan(selection, "fontSize", sizeValue);
+        };
+        select.addEventListener('change', this.handleFontSizeChange);
+    };
+
+    
+
+    MOGL3D.prototype.wrapTextWithSpan = function( selection, styleProperty, value  ) {
+
+        const range = selection.getRangeAt(0);
+        const selectedNode = range.cloneContents();
+        const multiLine = ( selection.toString().split('\n').length > 1 ) ? true : false;
+        
+        //단일 라인
+        if( !multiLine ) {
+            
+            let commonAncestorNode = range.commonAncestorContainer;
+            let clone = commonAncestorNode.cloneNode(true);
+            // console.log('clone: ', clone);
+            let extract = range.extractContents();
+            // let clone = range.cloneContents();
+
+            // console.log('clone: ', clone );
+            // console.log('extract: ', extract );
+            console.log('origin commonAncestorNode: ', commonAncestorNode );
+            // 윗쪽 div가 나올때까지 반복해서 자신이 span노드이거나 span노드가 있으면 제거
+            
+            if( commonAncestorNode.nodeType === 1 ) {
+                console.log('commonAncestorNode: ', commonAncestorNode );
+                this.removeParentNode( commonAncestorNode, 'SPAN', styleProperty, value )
+            };
+            
+            // if( commonAncestorNode.nodeName === 'SPAN') {
+            //     console.log('commonAncestorNode.parentNode: ', commonAncestorNode.parentNode );
+            //     commonAncestorNode = commonAncestorNode.parentNode;
+            // }
+            
+            let nodes = [];
+            let underSpanNodes = this.collectNode( clone, 'SPAN', nodes )
+            // const treeWalker = document.createTreeWalker(
+            //     commonAncestorNode,
+            //     NodeFilter.SHOW_ELEMENT,
+            //     {
+            //         acceptNode: function( node ) {
+            //             return node.tagName === 'SPAN' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+            //         }
+            //     },
+            //     false
+            // );
+
+            // // let current;
+            // while( treeWalker.nextNode() ) {
+            //     // current.style[styleProperty] = value;
+            //     // nodes.push( current );
+            //     nodes.push( treeWalker.currentNode )
+            // }
+
+            // console.log('res: ', res );
+
+            if( underSpanNodes.length < 1 ) {
+
+                const newSpan = document.createElement('span');
+                newSpan.style[styleProperty] = value;
+                newSpan.appendChild( extract );
+                range.insertNode( newSpan );
+
+            } else {
+                console.log('extract: ', extract );
+                Array.from( extract.childNodes ).forEach( node => {
+                    console.log('node name: ', node.nodeName )
+                    if( node.nodeName === 'SPAN' ) {
+                        node.style[styleProperty] = value;
+                    }
+                })
+                range.insertNode( extract );
+
+            }
+            // if( nodes.length < 1 ) {
+                    // const newSpan = document.createElement('span');
+                    // newSpan.style[styleProperty] = value;
+                    // newSpan.appendChild( extract );
+                    // range.insertNode( newSpan );
+
+                // // let parentSpanNode = this.findParentNode( commonAncestorNode, 'SPAN' );
+                // // console.log('node parent SPAN Node: ', parentSpanNode );
+                // if( !parentSpanNode ) {
+                
+                //     const newSpan = document.createElement('span');
+                //     newSpan.style[styleProperty] = value;
+                //     newSpan.appendChild( extract );
+                //     range.insertNode( newSpan );
+                
+                // } else {
+
+                //     parentSpanNode.style[styleProperty] = value;
+                //     parentSpanNode.appendChild( extract );
+                //     // range.insertNode( parentSpanNode );
+
+                // }
+
+            // } 
+
+        }
+        
+    }
+
+    MOGL3D.prototype.findParentNode = function( node, tag ) {
+        
+        while( node !== null && node.tagName !== tag ) {
+            node = node.parentNode;
+        }
+
+        return node;
+    }
+
+    MOGL3D.prototype.removeParentNode = function( node, tag, styleProperty, value ){
+        console.log(`${tag}노드 제거`)
+        let current = node;
+        while ( current !== null && current.tagName !== tag ) {
+            current = current.parentNode;
+        }
+
+        if (current && current.tagName === 'SPAN') {
+            current.style[styleProperty] = value;
+            // const parent = current.parentNode;
+            // while (current.firstChild) {
+            //     parent.insertBefore(current.firstChild, current);
+            // }
+            // // 모든 자식을 이동한 후, 원래의 'span' 노드 삭제
+            // parent.removeChild(current);
+        }
+
+    }
+
+    MOGL3D.prototype.collectNode = function( node, tag, arr ) {
+        
+        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === tag) {
+            arr.push(node);
+        }
+        Array.from(node.childNodes).forEach(child => this.collectNode( child, tag, arr ));
+        return arr;
+        
     }
 
     // Continue to add more prototype methods...

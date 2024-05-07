@@ -17,7 +17,7 @@
     <script src="./plugins/mogl3dEditor_UMD.js" type="module"></script>
 </head>
 <body>
-
+    
     <div class="content">
     
         <h1>Mogl3D Editor</h1>
@@ -81,22 +81,27 @@
                 let models = myEditor.getModels();
                 
                 textOutputArea.innerHTML = mogl3dContent.innerHTML;
+
+                if( models ) {
+
+                    models.map( model => {
+
+                        for( let item in model ) {
+                        
+                            let node = textOutputArea.querySelector(`[title="${item}"]`);
+                            if( node.firstChild ) node.removeChild( node.firstChild );
+                        
+                            let obj = model[item].clone();
+                            let threeModules = new ThreeModules({
+                                    editor: document.querySelector('#editor')
+                                });
+                            
+                            threeModules.init( node, obj );
+                        }
+                    })
+
+                }
                 
-                models.map( model => {
-
-                    for( let item in model ) {
-
-                        let node = textOutputArea.querySelector(`[title="${item}"]`);
-                        if( node.firstChild ) node.removeChild( node.firstChild );
-
-                        let obj = model[item].clone();
-                        let threeModules = new ThreeModules({
-                                editor: document.querySelector('#editor')
-                            });
-
-                        threeModules.init( node, obj );
-                    }
-                })
             });
 
             // 전체화면 Evt
