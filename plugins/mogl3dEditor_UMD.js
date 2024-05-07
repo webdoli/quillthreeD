@@ -923,13 +923,18 @@
         if (!select) return;
 
         select.removeEventListener('change', this.handleFontSizeChange); // 기존 리스너 제거
-        this.handleFontSizeChange = (event) => {
+        this.handleFontSizeChange = ( event ) => {
+
             const sizeValue = select.value;
             const selection = window.getSelection();
+            
             if (!selection.rangeCount) return;
             this.wrapTextWithSpan(selection, "fontSize", sizeValue);
+        
         };
+        
         select.addEventListener('change', this.handleFontSizeChange);
+    
     };
 
     
@@ -944,93 +949,77 @@
         if( !multiLine ) {
             
             let commonAncestorNode = range.commonAncestorContainer;
-            let clone = commonAncestorNode.cloneNode(true);
-            // console.log('clone: ', clone);
             let extract = range.extractContents();
-            // let clone = range.cloneContents();
-
-            // console.log('clone: ', clone );
-            // console.log('extract: ', extract );
-            console.log('origin commonAncestorNode: ', commonAncestorNode );
-            // 윗쪽 div가 나올때까지 반복해서 자신이 span노드이거나 span노드가 있으면 제거
             
-            if( commonAncestorNode.nodeType === 1 ) {
-                console.log('commonAncestorNode: ', commonAncestorNode );
-                this.removeParentNode( commonAncestorNode, 'SPAN', styleProperty, value )
-            };
-            
-            // if( commonAncestorNode.nodeName === 'SPAN') {
-            //     console.log('commonAncestorNode.parentNode: ', commonAncestorNode.parentNode );
-            //     commonAncestorNode = commonAncestorNode.parentNode;
-            // }
-            
-            let nodes = [];
-            let underSpanNodes = this.collectNode( clone, 'SPAN', nodes )
-            // const treeWalker = document.createTreeWalker(
-            //     commonAncestorNode,
-            //     NodeFilter.SHOW_ELEMENT,
-            //     {
-            //         acceptNode: function( node ) {
-            //             return node.tagName === 'SPAN' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
-            //         }
-            //     },
-            //     false
-            // );
-
-            // // let current;
-            // while( treeWalker.nextNode() ) {
-            //     // current.style[styleProperty] = value;
-            //     // nodes.push( current );
-            //     nodes.push( treeWalker.currentNode )
-            // }
-
-            // console.log('res: ', res );
-
-            if( underSpanNodes.length < 1 ) {
-
-                const newSpan = document.createElement('span');
-                newSpan.style[styleProperty] = value;
-                newSpan.appendChild( extract );
-                range.insertNode( newSpan );
-
-            } else {
-                console.log('extract: ', extract );
-                Array.from( extract.childNodes ).forEach( node => {
-                    console.log('node name: ', node.nodeName )
-                    if( node.nodeName === 'SPAN' ) {
-                        node.style[styleProperty] = value;
-                    }
-                })
-                range.insertNode( extract );
-
+            if( commonAncestorNode.nodeType === 1 ) {   
+                this.removeParentNode( commonAncestorNode, 'SPAN' );
+                this.removeNullNode( commonAncestorNode );
             }
-            // if( nodes.length < 1 ) {
-                    // const newSpan = document.createElement('span');
-                    // newSpan.style[styleProperty] = value;
-                    // newSpan.appendChild( extract );
-                    // range.insertNode( newSpan );
 
-                // // let parentSpanNode = this.findParentNode( commonAncestorNode, 'SPAN' );
-                // // console.log('node parent SPAN Node: ', parentSpanNode );
-                // if( !parentSpanNode ) {
-                
-                //     const newSpan = document.createElement('span');
-                //     newSpan.style[styleProperty] = value;
-                //     newSpan.appendChild( extract );
-                //     range.insertNode( newSpan );
-                
-                // } else {
+            this.removeChildNode( extract, 'SPAN' );
+            
+            const newSpan = document.createElement('span');
+            newSpan.style[styleProperty] = value;
+            newSpan.appendChild( extract );
+            range.insertNode( newSpan );
 
-                //     parentSpanNode.style[styleProperty] = value;
-                //     parentSpanNode.appendChild( extract );
-                //     // range.insertNode( parentSpanNode );
+        } 
+        
+        if( multiLine ) {
+            
+            // let commonAncestorNode = range.commonAncestorContainer;
+            let cloneNodes = range.cloneContents();
+            let startNode = range.startContainer;
+            let startOffset = range.startOffset;
+            let endNode = range.endContainer;
+            let endOffset = range.endOffset;
 
-                // }
+            range.deleteContents();
+            console.log('clone: ', cloneNodes );
+            
+            //1] cloneNodes의 첫번째노드, 마지막노드에서 div껍질 제거하기
+            let firstNode = cloneNodes.firstChild;
+            let lastNode = cloneNodes.lastChild;
 
-            // } 
+            console.log(firstNode.firstChild );
+            let firstSpan = document.createElement('span');
+            let lastSpan = document.createElement('span');
+
+            firstSpan.style[styleProperty] = value;
+            lastSpan.style[styleProperty] = value;
+            
+            while( firstNode.firstChild ) {
+                firstSpan.appendChild( firstNode.firstChild )
+            }
+
+            let len = cloneNodes.childNodes.length;
+            let startNodeParent = startNode.parentNode;
+            Array.from( cloneNodes.children ).forEach( (clone, idx) => {
+
+                if( idx !== 0 && idx !== (len-1) ) {
+                    let newSpan_ = document.createElement('span');
+                    newSpan_.style[styleProperty] = value;
+                    
+                    console.log('clone 노드: ', clone );
+                    startNodeParent.parentNode.insertBefore( clone, startNodeParent.nextSibling );
+                }
+            })
+
+            while( lastNode.firstChild ) {
+                lastSpan.appendChild( lastNode.firstChild );
+            }
+
+            console.log('firstSpan: ', firstSpan );
+            console.log('lastSpan: ', lastSpan );
+
+            startNode.parentNode.appendChild( firstSpan );
+            endNode.parentNode.insertBefore( lastSpan, endNode.parentNode.firstChild )
+
+            //2] extractNodes 바로 앞의 노드 찾기
+            //3] extractNodes 바로 뒤의 노드 찾기
+            //4] 
 
         }
-        
     }
 
     MOGL3D.prototype.findParentNode = function( node, tag ) {
@@ -1042,7 +1031,66 @@
         return node;
     }
 
-    MOGL3D.prototype.removeParentNode = function( node, tag, styleProperty, value ){
+    MOGL3D.prototype.removeChildNode = function( node, tag ) {
+        
+        const nodes = node.querySelectorAll( tag );
+
+        nodes.forEach( el => {
+            
+            while (el.firstChild) {
+                el.parentNode.insertBefore(el.firstChild, el);
+            }
+            
+            el.parentNode.removeChild(el);
+        });
+
+        // return node;
+
+    }
+
+    MOGL3D.prototype.removeNullNode = function( node ) {
+
+        Array.from( node.childNodes ).forEach( child => {
+
+            this.removeNullNode( child );
+
+            if( this.isNodeEmpty( child ) ) {
+                node.removeChild( child );
+            }
+
+        })
+
+    }
+
+    MOGL3D.prototype.isNodeEmpty = function ( node ) {
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            
+            return node.childNodes.length === 0 || this.areAllChildrenEmpty( node );
+        
+        } else if (node.nodeType === Node.TEXT_NODE) {
+
+            return !node.textContent.trim();
+
+        }
+
+        return false;
+
+    }
+
+    MOGL3D.prototype.areAllChildrenEmpty = function( node ) {
+
+        for (let i = 0; i < node.childNodes.length; i++) {
+            if (! this.isNodeEmpty( node.childNodes[i]) ) {
+                return false;
+            }
+        }
+
+        return true;
+    
+    }
+
+    MOGL3D.prototype.removeParentNode = function( node, tag ){
         console.log(`${tag}노드 제거`)
         let current = node;
         while ( current !== null && current.tagName !== tag ) {
@@ -1050,13 +1098,13 @@
         }
 
         if (current && current.tagName === 'SPAN') {
-            current.style[styleProperty] = value;
-            // const parent = current.parentNode;
-            // while (current.firstChild) {
-            //     parent.insertBefore(current.firstChild, current);
-            // }
-            // // 모든 자식을 이동한 후, 원래의 'span' 노드 삭제
-            // parent.removeChild(current);
+        
+            const parent = current.parentNode;
+            while (current.firstChild) {
+                parent.insertBefore(current.firstChild, current);
+            }
+            // 모든 자식을 이동한 후, 원래의 'span' 노드 삭제
+            parent.removeChild(current);
         }
 
     }
