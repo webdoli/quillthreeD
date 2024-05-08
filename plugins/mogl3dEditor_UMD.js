@@ -27,7 +27,11 @@
         this.options = options;
         this.threeSceneNum = 0;
         this.uploadModels = [];
-        
+
+        this.multiSelection = {};
+        this.test_first;
+        this.test_last;
+
         if( this.options.plugins && this.options.plugins.length > 0 ) {
             let mogl3d = this;
             this.options.plugins.map( plugin => {
@@ -975,21 +979,21 @@
             let endOffset = range.endOffset;
 
             range.deleteContents();
-            console.log('clone: ', cloneNodes );
+            
             
             //1] cloneNodes의 첫번째노드, 마지막노드에서 div껍질 제거하기
             let firstNode = cloneNodes.firstChild;
             let lastNode = cloneNodes.lastChild;
 
-            console.log(firstNode.firstChild );
             let firstSpan = document.createElement('span');
             let lastSpan = document.createElement('span');
 
             firstSpan.style[styleProperty] = value;
             lastSpan.style[styleProperty] = value;
-            
+
             while( firstNode.firstChild ) {
-                firstSpan.appendChild( firstNode.firstChild )
+                
+                firstSpan.appendChild( firstNode.firstChild );
             }
 
             let len = cloneNodes.childNodes.length;
@@ -1000,7 +1004,11 @@
                     let newSpan_ = document.createElement('span');
                     newSpan_.style[styleProperty] = value;
                     
-                    console.log('clone 노드: ', clone );
+                    // console.log('2]중간 노드: ', clone );
+                    while( clone.firstChild ) {
+                        newSpan_.appendChild( clone.firstChild )
+                    }
+                    clone.appendChild( newSpan_ );
                     startNodeParent.parentNode.insertBefore( clone, startNodeParent.nextSibling );
                 }
             })
@@ -1009,15 +1017,15 @@
                 lastSpan.appendChild( lastNode.firstChild );
             }
 
-            console.log('firstSpan: ', firstSpan );
-            console.log('lastSpan: ', lastSpan );
+            // if( this.test_first ) startNode.parentNode.removeChild( this.test_first );
+            console.log('startNode: ', startNode );
+            console.log('startNode parentNode: ', startNode.parentNode );
 
+            console.log( this.removeParentNode( startNode.parentNode, 'SPAN' ) );
+            
+            this.test_first = firstSpan;
             startNode.parentNode.appendChild( firstSpan );
             endNode.parentNode.insertBefore( lastSpan, endNode.parentNode.firstChild )
-
-            //2] extractNodes 바로 앞의 노드 찾기
-            //3] extractNodes 바로 뒤의 노드 찾기
-            //4] 
 
         }
     }
@@ -1032,6 +1040,7 @@
     }
 
     MOGL3D.prototype.removeChildNode = function( node, tag ) {
+        
         
         const nodes = node.querySelectorAll( tag );
 
@@ -1091,21 +1100,24 @@
     }
 
     MOGL3D.prototype.removeParentNode = function( node, tag ){
-        console.log(`${tag}노드 제거`)
-        let current = node;
-        while ( current !== null && current.tagName !== tag ) {
-            current = current.parentNode;
+        // console.log(`${tag}노드 제거`)
+        // console.log('node name: ', node.tagName );
+        while ( node !== null && node.tagName !== tag ) {
+            node = node.parentNode;
         }
 
-        if (current && current.tagName === 'SPAN') {
+        if (node && node.tagName === tag ) {
         
-            const parent = current.parentNode;
-            while (current.firstChild) {
-                parent.insertBefore(current.firstChild, current);
+            const parent = node.parentNode;
+            console.log('parent: ', parent );
+            while (node.firstChild) {
+                parent.insertBefore(node.firstChild, node);
             }
             // 모든 자식을 이동한 후, 원래의 'span' 노드 삭제
-            parent.removeChild(current);
+            parent.removeChild(node);
         }
+
+        return node;
 
     }
 
