@@ -991,10 +991,24 @@
             firstSpan.style[styleProperty] = value;
             lastSpan.style[styleProperty] = value;
 
-            while( firstNode.firstChild ) {
-                
-                firstSpan.appendChild( firstNode.firstChild );
+            // console.log(`firstNode: ${firstNode.outerHTML}`)
+            let span = firstNode.querySelector('span');
+
+            if( span ) {
+                let extractText = this.extractText( span );
+                firstSpan = span;
+                firstSpan.style[styleProperty] = value;
+            } else {
+                let extractText = this.extractText( firstNode );
+                firstSpan.textContent = extractText;
             }
+
+            // while( firstNode.firstChild ) {
+            //     if( firstNode.firstChild.nodeName === 'SPAN') break;
+            //     firstSpan.appendChild( firstNode.firstChild );
+            // }
+
+            // console.log('시발 firstSpan: ', firstSpan.outerHTML );
 
             let len = cloneNodes.childNodes.length;
             let startNodeParent = startNode.parentNode;
@@ -1016,18 +1030,36 @@
             while( lastNode.firstChild ) {
                 lastSpan.appendChild( lastNode.firstChild );
             }
-
-            // if( this.test_first ) startNode.parentNode.removeChild( this.test_first );
-            console.log('startNode: ', startNode );
-            console.log('startNode parentNode: ', startNode.parentNode );
-
-            console.log( this.removeParentNode( startNode.parentNode, 'SPAN' ) );
             
-            this.test_first = firstSpan;
-            startNode.parentNode.appendChild( firstSpan );
+            let par = startNode.parentNode;
+
+            if( span ) {
+                
+                let res = this.removeUpToTagName( startNode, 'div' );
+                par.appendChild( firstSpan );
+            } else {
+                startNode.parentNode.appendChild( firstSpan );
+            }
+
             endNode.parentNode.insertBefore( lastSpan, endNode.parentNode.firstChild )
 
         }
+    }
+
+    MOGL3D.prototype.extractText = function( node ) {
+        
+        let text = '';
+        // 노드가 텍스트 노드인 경우, 텍스트를 추가
+        if (node.nodeType === Node.TEXT_NODE) {
+            text += node.nodeValue;
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            // 요소 노드인 경우, 모든 자식 노드를 재귀적으로 처리
+            node.childNodes.forEach(child => {
+                text += this.extractText(child);
+            });
+        }
+        return text;
+
     }
 
     MOGL3D.prototype.findParentNode = function( node, tag ) {
@@ -1097,6 +1129,27 @@
 
         return true;
     
+    }
+
+    MOGL3D.prototype.removeUpToTagName = function( startNode, tagName ) {
+
+        console.log('시작 startNode: ', startNode );
+        let parent;
+        // 부모 노드 탐색하여 지정된 tagName의 직접적인 자식 요소 찾기
+        while ( startNode.parentNode && startNode.parentNode.nodeName !== tagName.toUpperCase()) {
+            startNode = startNode.parentNode;
+        }
+
+        // 찾은 요소가 지정된 태그의 직접적인 자식인지 확인하고, 조건을 만족하면 제거
+        if ( startNode.parentNode && startNode.parentNode.nodeName === tagName.toUpperCase()) {
+            
+            parent = startNode.parentNode;
+            console.log(`div발견 ${parent.outerHTML }, startNode ${startNode.outerHTML } 제거`)
+            startNode.parentNode.removeChild(startNode);
+        }
+
+        return parent;
+
     }
 
     MOGL3D.prototype.removeParentNode = function( node, tag ){
