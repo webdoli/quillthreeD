@@ -973,13 +973,10 @@
             
             // let commonAncestorNode = range.commonAncestorContainer;
             let cloneNodes = range.cloneContents();
-            let startNode = range.startContainer;
-            let startOffset = range.startOffset;
+            let startNode = range.startContainer; 
             let endNode = range.endContainer;
-            let endOffset = range.endOffset;
 
             range.deleteContents();
-            
             
             //1] cloneNodes의 첫번째노드, 마지막노드에서 div껍질 제거하기
             let firstNode = cloneNodes.firstChild;
@@ -991,7 +988,6 @@
             firstSpan.style[styleProperty] = value;
             lastSpan.style[styleProperty] = value;
 
-            // console.log(`firstNode: ${firstNode.outerHTML}`)
             let span = firstNode.querySelector('span');
 
             if( span ) {
@@ -1003,27 +999,30 @@
                 firstSpan.textContent = extractText;
             }
 
-            // while( firstNode.firstChild ) {
-            //     if( firstNode.firstChild.nodeName === 'SPAN') break;
-            //     firstSpan.appendChild( firstNode.firstChild );
-            // }
-
-            // console.log('시발 firstSpan: ', firstSpan.outerHTML );
-
+            let newSpan_ = document.createElement('span');
+                newSpan_.style[styleProperty] = value;
             let len = cloneNodes.childNodes.length;
             let startNodeParent = startNode.parentNode;
             Array.from( cloneNodes.children ).forEach( (clone, idx) => {
 
                 if( idx !== 0 && idx !== (len-1) ) {
-                    let newSpan_ = document.createElement('span');
-                    newSpan_.style[styleProperty] = value;
                     
-                    // console.log('2]중간 노드: ', clone );
-                    while( clone.firstChild ) {
-                        newSpan_.appendChild( clone.firstChild )
+                    let span = clone.querySelector('span');
+
+                    if( span ) {
+                        let extractText = this.extractText( span );
+                        newSpan_ = span;
+                        newSpan_.style[styleProperty] = value;
+                    } else {
+                        let extractText = this.extractText( clone );
+                        newSpan_.textContent = extractText;
                     }
-                    clone.appendChild( newSpan_ );
-                    startNodeParent.parentNode.insertBefore( clone, startNodeParent.nextSibling );
+                    
+                    // while( clone.firstChild ) {
+                    //     newSpan_.appendChild( clone.firstChild )
+                    // }
+                    // clone.appendChild( newSpan_ );
+                    // startNodeParent.parentNode.insertBefore( clone, startNodeParent.nextSibling );
                 }
             })
 
@@ -1033,17 +1032,49 @@
             
             let par = startNode.parentNode;
 
+            
             if( span ) {
                 
                 let res = this.removeUpToTagName( startNode, 'div' );
-                par.appendChild( firstSpan );
+                    res.insertBefore( firstSpan, res.firstChild.nextSibling );
+                let wrapper = document.createElement('div');
+                    wrapper.appendChild( newSpan_ );
+                // console.log('res: ', res );
+                res.parentNode.insertBefore( wrapper, res.parentNode.firstChild.nextSibling );
+                
             } else {
+
                 startNode.parentNode.appendChild( firstSpan );
+                let startDivNode = this.findParentNode( startNode, 'DIV' );
+                let motherNode = startDivNode.parentNode;
+                let firstNode_index = this.findChildIndex( motherNode, startDivNode ); 
+    
+                let wrapper = document.createElement('div');
+                wrapper.appendChild( newSpan_ );
+                
+                console.log('motherNode: ', motherNode );
+                console.log('motherNode[firstNode_index]: ', motherNode.childNodes[firstNode_index])
+
+                motherNode.insertBefore( wrapper, motherNode.childNodes[firstNode_index].nextSibling )
+                
             }
 
             endNode.parentNode.insertBefore( lastSpan, endNode.parentNode.firstChild )
 
         }
+    }
+
+    MOGL3D.prototype.findChildIndex = function ( parent, element ) {
+
+        // 부모 노드의 모든 자식 노드를 배열로 변환
+        let children = Array.prototype.slice.call(parent.childNodes);
+
+        // 주어진 element의 인덱스를 찾고, 사람들이 이해하기 쉽게 1을 더함
+        // let index = children.indexOf( element ) + 1;
+        let index = children.indexOf( element );
+
+        return index;
+
     }
 
     MOGL3D.prototype.extractText = function( node ) {
@@ -1133,7 +1164,6 @@
 
     MOGL3D.prototype.removeUpToTagName = function( startNode, tagName ) {
 
-        console.log('시작 startNode: ', startNode );
         let parent;
         // 부모 노드 탐색하여 지정된 tagName의 직접적인 자식 요소 찾기
         while ( startNode.parentNode && startNode.parentNode.nodeName !== tagName.toUpperCase()) {
