@@ -945,8 +945,8 @@
 
     MOGL3D.prototype.wrapTextWithSpan = function( selection, styleProperty, value  ) {
 
-        const range = selection.getRangeAt(0);
-        const selectedNode = range.cloneContents();
+        let range = selection.getRangeAt(0);
+        // const selectedNode = range.cloneContents();
         const multiLine = ( selection.toString().split('\n').length > 1 ) ? true : false;
         
         //단일 라인
@@ -975,12 +975,21 @@
             let cloneNodes = range.cloneContents();
             let startNode = range.startContainer; 
             let endNode = range.endContainer;
+            let startMotherNode = this.findParentNode( startNode, 'DIV' );
+            let endMotherNode = this.findParentNode( endNode, 'DIV' );
+            let rootNode = startMotherNode.parentNode; //same result when use endMotherNode. 
+
+            console.log('cloneNodes: ', cloneNodes );
+            console.log('startNode: ', startNode );
+            console.log('endNode: ', endNode );
+            console.log('startMotherNode: ', startMotherNode );
+            console.log('endMotherNode: ', endMotherNode );
 
             range.deleteContents();
             
-            //1] cloneNodes의 첫번째노드, 마지막노드에서 div껍질 제거하기
             let firstNode = cloneNodes.firstChild;
             let lastNode = cloneNodes.lastChild;
+            let cloneFirstNode = firstNode.cloneNode( true );
 
             let firstSpan = document.createElement('span');
             let lastSpan = document.createElement('span');
@@ -988,88 +997,127 @@
             firstSpan.style[styleProperty] = value;
             lastSpan.style[styleProperty] = value;
 
-            let span = firstNode.querySelector('span');
+            let firstNodeExistSpan = firstNode.querySelector('span');
+            let lastNodeExistSpan = lastNode.querySelector('span');
 
-            if( span ) {
-                let extractText = this.extractText( span );
-                firstSpan = span;
-                firstSpan.style[styleProperty] = value;
+            if( firstNodeExistSpan ) {
+
+                let tmpNode = document.createDocumentFragment();
+                console.log('시발 firstNode: ', firstNode );
+                // let cloneFirstNode = firstNode.cloneNode( true );
+                console.log('cloneFirstNode: ', cloneFirstNode );
+                firstNodeExistSpan.style[styleProperty] = value;
+
+                while( cloneFirstNode.firstChild ) {
+                    tmpNode.appendChild( cloneFirstNode.firstChild );
+                }
+                console.log('시발 tmpNode: ', tmpNode );
+                // while( firstNode.firstChild ) {
+                //     tmpNode.appendChild( firstNode.firstChild );
+                // }
+
+                firstSpan = tmpNode;
+
             } else {
-                let extractText = this.extractText( firstNode );
+                let extractText = this.extractText( cloneFirstNode );
+                // let extractText = this.extractText( firstNode );
                 firstSpan.textContent = extractText;
             }
 
-            let newSpan_ = document.createElement('span');
-                newSpan_.style[styleProperty] = value;
-            let len = cloneNodes.childNodes.length;
-            let startNodeParent = startNode.parentNode;
-            Array.from( cloneNodes.children ).forEach( (clone, idx) => {
-
-                if( idx !== 0 && idx !== (len-1) ) {
-                    
-                    let span = clone.querySelector('span');
-
-                    if( span ) {
-                        let extractText = this.extractText( span );
-                        newSpan_ = span;
-                        newSpan_.style[styleProperty] = value;
-                    } else {
-                        let extractText = this.extractText( clone );
-                        newSpan_.textContent = extractText;
-                    }
-                    
-                    // while( clone.firstChild ) {
-                    //     newSpan_.appendChild( clone.firstChild )
-                    // }
-                    // clone.appendChild( newSpan_ );
-                    // startNodeParent.parentNode.insertBefore( clone, startNodeParent.nextSibling );
-                }
-            })
-
-            while( lastNode.firstChild ) {
-                lastSpan.appendChild( lastNode.firstChild );
-            }
+            // let newSpan_ = document.createElement('span');
+            //     newSpan_.style[styleProperty] = value;
+            // let len = cloneNodes.childNodes.length;
             
-            let par = startNode.parentNode;
+            // Array.from( cloneNodes.children ).forEach( (clone, idx) => {
+
+            //     if( idx !== 0 && idx !== (len-1) ) {
+
+            //         let midNodeExistSpan = clone.querySelector('span');
+
+            //         if( midNodeExistSpan ) {
+            //             let extractText = this.extractText( midNodeExistSpan );
+            //             newSpan_ = midNodeExistSpan;
+            //             newSpan_.style[styleProperty] = value;
+            //         } else {
+            //             newSpan_ = this.changeNodeToNode( clone, newSpan_ );
+            //         }
+                    
+            //     }
+            // })
+
+            // if( lastNodeExistSpan ) {
+
+            //     let tmpNode = document.createDocumentFragment();
+            //     lastNodeExistSpan.style[styleProperty] = value;
+
+            //     while( lastNode.firstChild ) {
+            //         tmpNode.appendChild( lastNode.firstChild );
+            //     }
+
+            //     lastSpan = tmpNode;
+
+            // } else {
+
+            //     let extractText = this.extractText( lastNode );
+            //     lastSpan.textContent = extractText;
+
+            // }
 
             
-            if( span ) {
+            if( firstNodeExistSpan ) {
                 
-                let res = this.removeUpToTagName( startNode, 'div' );
-                    res.insertBefore( firstSpan, res.firstChild.nextSibling );
-                let wrapper = document.createElement('div');
-                    wrapper.appendChild( newSpan_ );
-                // console.log('res: ', res );
-                res.parentNode.insertBefore( wrapper, res.parentNode.firstChild.nextSibling );
+                // let firstNode_res = this.removeUpToTagName( startNode, 'div' );
+                
+                // let idx = this.findChildIndex( startMotherNode, firstSpan );
+                // startMotherNode.insertBefore( firstSpan, startMotherNode.childNodes[idx].nextSibling );
+                console.log('firstSpan: ', firstSpan );
+                startMotherNode.appendChild( firstSpan ); 
+
+                // let wrapper = document.createElement('div');
+                //     wrapper.appendChild( newSpan_ );
+
+                // const motherNode = firstNode_res.parentNode;
+                // let idx = this.findChildIndex( motherNode, firstNode_res );
+
+                // motherNode.insertBefore( wrapper, motherNode.childNodes[idx].nextSibling );
+
+                // let lastNode_res = this.removeUpToTagName( endNode, 'div' );
+                //     lastNode_res.insertBefore( lastSpan, lastNode_res.firstChild );
                 
             } else {
 
                 startNode.parentNode.appendChild( firstSpan );
-                let startDivNode = this.findParentNode( startNode, 'DIV' );
-                let motherNode = startDivNode.parentNode;
-                let firstNode_index = this.findChildIndex( motherNode, startDivNode ); 
-    
-                let wrapper = document.createElement('div');
-                wrapper.appendChild( newSpan_ );
-                
-                console.log('motherNode: ', motherNode );
-                console.log('motherNode[firstNode_index]: ', motherNode.childNodes[firstNode_index])
 
-                motherNode.insertBefore( wrapper, motherNode.childNodes[firstNode_index].nextSibling )
+                // let startDivNode = this.findParentNode( startNode, 'DIV' );
+                // const motherNode = startDivNode.parentNode;
+                // let firstNode_index = this.findChildIndex( motherNode, startDivNode ); 
+    
+                // let wrapper = document.createElement('div');
+                //     wrapper.appendChild( newSpan_ );
+
+                // motherNode.insertBefore( wrapper, motherNode.childNodes[firstNode_index].nextSibling );
+
+                // endNode.parentNode.insertBefore( lastSpan, endNode.parentNode.firstChild );
                 
             }
 
-            endNode.parentNode.insertBefore( lastSpan, endNode.parentNode.firstChild )
-
         }
+    }
+
+    MOGL3D.prototype.changeNodeToNode = function( target, convert ) {
+        
+        while( target.firstChild ) {
+            convert.appendChild( target.firstChild );
+        }
+
+        return convert;
+
     }
 
     MOGL3D.prototype.findChildIndex = function ( parent, element ) {
 
         // 부모 노드의 모든 자식 노드를 배열로 변환
         let children = Array.prototype.slice.call(parent.childNodes);
-
-        // 주어진 element의 인덱스를 찾고, 사람들이 이해하기 쉽게 1을 더함
         // let index = children.indexOf( element ) + 1;
         let index = children.indexOf( element );
 
@@ -1174,7 +1222,7 @@
         if ( startNode.parentNode && startNode.parentNode.nodeName === tagName.toUpperCase()) {
             
             parent = startNode.parentNode;
-            console.log(`div발견 ${parent.outerHTML }, startNode ${startNode.outerHTML } 제거`)
+            // console.log(`div발견 ${parent.outerHTML }, startNode ${startNode.outerHTML } 제거`)
             startNode.parentNode.removeChild(startNode);
         }
 
