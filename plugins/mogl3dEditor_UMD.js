@@ -941,8 +941,6 @@
     
     };
 
-    
-
     MOGL3D.prototype.wrapTextWithSpan = function( selection, styleProperty, value  ) {
 
         let range = selection.getRangeAt(0);
@@ -952,164 +950,141 @@
         //단일 라인
         if( !multiLine ) {
             
-            let commonAncestorNode = range.commonAncestorContainer;
-            let extract = range.extractContents();
+            let extractContents = range.extractContents();
+            let commonNode = range.commonAncestorContainer;
+            let motherNode = this.findParentNode( commonNode, 'DIV' );
             
-            if( commonAncestorNode.nodeType === 1 ) {   
-                this.removeParentNode( commonAncestorNode, 'SPAN' );
-                this.removeNullNode( commonAncestorNode );
-            }
+            this.removeChildNode( extractContents, 'span', 'mogl3d-font-span' );
 
-            this.removeChildNode( extract, 'SPAN' );
-            
-            const newSpan = document.createElement('span');
+            let newSpan = document.createElement('span');
             newSpan.style[styleProperty] = value;
-            newSpan.appendChild( extract );
+            newSpan.className = 'mogl3d-font-span';
+            newSpan.appendChild( extractContents );
+            newSpan.normalize();
+
             range.insertNode( newSpan );
+            this.removeEmptyNodes( motherNode )
 
         } 
         
         if( multiLine ) {
             
-            // let commonAncestorNode = range.commonAncestorContainer;
             let cloneNodes = range.cloneContents();
             let startNode = range.startContainer; 
             let endNode = range.endContainer;
             let startMotherNode = this.findParentNode( startNode, 'DIV' );
             let endMotherNode = this.findParentNode( endNode, 'DIV' );
-            let rootNode = startMotherNode.parentNode; //same result when use endMotherNode. 
-
-            console.log('cloneNodes: ', cloneNodes );
-            console.log('startNode: ', startNode );
-            console.log('endNode: ', endNode );
-            console.log('startMotherNode: ', startMotherNode );
-            console.log('endMotherNode: ', endMotherNode );
+            let rootNode = startMotherNode.parentNode;
 
             range.deleteContents();
+            let newRange = document.createRange();
+            
+            //선택된 노드 내부의 빈 태그 존재시 > 삭제
+            this.removeEmptyNodes( startMotherNode );
+            this.removeEmptyNodes( endMotherNode );
             
             let firstNode = cloneNodes.firstChild;
             let lastNode = cloneNodes.lastChild;
-            let cloneFirstNode = firstNode.cloneNode( true );
 
-            let firstSpan = document.createElement('span');
-            let lastSpan = document.createElement('span');
+            // 선택된 range범위 내 mogl3d-font-span태그가 포함된 경우 삭제
+            this.removeChildNode( firstNode, 'span', 'mogl3d-font-span' );
+            this.removeChildNode( lastNode, 'span', 'mogl3d-font-span' );
 
-            firstSpan.style[styleProperty] = value;
-            lastSpan.style[styleProperty] = value;
+            // 선택 첫 노드
+            let firstWrapper = document.createElement('span');
+            firstWrapper.className = 'mogl3d-font-span';
+            firstWrapper.style[styleProperty] = value;
 
-            let firstNodeExistSpan = firstNode.querySelector('span');
-            let lastNodeExistSpan = lastNode.querySelector('span');
-
-            if( firstNodeExistSpan ) {
-
-                let tmpNode = document.createDocumentFragment();
-                console.log('시발 firstNode: ', firstNode );
-                // let cloneFirstNode = firstNode.cloneNode( true );
-                console.log('cloneFirstNode: ', cloneFirstNode );
-                firstNodeExistSpan.style[styleProperty] = value;
-
-                while( cloneFirstNode.firstChild ) {
-                    tmpNode.appendChild( cloneFirstNode.firstChild );
-                }
-                console.log('시발 tmpNode: ', tmpNode );
-                // while( firstNode.firstChild ) {
-                //     tmpNode.appendChild( firstNode.firstChild );
-                // }
-
-                firstSpan = tmpNode;
-
-            } else {
-                let extractText = this.extractText( cloneFirstNode );
-                // let extractText = this.extractText( firstNode );
-                firstSpan.textContent = extractText;
-            }
-
-            // let newSpan_ = document.createElement('span');
-            //     newSpan_.style[styleProperty] = value;
-            // let len = cloneNodes.childNodes.length;
+            // 선택 중간 노드 부분 
+            let midWrappers = [];
             
-            // Array.from( cloneNodes.children ).forEach( (clone, idx) => {
+            let tmpMidClone = cloneNodes.cloneNode( true );
+            let midNodeLength = tmpMidClone.childNodes.length - 1;
+            Array.from( tmpMidClone.childNodes ).forEach( ( midNode, idx ) => {
 
-            //     if( idx !== 0 && idx !== (len-1) ) {
-
-            //         let midNodeExistSpan = clone.querySelector('span');
-
-            //         if( midNodeExistSpan ) {
-            //             let extractText = this.extractText( midNodeExistSpan );
-            //             newSpan_ = midNodeExistSpan;
-            //             newSpan_.style[styleProperty] = value;
-            //         } else {
-            //             newSpan_ = this.changeNodeToNode( clone, newSpan_ );
-            //         }
+                if( idx !== 0 && idx !== midNodeLength ) {
                     
-            //     }
-            // })
+                    // 1] 선택된 노드 내부의 빈 태그 존재시 > 삭제
+                    this.removeEmptyNodes( midNode );
 
-            // if( lastNodeExistSpan ) {
+                    // 2] 중간 노드 받아서 하위 mogl3d-font-span태그 포함되면 모두 삭제
+                    this.removeChildNode( midNode, 'span', 'mogl3d-font-span' );
+                    
+                    // 3] div wrapper를 span으로 변경하기
+                    let midWrapper = document.createElement('span');
+                    midWrapper.className = 'mogl3d-font-span';
+                    midWrapper.style[styleProperty] = value;
 
-            //     let tmpNode = document.createDocumentFragment();
-            //     lastNodeExistSpan.style[styleProperty] = value;
+                    // 4] div wrapper만들어서 span을 상위에 덮어쓰기
+                    let midNodeSpan = this.changeNodeToNode( midNode, midWrapper );
+                    let tmpDiv = document.createElement('div');
+                    tmpDiv.appendChild( midNodeSpan );
 
-            //     while( lastNode.firstChild ) {
-            //         tmpNode.appendChild( lastNode.firstChild );
-            //     }
+                    // 5] midWrapper 배열에 넣기
+                    midWrappers.push( tmpDiv );
 
-            //     lastSpan = tmpNode;
+                }
 
-            // } else {
+            })
 
-            //     let extractText = this.extractText( lastNode );
-            //     lastSpan.textContent = extractText;
+            // 선택 마지막 노드
+            let lastWrapper = document.createElement('span');
+            lastWrapper.className = 'mogl3d-font-span';
+            lastWrapper.style[styleProperty] = value;
 
-            // }
+            //선택된 노드의 wrapper(보통 div)껍데기를 fontSpan으로 변경함
+            let firstNodeSpan = this.changeNodeToNode( firstNode, firstWrapper );
+            let lastNodeSpan = this.changeNodeToNode( lastNode, lastWrapper );
+            firstNodeSpan.normalize();
+            lastNodeSpan.normalize();
 
-            
-            if( firstNodeExistSpan ) {
-                
-                // let firstNode_res = this.removeUpToTagName( startNode, 'div' );
-                
-                // let idx = this.findChildIndex( startMotherNode, firstSpan );
-                // startMotherNode.insertBefore( firstSpan, startMotherNode.childNodes[idx].nextSibling );
-                console.log('firstSpan: ', firstSpan );
-                startMotherNode.appendChild( firstSpan ); 
+            startMotherNode.appendChild( firstNodeSpan );
+            endMotherNode.insertBefore( lastNodeSpan, endMotherNode.firstChild );
 
-                // let wrapper = document.createElement('div');
-                //     wrapper.appendChild( newSpan_ );
+            // 6] midWrapper 배열에서 노드를 꺼내서 motherNode의 lastNode앞에 집어넣기
+            midWrappers.map( midNode => {
+                midNode.normalize();
+                rootNode.insertBefore( midNode, endMotherNode );
+            })
 
-                // const motherNode = firstNode_res.parentNode;
-                // let idx = this.findChildIndex( motherNode, firstNode_res );
+            // 범위 재설정
+            newRange.setStartBefore( firstNodeSpan );
+            newRange.setEndAfter( lastNodeSpan );
+            selection.removeAllRanges();
+            selection.addRange( newRange );
+        }
 
-                // motherNode.insertBefore( wrapper, motherNode.childNodes[idx].nextSibling );
+    }
 
-                // let lastNode_res = this.removeUpToTagName( endNode, 'div' );
-                //     lastNode_res.insertBefore( lastSpan, lastNode_res.firstChild );
-                
-            } else {
+    MOGL3D.prototype.removeEmptyNodes = function( node ) {
 
-                startNode.parentNode.appendChild( firstSpan );
+        if (!node) return;
 
-                // let startDivNode = this.findParentNode( startNode, 'DIV' );
-                // const motherNode = startDivNode.parentNode;
-                // let firstNode_index = this.findChildIndex( motherNode, startDivNode ); 
-    
-                // let wrapper = document.createElement('div');
-                //     wrapper.appendChild( newSpan_ );
+        // 모든 자식 노드를 순회
+        for (let i = 0; i < node.childNodes.length; i++) {
+            const child = node.childNodes[i];
 
-                // motherNode.insertBefore( wrapper, motherNode.childNodes[firstNode_index].nextSibling );
+            // 재귀적으로 자식 노드의 빈 노드를 확인
+            this.removeEmptyNodes(child);
 
-                // endNode.parentNode.insertBefore( lastSpan, endNode.parentNode.firstChild );
-                
+            // 자식이 빈 텍스트 노드이거나 빈 요소인 경우 제거
+            if ((child.nodeType === Node.ELEMENT_NODE && child.innerHTML === '') ||
+                (child.nodeType === Node.TEXT_NODE && child.textContent.trim() === '')) {
+                node.removeChild(child);
+                i--; // 노드가 제거된 후 인덱스 조정
             }
-
         }
     }
 
     MOGL3D.prototype.changeNodeToNode = function( target, convert ) {
         
-        while( target.firstChild ) {
-            convert.appendChild( target.firstChild );
-        }
+        // console.log('target: ', target );
+        let cloneTarget = target.cloneNode(true);
 
+        while( cloneTarget.firstChild ) {
+            convert.appendChild( cloneTarget.firstChild );
+        }
+        // console.log('convert: ', convert );
         return convert;
 
     }
@@ -1150,18 +1125,21 @@
         return node;
     }
 
-    MOGL3D.prototype.removeChildNode = function( node, tag ) {
+    MOGL3D.prototype.removeChildNode = function( node, tag, className ) {
         
-        
+        let class_ = ( className ) ? className : null;
         const nodes = node.querySelectorAll( tag );
 
         nodes.forEach( el => {
             
-            while (el.firstChild) {
-                el.parentNode.insertBefore(el.firstChild, el);
+            if( el.className === class_ ) {
+                while (el.firstChild) {
+                    el.parentNode.insertBefore(el.firstChild, el);
+                }
+                
+                el.parentNode.removeChild(el);
             }
             
-            el.parentNode.removeChild(el);
         });
 
         // return node;
