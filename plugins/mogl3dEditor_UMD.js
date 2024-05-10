@@ -20,6 +20,7 @@
     // The actual constructor of the MOGL3D class
     function MOGL3D(element, options = {}) {
 
+        this.addFonts();
         this.name = 'MOGL3D Library';
         this.loader = null;
         this.modules = null;
@@ -27,10 +28,7 @@
         this.options = options;
         this.threeSceneNum = 0;
         this.uploadModels = [];
-
-        this.multiSelection = {};
-        this.test_first;
-        this.test_last;
+        
 
         if( this.options.plugins && this.options.plugins.length > 0 ) {
             let mogl3d = this;
@@ -51,6 +49,29 @@
         
     }
 
+    MOGL3D.prototype.addFonts = function() {
+
+         // preconnect를 위한 첫 번째 링크
+        var link1 = document.createElement('link');
+        link1.rel = 'preconnect';
+        link1.href = 'https://fonts.googleapis.com';
+        document.head.appendChild(link1);
+
+        // preconnect를 위한 두 번째 링크 (crossorigin 속성 포함)
+        var link2 = document.createElement('link');
+        link2.rel = 'preconnect';
+        link2.href = 'https://fonts.gstatic.com';
+        link2.crossOrigin = 'anonymous'; // crossorigin 속성이 필요할 경우
+        document.head.appendChild(link2);
+
+        // Google Fonts 스타일시트 링크
+        var link3 = document.createElement('link');
+        link3.rel = 'stylesheet';
+        link3.href = 'https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Lora:ital,wght@0,400..700;1,400..700&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poetsen+One&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Sedan+SC&family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap';
+        document.head.appendChild(link3);
+
+    }
+
     MOGL3D.prototype.dropdownActions = function () {
         return {
             fontColor: {
@@ -61,26 +82,35 @@
             fontType: {
                 icon: `
                     <label for="fontfamily">font family:</label>
-                    <select id="fontfamily">
-                        <option value="Arial">Arial</option>
-                        <option value="Verdana">Verdana</option>
-                        <option value="Times New Roman">Times New Roman</option>
-                        <option value="Courier New">Courier New</option>
-                        <option value="Georgia">Georgia</option>
+                    <select id="mogl3d-fontfamily">
+                    <option data-type="placeholder" selected> </option>
+                        <option value='"Noto Sans KR", sans-serif'>Nano</option>
+                        <option value='"Roboto", sans-serif'>Roboto</option>
+                        <option value='"Poetsen One"'>Poetsen</option>
+                        <option value='"Ubuntu Sans", sans-serif'>Ubuntu</option>
+                        <option value='"Open Sans", sans-serif'>Open Sans</option>
+                        <option value='"Sedan SC", serif'>Sedan SC</option>
+                        <option value='"Lato", sans-serif'>Lato</option>
+                        <option value='"Nanum Myeongjo", serif'>Nanum Myeongjo</option>
+                        <option value='"Noto Serif KR", serif'>Noto</option>
+                        <option value='"Black Han Sans", sans-serif'>Black Han Sans</option>
+                        <option value='"Lora", serif'>Lora</option>
+                        <option value='"Nanum Gothic", sans-serif'>Nanum Gothic</option>
                     </select>
                 `,
-                result: () => { 
-                    const select = document.getElementById('fontfamily');
-                    select.addEventListener('change', () => {
-                        this.exec('fontName', select.value);
-                    });
+                result: () => {
+                    this.initFontTypeListener()
+                    // const select = document.getElementById('fontfamily');
+                    // select.addEventListener('change', () => {
+                    //     this.exec('fontName', select.value);
+                    // });
                 },
                 title: 'Font Color'
             },
             fontSize: {
                 icon: `
                     <label for="fontsize">size:</label>
-                    <select id="fontsize">
+                    <select id="mogl3d-fontsize">
                         <option data-type="placeholder" selected> </option>
                         <option value="12px">Small</option>
                         <option value="16px">Medium</option>
@@ -90,9 +120,6 @@
                 `,
                 result: () => {
                     this.initFontSizeListener()
-                    // const select = document.getElementById('fontsize');
-                    // this.wrapTextWithSpan( select );
-                    
                 },
                 title: 'Font Color'
             },
@@ -920,10 +947,29 @@
         })
     }
 
+    MOGL3D.prototype.initFontTypeListener = function() {
+
+        const select = document.getElementById('mogl3d-fontfamily');
+        if( !select ) return;
+
+        select.removeEventListener( 'change', this.handleFontTypeChange );
+
+        this.handleFontTypeChange = ( event ) => {
+            const fontTypeValue = select.value;
+            const selection = window.getSelection();
+
+            if( !selection.rangeCount ) return;
+            this.wrapTextWithSpan( selection, "fontFamily", fontTypeValue, 'font-family' );
+        }
+
+        select.addEventListener( 'change', this.handleFontTypeChange );
+
+    }
+
     // 초기화 함수에서 이벤트 리스너 설정
     MOGL3D.prototype.initFontSizeListener = function() {
 
-        const select = document.getElementById('fontsize');
+        const select = document.getElementById('mogl3d-fontsize');
         if (!select) return;
 
         select.removeEventListener('change', this.handleFontSizeChange); // 기존 리스너 제거
@@ -933,7 +979,7 @@
             const selection = window.getSelection();
             
             if (!selection.rangeCount) return;
-            this.wrapTextWithSpan(selection, "fontSize", sizeValue);
+            this.wrapTextWithSpan(selection, "fontSize", sizeValue, 'font-size');
         
         };
         
@@ -941,7 +987,7 @@
     
     };
 
-    MOGL3D.prototype.wrapTextWithSpan = function( selection, styleProperty, value  ) {
+    MOGL3D.prototype.wrapTextWithSpan = function( selection, styleProperty, value, type  ) {
 
         let range = selection.getRangeAt(0);
         // const selectedNode = range.cloneContents();
@@ -954,11 +1000,15 @@
             let commonNode = range.commonAncestorContainer;
             let motherNode = this.findParentNode( commonNode, 'DIV' );
             
-            this.removeChildNode( extractContents, 'span', 'mogl3d-font-span' );
+            ( type === 'font-size' ) 
+                ? this.removeChildNode( extractContents, 'span', 'mogl3d-font-span' )
+                : this.removeChildNode( extractContents, 'span', 'mogl3d-fontfamily-span' );
+            // this.removeChildNode( extractContents, 'span', 'mogl3d-font-span' );
 
             let newSpan = document.createElement('span');
             newSpan.style[styleProperty] = value;
-            newSpan.className = 'mogl3d-font-span';
+            
+            newSpan.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
             newSpan.appendChild( extractContents );
             newSpan.normalize();
 
@@ -987,12 +1037,21 @@
             let lastNode = cloneNodes.lastChild;
 
             // 선택된 range범위 내 mogl3d-font-span태그가 포함된 경우 삭제
-            this.removeChildNode( firstNode, 'span', 'mogl3d-font-span' );
-            this.removeChildNode( lastNode, 'span', 'mogl3d-font-span' );
+            if ( type === 'font-size' ) {
+                this.removeChildNode( firstNode, 'span', 'mogl3d-font-span' );
+                this.removeChildNode( lastNode, 'span', 'mogl3d-font-span' );
+            }
+            else if ( type === 'font-family') {
+                this.removeChildNode( firstNode, 'span', 'mogl3d-fontfamily-span' );
+                this.removeChildNode( lastNode, 'span', 'mogl3d-fontfamily-span' );
+            }
+
+            // this.removeChildNode( firstNode, 'span', 'mogl3d-font-span' );
+            // this.removeChildNode( lastNode, 'span', 'mogl3d-font-span' );
 
             // 선택 첫 노드
             let firstWrapper = document.createElement('span');
-            firstWrapper.className = 'mogl3d-font-span';
+            firstWrapper.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
             firstWrapper.style[styleProperty] = value;
 
             // 선택 중간 노드 부분 
@@ -1008,11 +1067,14 @@
                     this.removeEmptyNodes( midNode );
 
                     // 2] 중간 노드 받아서 하위 mogl3d-font-span태그 포함되면 모두 삭제
-                    this.removeChildNode( midNode, 'span', 'mogl3d-font-span' );
+                    ( type === 'font-size' )
+                        ? this.removeChildNode( midNode, 'span', 'mogl3d-font-span' )
+                        : this.removeChildNode( midNode, 'span', 'mogl3d-fontfamily-span' )
+                    // this.removeChildNode( midNode, 'span', 'mogl3d-font-span' );
                     
                     // 3] div wrapper를 span으로 변경하기
                     let midWrapper = document.createElement('span');
-                    midWrapper.className = 'mogl3d-font-span';
+                    midWrapper.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
                     midWrapper.style[styleProperty] = value;
 
                     // 4] div wrapper만들어서 span을 상위에 덮어쓰기
@@ -1029,7 +1091,7 @@
 
             // 선택 마지막 노드
             let lastWrapper = document.createElement('span');
-            lastWrapper.className = 'mogl3d-font-span';
+            lastWrapper.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
             lastWrapper.style[styleProperty] = value;
 
             //선택된 노드의 wrapper(보통 div)껍데기를 fontSpan으로 변경함
