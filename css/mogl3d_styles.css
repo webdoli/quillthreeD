@@ -65,7 +65,7 @@
 }
 
 .mogl3d-button {
-    font-size: 1.2em;
+    font-size: 1.1em;
     background-color: #474747; /* 버튼 배경색 */
     color: #c7c7c7; /* 버튼 텍스트 색상 */
     padding: 8px 12px; /* 버튼 안쪽 여백 */
@@ -84,6 +84,10 @@
 .mogl3d-button:hover {
     background-color: #5d5d5d; /* 호버 상태의 버튼 배경색 */
     border-radius: 4px;
+}
+
+.mogl3d-button label {
+    font-size: 0.8em;
 }
 
 span.divider {
@@ -171,13 +175,15 @@ span.divider {
 }
 
 .mogl3d-icons {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
 }
 
+
+
 .mogl3d-icons-type {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
 }
 
 #FileMenu-dropdown button {

@@ -216,7 +216,7 @@
                 title: 'Strike-through',
             },
             fontMenu: {
-                icon: '<img src="./css/icons/icons-font_menus.png" class="mogl3d-icons">',
+                icon: '<img src="./css/icons/icons-font_menus.png" class="mogl3d-icons font-menu">',
                 result: () => {},
                 init: ( button ) => {
                     this.initMenu( 
@@ -425,7 +425,7 @@
 
     MOGL3D.prototype.initDropdownMenu = function () {
         let dropdownWrap = document.querySelectorAll('.dropdown');
-        let dropdownNodesID = [ 'TextMenu-dropdown', 'AlignMenu-dropdown', 'FileMenu-dropdown' ]
+        let dropdownNodesID = [ 'TextMenu-dropdown', 'AlignMenu-dropdown', 'FileMenu-dropdown', 'FontMenu-dropdown' ]
 
         dropdownWrap.forEach( dropEl => {
 
