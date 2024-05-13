@@ -41,15 +41,15 @@
 
         const editorElement = document.getElementById('editor');
         const myEditor = new MOGL3D( editorElement, {
-            actions:[
-                'italic',
-                'bold',
-                'fontMenu',
-                'textColorMenu',
-                'alignMenu',
-                'filesMenu',
-                'threeLogEditor',
-            ],
+            // actions:[
+            //     'italic',
+            //     'bold',
+            //     'fontMenu',
+            //     'textColorMenu',
+            //     'alignMenu',
+            //     'filesMenu',
+            //     'threeLogEditor',
+            // ],
             onChange: function ( html, models ) {
                 
                 // let textOutput = document.getElementById('text-output');
@@ -113,17 +113,24 @@
                 
             });
 
-            // 전체화면 Evt
+            // // 전체화면 Evt
             // document.addEventListener('fullscreenchange', () => {
 
-            // const fullscreenBtns = document.querySelectorAll('.three-scene button');
+            //     const guiElements = document.querySelectorAll('.three-scene-btn');
+            //     const fullscreenElement = document.fullscreenElement;
 
-            //     fullscreenBtns.forEach(btn => {
-            //         if (document.fullscreenElement) {
-            //            btn.innerText = 'Ave';
+            //     guiElements.forEach( btn => {
+            //         // 전체화면 모드일 때
+            //         if (fullscreenElement) {
+            //             btn.style.display = 'none';  // 버튼들을 숨깁니다
             //         } else {
-            //            btn.innerText = 'Full';
+            //             btn.style.display = 'block'; // 버튼들을 다시 보여줍니다
             //         }
+            //         // if (document.fullscreenElement) {
+            //         //    btn.innerText = 'Ave';
+            //         // } else {
+            //         //    btn.innerText = 'Full';
+            //         // }
             //     });
             // });
 

@@ -120,21 +120,22 @@ export class ThreeModules {
 		fullscreenBtn.id = 'fullscreen-btn'
 		fullscreenBtn.className = 'three-scene-btn';
         
-        fullscreenBtn.addEventListener('click', () => {
+        // fullscreenBtn.addEventListener('click', () => {
 
-            if( !document.fullscreenElement ) {
+        //     if( !document.fullscreenElement ) {
 				
-				renderer.domElement.requestFullscreen().catch(err => {
-					alert(`전체 화면 모드 진입에 실패했습니다: ${err.message}`);
-				});
+		// 		renderer.domElement.requestFullscreen().catch(err => {
+		// 			alert(`Failed to Full Screen: ${err.message}`);
+		// 		});
 
-            } else {
-				if (document.exitFullscreen) {
-            		document.exitFullscreen();
-        		}
-            }
+        //     } else {
+		// 		if ( document.exitFullscreen ) {
+        //     		document.exitFullscreen();
 
-        });
+        // 		}
+        //     }
+
+        // });
 
 		let backgroundBtn = document.createElement('input');
 		backgroundBtn.type = 'color';
@@ -212,6 +213,25 @@ export class ThreeModules {
 			renderer.setSize(width, height);
 		});
 
+		fullscreenBtn.addEventListener('click', () => {
+
+            if( !document.fullscreenElement ) {
+				
+				renderer.domElement.requestFullscreen().catch(err => {
+					alert(`Failed to Full Screen: ${err.message}`);
+				});
+
+            } else {
+				if ( document.exitFullscreen ) {
+            		document.exitFullscreen();
+					scnContainer.appendChild( btnWrapper );
+					
+        		}
+            }
+
+        });
+
+		// Repeat
         function animate() {
 
             requestAnimationFrame(animate);

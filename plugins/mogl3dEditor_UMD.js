@@ -292,11 +292,11 @@
                 result: () => this.exec('insertOrderedList'),
                 title: 'Ordered List',
             },
-            paragraph: {
-                icon: '&#182;',
-                result: () => this.exec( this.formatBlock, '<p>'),
-                title: 'Paragraph',
-            },
+            // paragraph: {
+            //     icon: '&#182;',
+            //     result: () => this.exec( this.formatBlock, '<p>'),
+            //     title: 'Paragraph',
+            // },
             quote: {
                 icon: '&#8220; &#8221;',
                 result: () => this.exec( this.formatBlock, '<blockquote>'),
@@ -333,39 +333,39 @@
                     )},
                 title: 'FilesDropDown'
             },
-            threeLogEditor: {
-                icon: '<i class="fas fa-cube"></i>',
-                result: () => {
+            // threeLogEditor: {
+            //     icon: '<i class="fas fa-cube"></i>',
+            //     result: () => {
                 
-                    const logEditorWindow = window.open('popup/threeLogEditorWindow.html', 'threeLogWindow', 'width=800,height=600');
+            //         const logEditorWindow = window.open('popup/threeLogEditorWindow.html', 'threeLogWindow', 'width=800,height=600');
 
-                    // 메시지 이벤트 리스너를 메인 윈도우에 추가합니다.
-                    window.addEventListener('message', (event) => {
-                        // 올바른 출처의 메시지인지 검사합니다.
-                        console.log('event origin: ', event.origin );
-                        if ( event.origin !== "http://127.0.0.1:5500" ) return; // 'http://올바른-출처'는 새 창의 URL 출처와 일치해야 합니다.
-                        if ( event.data.action === 'insertImage') {
-                            // 이미지 URL을 에디터에 삽입하는 코드를 여기에 작성합니다.
-                            const imageUrl = event.data.imageUrl;
-                            insertImageToEditor(imageUrl);
-                        }
-                    }, false);
+            //         // 메시지 이벤트 리스너를 메인 윈도우에 추가합니다.
+            //         window.addEventListener('message', (event) => {
+            //             // 올바른 출처의 메시지인지 검사합니다.
+            //             console.log('event origin: ', event.origin );
+            //             if ( event.origin !== "http://127.0.0.1:5500" ) return; // 'http://올바른-출처'는 새 창의 URL 출처와 일치해야 합니다.
+            //             if ( event.data.action === 'insertImage') {
+            //                 // 이미지 URL을 에디터에 삽입하는 코드를 여기에 작성합니다.
+            //                 const imageUrl = event.data.imageUrl;
+            //                 insertImageToEditor(imageUrl);
+            //             }
+            //         }, false);
                 
-                    // this.insertImageToEditor( imageUrl );
-                    function insertImageToEditor(imageUrl) {
-                        const imgTag = `<img src="${imageUrl}" alt="Loaded Image"/>`;
-                        // 'contentEditable' 영역에 imgTag를 삽입하는 로직을 추가해야 합니다.
-                        document.querySelector('.mogl3d-content').innerHTML += imgTag;
-                    }
+            //         // this.insertImageToEditor( imageUrl );
+            //         function insertImageToEditor(imageUrl) {
+            //             const imgTag = `<img src="${imageUrl}" alt="Loaded Image"/>`;
+            //             // 'contentEditable' 영역에 imgTag를 삽입하는 로직을 추가해야 합니다.
+            //             document.querySelector('.mogl3d-content').innerHTML += imgTag;
+            //         }
                 
-                },
-                title: '3D Scene Editor'
-            },
-            code: {
-                icon: '&lt;/&gt;',
-                result: () => this.exec('formatBlock', '<pre>'),
-                title: 'Code'
-            },
+            //     },
+            //     title: '3D Scene Editor'
+            // },
+            // code: {
+            //     icon: '&lt;/&gt;',
+            //     result: () => this.exec('formatBlock', '<pre>'),
+            //     title: 'Code'
+            // },
         }
     };
 
