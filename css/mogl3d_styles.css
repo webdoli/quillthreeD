@@ -13,12 +13,18 @@
     background-color: rgba(255, 255, 255, 0.8);
 }
 
+div {
+    display: block;
+}
+
 .mogl3d {
     /* border: 1px solid rgba(10, 10, 10, 0.1); */
     box-sizing: border-box;
 }
 
 .mogl3d-content {
+    flex-grow: 1;
+    display: block;
     box-sizing: border-box;
     min-height: 420px;
     height: auto;

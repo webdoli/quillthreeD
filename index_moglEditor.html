@@ -41,6 +41,15 @@
 
         const editorElement = document.getElementById('editor');
         const myEditor = new MOGL3D( editorElement, {
+            actions:[
+                'italic',
+                'bold',
+                'fontMenu',
+                'textColorMenu',
+                'alignMenu',
+                'filesMenu',
+                'threeLogEditor',
+            ],
             onChange: function ( html, models ) {
                 
                 // let textOutput = document.getElementById('text-output');

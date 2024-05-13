@@ -39,7 +39,23 @@
             })
         }
         
-        this.actions = options.actions || Object.keys(this.defaultActions());
+        // this.actions = options.actions || Object.keys(this.defaultActions());
+        this.actions = options.actions
+            ? (
+                options.actions.map( action => {
+                    
+                    if( typeof action === 'string' ) {
+                        // console.log('action: ', action );
+                        // console.log('this.defaultActions()[action]: ', this.defaultActions()[action])
+                        return this.defaultActions()[action]; 
+                    }
+                    else if( this.defaultActions()[ action.name ]) return { ...this.defaultActions()[ action.name ], ...action }
+                    return action;
+
+                })
+            )
+            : Object.keys( this.defaultActions() ).map( action => this.defaultActions()[ action ] );
+        
         this.classes = { ...this.defaultClasses(), ...this.options.classes };
         this.formatBlock = 'formatBlock';
         this.defaultParagraphSeparatorString = 'defaultParagraphSeparator';
@@ -379,21 +395,26 @@
         this.element.appendChild( content );
 
         this.actions.forEach( actionKey => {
-            
-            const action = mogl3d.defaultActions()[ actionKey ];
+            // console.log('actionKey: ', actionKey );
+            // const action = mogl3d.defaultActions()[ actionKey ];
             const button = document.createElement('button');
             button.className = mogl3d.classes.button;
-            button.innerHTML = action.icon;
+            // button.innerHTML = action.icon;
+            button.innerHTML = actionKey.icon;
             button.setAttribute('type', 'button');
-            button.title = action.title;
+            // button.title = action.title;
+            button.title = actionKey.title;
             button.addEventListener('click', e => {
                 
-                action.result();
+                // action.result();
+                actionKey.result();
                 content.focus();
             })
 
-            if( action.state ) {
-                const handler = () => button.classList[action.state() ? 'add' : 'remove'](mogl3d.classes.selected);
+            // if( action.state ) {
+            if( actionKey.state ) {
+                // const handler = () => button.classList[action.state() ? 'add' : 'remove'](mogl3d.classes.selected);
+                const handler = () => button.classList[actionKey.state() ? 'add' : 'remove'](mogl3d.classes.selected);
                 content.addEventListener( 'keyup', handler );
                 content.addEventListener( 'mouseup', handler );
                 button.addEventListener( 'click', handler );
@@ -412,12 +433,14 @@
 
         this.actions.forEach(( actionKey ) => {
 
-            const action = mogl3d.defaultActions()[ actionKey ];
+            // const action = mogl3d.defaultActions()[ actionKey ];
             
-            if ( action.init ) {
-    
-                const button = document.querySelector(`button[title="${action.title}"]`);
-                if (button) action.init(button);
+            // if ( action.init ) {
+            if( actionKey.init ) {
+                // const button = document.querySelector(`button[title="${action.title}"]`);
+                const button = document.querySelector(`button[title="${ actionKey.title }"]`);
+                if (button) actionKey.init(button);
+                // if (button) action.init(button);
                 
             }
         });
@@ -439,13 +462,15 @@
                 let dropID = await this.chkDropID( dropMenuEl );
                 
                 dropdownNodesID.forEach( id => {
-                    
+                
                     let node = document.querySelector(`#${id}`);
-                    if( id !== dropID ) node.style.display = 'none';
-                    
+                    if( node ) {
+                        if( id !== dropID ) node.style.display = 'none';
+                    }
     
                 });
 
+                
                 let selectNode = document.querySelector(`#${dropID}`);
                 
                 if( selectNode.style.display === 'flex' ) {
@@ -464,13 +489,18 @@
             
             const editor = document.querySelector('.mogl3d-content');
             let target = e.target;
-            dropdownNodesID.map( id => {
-                
-                let node = document.querySelector(`#${id}`);
-                
-                if( node.style.display === 'flex' ) node.style.display = 'none';
-    
-            })
+            
+            if( target.id !== 'mogl3d-fontsize' && target.id !== 'mogl3d-fontfamily' ) {
+                dropdownNodesID.map( id => {
+                    
+                    let node = document.querySelector(`#${id}`);
+                    if( node ) {
+                        if( node.style.display === 'flex' ) node.style.display = 'none';
+                    }
+                    
+                })
+            }
+
         });
     };
 
@@ -539,7 +569,13 @@
                 
                 modules.loadFiles( files, filesMap, ( res ) => {
     
-                    this.insert3DModelAtLine( modules, res );
+                    const currentRange = this.saveCurrentRange();
+                    if( currentRange ) {
+                        this.insert3DModelAtLine( modules, res, currentRange );
+                    } else {
+                        this.insert3DModelAtLine( modules, res );
+                    }
+                    
                     // if( this.options.on3DLoad ) {
                     //     this.options.on3DLoad( res, this.threeSceneNum );
                     // }
@@ -556,6 +592,13 @@
 
     }
 
+    MOGL3D.prototype.saveCurrentRange = function() {
+        if (window.getSelection().rangeCount > 0) {
+            return window.getSelection().getRangeAt(0);
+        }
+        return null;
+    }
+
     MOGL3D.prototype.getModels = function() {
         
         if( this.uploadModels.length > 0 ) {
@@ -563,13 +606,13 @@
         }
     }
 
-    MOGL3D.prototype.insert3DModelAtLine = function( modules, res ) {
+    MOGL3D.prototype.insert3DModelAtLine = function( modules, res, range ) {
         
         this.threeSceneNum++;
         
         const editor = this.element;
         const selection = window.getSelection();
-        let range;
+        // let range;
 
         // 새 div 요소를 생성하여 3D 씬을 포함하도록 설정합니다.
         let wrapper = document.createElement('div');
@@ -610,8 +653,8 @@
         const emptyLineAfter = document.createElement('div');
         emptyLineAfter.textContent = "\u00A0";
         tempContent.appendChild(emptyLineAfter);
-        
-        if (!selection.rangeCount) {
+
+        if ( !range ) {
         
             // 첫 번째 텍스트 라인이 도구 상자가 아닌 경우에만 처리
             // 커서를 첫 줄로 설정
@@ -628,18 +671,46 @@
         } else {
             
             // 사용자가 선택한 위치에 삽입
-            const editorContent = document.querySelector('.mogl3d-content');
-            const range = selection.getRangeAt(0);
             range.deleteContents();  // 현재 선택된 컨텐츠를 제거
             range.insertNode(tempContent);
             
             // 삽입된 내용 뒤에 커서 위치 조정
-            range.setStartAfter(emptyLineAfter);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-            // this.triggerInputEvent(editorContent);
+            let newRange = document.createRange();
+            newRange.setStartAfter(emptyLineAfter);
+            newRange.collapse(true);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(newRange);
         }
+
+        
+        // if (!selection.rangeCount) {
+        
+        //     // 첫 번째 텍스트 라인이 도구 상자가 아닌 경우에만 처리
+        //     // 커서를 첫 줄로 설정
+        //     const editorContent = document.querySelector('.mogl3d-content');
+        //     const range = document.createRange();
+        //     range.selectNodeContents(emptyLineBefore);
+        //     range.collapse(true);
+        //     selection.removeAllRanges();
+        //     selection.addRange(range);
+        //     editorContent.appendChild( tempContent );
+        //     // 새로운 콘텐츠 삽입 후 input 이벤트 발생시키기
+        //     // this.triggerInputEvent(editorContent);
+            
+        // } else {
+            
+        //     // 사용자가 선택한 위치에 삽입
+        //     const range = selection.getRangeAt(0);
+        //     range.deleteContents();  // 현재 선택된 컨텐츠를 제거
+        //     range.insertNode(tempContent);
+            
+        //     // 삽입된 내용 뒤에 커서 위치 조정
+        //     range.setStartAfter(emptyLineAfter);
+        //     range.collapse(true);
+        //     selection.removeAllRanges();
+        //     selection.addRange(range);
+        //     // this.triggerInputEvent(editorContent);
+        // }
 
     }
 
@@ -798,6 +869,12 @@
 
     MOGL3D.prototype.createModal = function( type ) {
 
+        // 현재 선택된 Range 저장
+        let currentRange;
+        if (window.getSelection().rangeCount > 0) {
+            currentRange = window.getSelection().getRangeAt(0);
+        }
+
         this.closeDropDown( 'Menu-dropdown' )
         const modal = document.createElement('div');
         modal.setAttribute('class', 'modal');
@@ -813,21 +890,35 @@
         closeButton.setAttribute('class', 'modalClose');
         closeButton.id = 'videoModalClose';
         closeButton.textContent = '×';
-        closeButton.addEventListener('click', e => closeModal(modal))
+        closeButton.addEventListener('click', e => {
+        
+            this.closeModal(modal)
+            if( currentRange ) {
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(currentRange);
+            }
+        })
         
         modalContent.appendChild(closeButton);
     
         if( type === 'video' ) {
-            let form = this.videoForm( modalContent, modal );
+            let form = this.videoForm( modalContent, modal, currentRange );
             modal.appendChild(form);
         }
     
         document.body.appendChild( modal );
         modal.style.display = "block";
+
+        // 이벤트 캡처링과 버블링을 막기
+        modal.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+        }, true);
+
         return modal;
     }
 
-    MOGL3D.prototype.videoForm = function( modalContent, modal ) {
+    MOGL3D.prototype.videoForm = function( modalContent, modal, range ) {
         
         const header = document.createElement('h2');
         header.textContent = 'Add Video';
@@ -844,7 +935,7 @@
     
         const insertButton = document.createElement('button');
         insertButton.textContent = 'Insert Video';
-        insertButton.addEventListener('click', e => this.insertVideoFromModal( modal ))
+        insertButton.addEventListener('click', e => this.insertVideoFromModal( modal, range ))
     
         // Adding elements to modal content
         modalContent.appendChild( header );
@@ -860,7 +951,7 @@
         modal.remove();
     }
 
-    MOGL3D.prototype.insertVideoFromModal = function( modal ) {
+    MOGL3D.prototype.insertVideoFromModal = function( modal, range ) {
         const mogl3d = this;
         const url = document.getElementById('videoUrlInput').value;
         const fileInput = document.getElementById('videoFileInput');
@@ -868,7 +959,7 @@
 
         if (url) {
             // URL로 iframe 생성
-            mogl3d.insertVideoIframe( url );
+            mogl3d.insertVideoIframe( url, range );
         } else if (file && file.size <= 30 * 1024 * 1024) { // 30 MB 제한
             // 파일로 비디오 태그 생성
             mogl3d.insertVideoFile( file );
@@ -879,22 +970,27 @@
         this.closeModal( modal );
     }
 
-    MOGL3D.prototype.insertVideoIframe = function( url ) {
+    MOGL3D.prototype.convertToEmbedUrl = function(url) {
         let embedUrl = url;
-    
-        // 사용자가 일반 YouTube URL을 입력한 경우 embed URL로 변환
-        if ( url.includes('youtube.com/watch?v=') ) {
-
-            const videoId = url.split('v=')[1].split('&')[0]; // URL에서 비디오 ID 추출
-            embedUrl = `https://www.youtube.com/embed/${videoId}`;
-        
-        } else if ( url.includes('youtu.be/') ) {
-            
+        if (url.includes('youtube.com/watch?v=')) {
+            const videoId = url.split('v=')[1].split('&')[0];
+            embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+        } else if (url.includes('youtu.be/')) {
             const videoId = url.split('youtu.be/')[1];
-            embedUrl = `https://www.youtube.com/embed/${videoId}`;
-
+            embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
         }
-    
+        return embedUrl;
+    }
+
+    MOGL3D.prototype.insertVideoIframe = function( url, range ) {
+        
+        let embedUrl = this.convertToEmbedUrl( url );
+        const editorContent = document.querySelector('.mogl3d-content');
+        let tmpTextNode = document.createTextNode('');
+        const wrapper = document.createElement('span');
+        wrapper.innerHTML = " ";
+        wrapper.appendChild( tmpTextNode );
+
         const iframe = document.createElement('iframe');
         iframe.src = embedUrl;
         iframe.style.width = "560px";
@@ -902,18 +998,29 @@
         iframe.frameBorder = "0";
         iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
         iframe.allowFullscreen = true;
-        document.querySelector('.mogl3d-content').appendChild( iframe );
+        
+        wrapper.appendChild( iframe );
+        wrapper.style.whiteSpace = 'pre';
 
-        return iframe;
+        if( !range ) {
+            editorContent.insertBefore( wrapper, editorContent.firstChild );
+        } else {
+            
+            range.deleteContents(); // 현재 커서 위치의 내용을 제거
+            range.insertNode(wrapper); // iframe 삽입
+        }
+
+        // return iframe;
     }
 
     MOGL3D.prototype.insertVideoFile = function( file ) {
         
         const editorContent = document.querySelector('.mogl3d-content');
-    
-        const beforeSpace = document.createElement('p');
-        beforeSpace.contentEditable = true;
-        beforeSpace.innerHTML = "<br>";  // 비디오 위에 텍스트 입력 공간
+
+        let tmpTextNode = document.createTextNode('');
+        const wrapper = document.createElement('span');
+        wrapper.innerHTML = " ";
+        wrapper.appendChild( tmpTextNode );
     
         const video = document.createElement('video');
         video.controls = true;
@@ -926,10 +1033,23 @@
         const afterSpace = document.createElement('p');
         afterSpace.contentEditable = true;
         afterSpace.innerHTML = "<br>";  // 비디오 아래에 텍스트 입력 공간
-    
-        editorContent.appendChild(beforeSpace);
-        editorContent.appendChild(video);
-        editorContent.appendChild(afterSpace);
+
+        wrapper.appendChild( video );
+        wrapper.style.whiteSpace = 'pre';
+        const selection = document.getSelection();
+        let range;
+
+        if ( selection.rangeCount > 0 ) {
+
+            range = selection.getRangeAt(0);
+            range.deleteContents(); // 현재 커서 위치의 내용을 제거
+            range.insertNode( wrapper ); // 파일 이름과 제거 버튼을 포함하는 컨테이너 삽입
+
+        } else {
+        // 선택된 범위가 없는 경우, 에디터의 첫 부분에 삽입
+            
+            editorContent.insertBefore( wrapper, editorContent.firstChild );
+        }
 
         return editorContent;
     }
