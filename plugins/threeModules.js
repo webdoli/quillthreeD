@@ -107,35 +107,18 @@ export class ThreeModules {
         const controls = new OrbitControls( camera, renderer.domElement);
         controls.enableDamping = true;
 
-		// 전체화면 버튼
+		// Creating FullScreen Button
 		let btnWrapper = document.createElement('div');
 		btnWrapper.className = 'three-scene-btn-wrapper';
 
 		let tooltip = document.createElement('div');
 		tooltip.className = 'tooltip';
-		scnContainer.appendChild(tooltip);  // 툴팁을 body에 추가
+		scnContainer.appendChild(tooltip); 
 
         let fullscreenBtn = document.createElement('button');
         fullscreenBtn.innerText = 'Full';
 		fullscreenBtn.id = 'fullscreen-btn'
 		fullscreenBtn.className = 'three-scene-btn';
-        
-        // fullscreenBtn.addEventListener('click', () => {
-
-        //     if( !document.fullscreenElement ) {
-				
-		// 		renderer.domElement.requestFullscreen().catch(err => {
-		// 			alert(`Failed to Full Screen: ${err.message}`);
-		// 		});
-
-        //     } else {
-		// 		if ( document.exitFullscreen ) {
-        //     		document.exitFullscreen();
-
-        // 		}
-        //     }
-
-        // });
 
 		let backgroundBtn = document.createElement('input');
 		backgroundBtn.type = 'color';
@@ -150,29 +133,29 @@ export class ThreeModules {
 		let customColorBtn = document.createElement('button');
 		customColorBtn.className = 'three-scene-btn';
 		customColorBtn.textContent = 'BG';
-		customColorBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.8)'; // 버튼 배경색
-		customColorBtn.style.color = '#333'; // 버튼 텍스트 색상
+		customColorBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+		customColorBtn.style.color = '#333'; 
 		customColorBtn.addEventListener('click', () => {
-		    backgroundBtn.click(); // 실제 색상 입력 필드 트리거
+		    backgroundBtn.click();
 		});
 
-		// 실제 색상 입력 요소는 숨깁니다.
+		// Hide the actual color input elements.
 		backgroundBtn.style.visibility = 'hidden';
 		backgroundBtn.style.position = 'absolute';
 		backgroundBtn.style.zIndex = '-1';
 
-		// 그리드 토글 버튼 생성
+		// 그Create Grid toggle button
 		let gridToggleBtn = document.createElement('button');
 		gridToggleBtn.textContent = 'Grid';
 		gridToggleBtn.className = 'three-scene-btn';
 		gridToggleBtn.id = 'three-scene-grid-btn'
 		gridToggleBtn.addEventListener('click', () => {
 			
-			grid.visible = !grid.visible;  // 그리드 가시성 토글
+			grid.visible = !grid.visible; 
 		
 		});
 
-		// 편집 모드 버튼 생성 (비활성화)
+		// Create an Edit Mode button (Disabled)
 		let editModeBtn = document.createElement('button');
 		editModeBtn.textContent = 'Edit';
 		editModeBtn.className = 'three-scene-btn';
@@ -182,26 +165,23 @@ export class ThreeModules {
 			if( tooltip.style.display === '' || tooltip.style.display === 'none') {
 				let editMenuBtn = document.querySelector(`[title="3D Scene Editor"]`);
 				editMenuBtn.click();
-        		tooltip.textContent = '준비중입니다';  // 표시할 텍스트
-				// tooltip.style.left = (editModeBtn.offsetLeft + editModeBtn.offsetWidth + 10) + 'px'; // 버튼 오른쪽에 위치
-				// tooltip.style.top = editModeBtn.offsetTop + 'px';
+        		tooltip.textContent = 'Getting ready..';
 				tooltip.style.display = 'block';
 
 				setTimeout(() => {
 					tooltip.style.display = 'none';
 				}, 2000 );
 
-				
 			}
 			
 		});
 		
-		 // 라벨을 버튼 래퍼에 추가
+		// Label
 		btnWrapper.appendChild( fullscreenBtn );
 		btnWrapper.appendChild(customColorBtn);
-		btnWrapper.appendChild(backgroundBtn); // 필요하지만 숨겨진 색상 입력 필드
-		btnWrapper.appendChild(gridToggleBtn);  // 그리드 토글 버튼 추가
-    	btnWrapper.appendChild(editModeBtn);  // 편집 모드 버튼 추가
+		btnWrapper.appendChild(backgroundBtn); 
+		btnWrapper.appendChild(gridToggleBtn);  
+    	btnWrapper.appendChild(editModeBtn); 
         scnContainer.appendChild( btnWrapper );
 		
 		// Resize
@@ -275,7 +255,7 @@ export class ThreeModules {
 			for ( let i = 0; i < files.length; i ++ ) {
 
 				fileExt.map( ext => {
-                                                        // ** scope주의
+                                                        // ** caution:: scope
 					if( files[i].name.endsWith( ext ) ) this.loadFile( files[ i ], manager, cb );
 				
 				})

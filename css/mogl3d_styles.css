@@ -63,23 +63,19 @@ div {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* justify-content: center; */
-    /* color: white; */
     background: #474747;
-    /*background: linear-gradient(to bottom, #93B5B5, #C8DAD3); */ /* 그라데이션 효과 */
-    /*box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.3); */ /* 내부 그림자와 외부 그림자로 3D 느낌 생성 */
 }
 
 .mogl3d-button {
     font-size: 1.1em;
-    background-color: #474747; /* 버튼 배경색 */
-    color: #c7c7c7; /* 버튼 텍스트 색상 */
-    padding: 8px 12px; /* 버튼 안쪽 여백 */
+    background-color: #474747; /* Button background color */
+    color: #c7c7c7;
+    padding: 8px 12px;
     margin: 1px;
-    border: none; /* 테두리 없음 */
-    cursor: pointer; /* 마우스 오버 시 커서 변경 */
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4); /* 텍스트에 그림자 추가 */
-    /*box-shadow: 0 2px 0 rgba(255, 255, 255, 0.2), 0 3px 5px rgba(0, 0, 0, 0.3); *//* 버튼의 3D 효과 */
+    border: none; 
+    cursor: pointer; 
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+    /*box-shadow: 0 2px 0 rgba(255, 255, 255, 0.2), 0 3px 5px rgba(0, 0, 0, 0.3); *//* Button 3D Effect */
     border-radius: 3px;
 }
 
@@ -88,7 +84,7 @@ div {
 }
 
 .mogl3d-button:hover {
-    background-color: #5d5d5d; /* 호버 상태의 버튼 배경색 */
+    background-color: #5d5d5d;
     border-radius: 4px;
 }
 
@@ -105,35 +101,30 @@ span.divider {
 }
 
 .three-scene {
-    /* float: left; */
-    border: 1px solid #555; /* 씬 테두리 */
+    border: 1px solid #555;
     clear: both;
-    /* display: inline-block; */
     position: relative;
-    width: 100%; /* 캔버스 크기에 맞게 조정 */
-    height: 100%; /* 캔버스 크기에 맞게 조정 */
+    width: 100%; 
+    height: 100%; 
 }
 
 .three-scene-btn-wrapper {
-    /* border: 1px solid red; */
     position: absolute;
-    
     top: 10px;
     right: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    z-index: 100; /* 캔버스 위에 표시되도록 z-index 설정 */
+    z-index: 100;
 }
 
 .three-scene-btn {
-    /* padding: 5px 10px; */
     padding: 10px 10px;
-    background-color: rgba(255, 255, 255, 0.8); /* 버튼 배경 반투명하게 설정 */
+    background-color: rgba(255, 255, 255, 0.8); 
     border: none;
     cursor: pointer;
     border-radius: 5px;
-    width: auto; /* 색상 선택기 크기 자동 조정 */
+    width: auto; 
 }
 
 #three-scene-btn-bg {
@@ -141,13 +132,11 @@ span.divider {
 }
 
 /* Text Color DropDown */
-/* 드롭다운 버튼을 포함하는 컨테이너에 대한 스타일 */
 .dropdown {
-    position: relative; /* 상대적 위치 설정 */
-    display: flex; /* 인라인-블록 요소로 표시 */
-  }
+    position: relative;
+    display: flex; 
+}
 
-/* 드롭다운 메뉴 스타일 */
 .Menu-dropdown {
     display: none;
     flex-direction: row;
@@ -155,27 +144,22 @@ span.divider {
     align-items: center;
     position: absolute;
     top: -1px;
-    left: 100%; /* 버튼 바로 옆에 위치*/
+    left: 100%; 
     white-space: nowrap;
-    /* width: 90%; */
     margin-left: 6px;
-    /* border: 1px solid #474747; */
     border-radius: 2px;
-    z-index: 100; /* 다른 요소들 위에 표시 */
+    z-index: 100; 
 }
   
-/* 드롭다운 메뉴 버튼 스타일 */
 .Menu-dropdown button {
-    color: #fff; /* 텍스트 색상 */
-    text-decoration: none; /* 텍스트 꾸미기 제거 */
+    color: #fff;
+    text-decoration: none; 
     display: block;
-    /* background: none; */
     background-color: #5d5d5d;
-    width: 100%; /* 전체 너비 */
-    box-sizing: border-box; /* 박스 모델 설정 */
+    width: 100%; 
+    box-sizing: border-box; 
 }
   
-/* 드롭다운 메뉴 버튼 호버 스타일 */
 .Menu-dropdown .mogl3d-button:hover {
     background-color: #474747;
 }
@@ -184,8 +168,6 @@ span.divider {
     width: 20px;
     height: 20px;
 }
-
-
 
 .mogl3d-icons-type {
     width: 18px;
@@ -201,13 +183,11 @@ span.divider {
 }
 
 [title="Highlight Text"] {
-    /* margin-left: 1px; */
     padding: 6px 8px;
     
 }
 
 [title="Remove Highlight"] {
-    /* margin-left: 1px; */
     padding: 6px 8px;
 }
 
@@ -314,30 +294,29 @@ span.divider {
     padding: 8px 4px;
 }
 
-/* 모달 스타일 */
+/* Modal */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    width: 100%; 
+    height: 100%;
+    overflow: auto; 
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4); 
 }
 
-/* 모달 내용 스타일 */
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 15% auto; 
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 80%; 
 }
   
-/* 닫기 버튼 스타일 */
+/* Close Button */
 .modalClose {
     color: #aaa;
     float: right;

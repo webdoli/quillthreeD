@@ -28,7 +28,6 @@
         this.options = options;
         this.threeSceneNum = 0;
         this.uploadModels = [];
-        
 
         if( this.options.plugins && this.options.plugins.length > 0 ) {
             let mogl3d = this;
@@ -39,14 +38,12 @@
             })
         }
         
-        // this.actions = options.actions || Object.keys(this.defaultActions());
+        // these.actions values = same as toolbox button
         this.actions = options.actions
             ? (
                 options.actions.map( action => {
                     
                     if( typeof action === 'string' ) {
-                        // console.log('action: ', action );
-                        // console.log('this.defaultActions()[action]: ', this.defaultActions()[action])
                         return this.defaultActions()[action]; 
                     }
                     else if( this.defaultActions()[ action.name ]) return { ...this.defaultActions()[ action.name ], ...action }
@@ -65,29 +62,10 @@
         
     }
 
-    MOGL3D.prototype.addFonts = function() {
 
-         // preconnect를 위한 첫 번째 링크
-        var link1 = document.createElement('link');
-        link1.rel = 'preconnect';
-        link1.href = 'https://fonts.googleapis.com';
-        document.head.appendChild(link1);
-
-        // preconnect를 위한 두 번째 링크 (crossorigin 속성 포함)
-        var link2 = document.createElement('link');
-        link2.rel = 'preconnect';
-        link2.href = 'https://fonts.gstatic.com';
-        link2.crossOrigin = 'anonymous'; // crossorigin 속성이 필요할 경우
-        document.head.appendChild(link2);
-
-        // Google Fonts 스타일시트 링크
-        var link3 = document.createElement('link');
-        link3.rel = 'stylesheet';
-        link3.href = 'https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Lora:ital,wght@0,400..700;1,400..700&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poetsen+One&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Sedan+SC&family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap';
-        document.head.appendChild(link3);
-
-    }
-
+    /* ------------------------- */
+    /******* Buttons Funcs *******/
+    /* ------------------------- */
     MOGL3D.prototype.dropdownActions = function () {
         return {
             fontColor: {
@@ -116,10 +94,6 @@
                 `,
                 result: () => {
                     this.initFontTypeListener()
-                    // const select = document.getElementById('fontfamily');
-                    // select.addEventListener('change', () => {
-                    //     this.exec('fontName', select.value);
-                    // });
                 },
                 title: 'Font Color'
             },
@@ -292,11 +266,6 @@
                 result: () => this.exec('insertOrderedList'),
                 title: 'Ordered List',
             },
-            // paragraph: {
-            //     icon: '&#182;',
-            //     result: () => this.exec( this.formatBlock, '<p>'),
-            //     title: 'Paragraph',
-            // },
             quote: {
                 icon: '&#8220; &#8221;',
                 result: () => this.exec( this.formatBlock, '<blockquote>'),
@@ -307,15 +276,6 @@
                 result: () => this.exec('insertUnorderedList'),
                 title: 'Unordered List',
             },
-            // link: {
-            //     icon: '&#128279;',
-            //     result: () => {
-            //         const url = window.prompt('Enter the link URL')
-            //         if (url) this.exec('createLink', url)
-            //     },
-            //     divider: true,
-            //     title: 'Link',
-            // },
             filesMenu: {
                 icon: '<img src="./css/icons/icons-upload_menus_.png" class="mogl3d-icons">',
                 result: () => {},
@@ -333,43 +293,11 @@
                     )},
                 title: 'FilesDropDown'
             },
-            // threeLogEditor: {
-            //     icon: '<i class="fas fa-cube"></i>',
-            //     result: () => {
-                
-            //         const logEditorWindow = window.open('popup/threeLogEditorWindow.html', 'threeLogWindow', 'width=800,height=600');
-
-            //         // 메시지 이벤트 리스너를 메인 윈도우에 추가합니다.
-            //         window.addEventListener('message', (event) => {
-            //             // 올바른 출처의 메시지인지 검사합니다.
-            //             console.log('event origin: ', event.origin );
-            //             if ( event.origin !== "http://127.0.0.1:5500" ) return; // 'http://올바른-출처'는 새 창의 URL 출처와 일치해야 합니다.
-            //             if ( event.data.action === 'insertImage') {
-            //                 // 이미지 URL을 에디터에 삽입하는 코드를 여기에 작성합니다.
-            //                 const imageUrl = event.data.imageUrl;
-            //                 insertImageToEditor(imageUrl);
-            //             }
-            //         }, false);
-                
-            //         // this.insertImageToEditor( imageUrl );
-            //         function insertImageToEditor(imageUrl) {
-            //             const imgTag = `<img src="${imageUrl}" alt="Loaded Image"/>`;
-            //             // 'contentEditable' 영역에 imgTag를 삽입하는 로직을 추가해야 합니다.
-            //             document.querySelector('.mogl3d-content').innerHTML += imgTag;
-            //         }
-                
-            //     },
-            //     title: '3D Scene Editor'
-            // },
-            // code: {
-            //     icon: '&lt;/&gt;',
-            //     result: () => this.exec('formatBlock', '<pre>'),
-            //     title: 'Code'
-            // },
         }
     };
 
     MOGL3D.prototype.init = function () {
+
         const mogl3d = this;
         const actionbar = document.createElement('div');
         actionbar.className = this.classes.actionbar;
@@ -380,134 +308,38 @@
         content.className = this.classes.content;
 
         const defaultParagraphSeparator = this.options[this.defaultParagraphSeparatorString] || 'div';
-        // content.oninput = ({ target: { firstChild } }) => {
-        //     if (firstChild && firstChild.nodeType === 3) this.exec(this.formatBlock, `<${defaultParagraphSeparator}>`)
-        //     else if (content.innerHTML === '<br>') content.innerHTML = '';
-        //     if( this.options.onChange ) this.options.onChange( content.innerHTML, this.uploadModels )
-        // }
-        
-        // content.onkeydown = event => {
-        //     if (event.key === 'Enter' && this.queryCommandValue(this.formatBlock) === 'blockquote') {
-        //         setTimeout(() => this.exec(this.formatBlock, `<${defaultParagraphSeparator}>`), 0)
-        //     }
-        // }
 
         this.element.appendChild( content );
-
         this.actions.forEach( actionKey => {
-            // console.log('actionKey: ', actionKey );
-            // const action = mogl3d.defaultActions()[ actionKey ];
+            
             const button = document.createElement('button');
             button.className = mogl3d.classes.button;
-            // button.innerHTML = action.icon;
             button.innerHTML = actionKey.icon;
             button.setAttribute('type', 'button');
-            // button.title = action.title;
             button.title = actionKey.title;
             button.addEventListener('click', e => {
                 
-                // action.result();
                 actionKey.result();
                 content.focus();
             })
 
-            // if( action.state ) {
             if( actionKey.state ) {
-                // const handler = () => button.classList[action.state() ? 'add' : 'remove'](mogl3d.classes.selected);
                 const handler = () => button.classList[actionKey.state() ? 'add' : 'remove'](mogl3d.classes.selected);
                 content.addEventListener( 'keyup', handler );
                 content.addEventListener( 'mouseup', handler );
                 button.addEventListener( 'click', handler );
-                
             }
-
-            // 중간 가림막 넣기
-            // if( action.divider ) {
-            //     const span = document.createElement('span');
-            //     span.className = 'divider';
-            //     actionbar.appendChild( span );
-            // }
 
             actionbar.appendChild(button);
         });
 
         this.actions.forEach(( actionKey ) => {
-
-            // const action = mogl3d.defaultActions()[ actionKey ];
             
-            // if ( action.init ) {
             if( actionKey.init ) {
-                // const button = document.querySelector(`button[title="${action.title}"]`);
                 const button = document.querySelector(`button[title="${ actionKey.title }"]`);
                 if (button) actionKey.init(button);
-                // if (button) action.init(button);
-                
             }
         });
-    };
-
-    MOGL3D.prototype.initDropdownMenu = function () {
-        let dropdownWrap = document.querySelectorAll('.dropdown');
-        let dropdownNodesID = [ 'TextMenu-dropdown', 'AlignMenu-dropdown', 'FileMenu-dropdown', 'FontMenu-dropdown' ]
-
-        dropdownWrap.forEach( dropEl => {
-
-            let editor = document.querySelector('#editor');
-            
-            dropEl.addEventListener('click', async e => {
-        
-                let target = e.target;
-                let dropdownWrapper = e.target.parentNode;
-                let dropMenuEl = ( dropdownWrapper.nodeName === 'BUTTON') ? dropdownWrapper.parentNode : dropdownWrapper; 
-                let dropID = await this.chkDropID( dropMenuEl );
-                
-                dropdownNodesID.forEach( id => {
-                
-                    let node = document.querySelector(`#${id}`);
-                    if( node ) {
-                        if( id !== dropID ) node.style.display = 'none';
-                    }
-    
-                });
-
-                
-                let selectNode = document.querySelector(`#${dropID}`);
-                
-                if( selectNode.style.display === 'flex' ) {
-                    selectNode.style.display = 'none';
-                } else {
-                    selectNode.style.display = 'flex';
-                }
-
-                e.stopPropagation(); // 이벤트 버블링 방지
-
-            })
-
-        });
-
-        document.addEventListener('click', (e) => {
-            
-            const editor = document.querySelector('.mogl3d-content');
-            let target = e.target;
-            
-            if( target.id !== 'mogl3d-fontsize' && target.id !== 'mogl3d-fontfamily' ) {
-                dropdownNodesID.map( id => {
-                    
-                    let node = document.querySelector(`#${id}`);
-                    if( node ) {
-                        if( node.style.display === 'flex' ) node.style.display = 'none';
-                    }
-                    
-                })
-            }
-
-        });
-    };
-
-    // Add more methods as needed
-    MOGL3D.prototype.insertImageToEditor = function (imageUrl) {
-        const imgTag = `<img src="${imageUrl}" alt="Loaded Image"/>`;
-        document.querySelector('.mogl3d-content').innerHTML += imgTag;
     };
 
     MOGL3D.prototype.defaultClasses = function () {
@@ -534,7 +366,7 @@
     MOGL3D.prototype.closeDropDown = function( elName ) {
         const dropdowns = document.querySelectorAll(`.${ elName }`);
         dropdowns.forEach( dropdown => {
-            dropdown.style.display = 'none'; // 모든 드랍다운 숨기기
+            dropdown.style.display = 'none'; // Hode All Dropdown menus
         });
     }
 
@@ -544,188 +376,71 @@
         input.type = type;
         input.oninput = (e) => {
             mogl3d.exec( execName, e.target.value );
-            input.remove(); // 색상 선택 후 input 요소 제거
+            input.remove();
         };
         input.click();
         this.closeDropDown( closeNodeName );
     }
 
-    // 3D
-    MOGL3D.prototype.threeDFileLoader = function() {
+    /* -------------------------- */
+    /******* DropDown Funcs *******/
+    /* -------------------------- */
+    MOGL3D.prototype.initDropdownMenu = function () {
+        let dropdownWrap = document.querySelectorAll('.dropdown');
+        let dropdownNodesID = [ 'TextMenu-dropdown', 'AlignMenu-dropdown', 'FileMenu-dropdown', 'FontMenu-dropdown' ]
 
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.multiple = true;
-        fileInput.onchange = async e => {
+        dropdownWrap.forEach( dropEl => {
 
-            const files = e.target.files;
+            let editor = document.querySelector('#editor');
             
-            try {
-                let filesMap = null;
-                let modules = new this.modules({
-                    editor: this.element
-                });
-                // let newLoader = new this.loader();
+            dropEl.addEventListener('click', async e => {
+        
+                let dropdownWrapper = e.target.parentNode;
+                let dropMenuEl = ( dropdownWrapper.nodeName === 'BUTTON') ? dropdownWrapper.parentNode : dropdownWrapper; 
+                let dropID = await this.chkDropID( dropMenuEl );
                 
-                modules.loadFiles( files, filesMap, ( res ) => {
+                dropdownNodesID.forEach( id => {
+                
+                    let node = document.querySelector(`#${id}`);
+                    if( node ) {
+                        if( id !== dropID ) node.style.display = 'none';
+                    }
     
-                    const currentRange = this.saveCurrentRange();
-                    if( currentRange ) {
-                        this.insert3DModelAtLine( modules, res, currentRange );
-                    } else {
-                        this.insert3DModelAtLine( modules, res );
+                });
+
+                
+                let selectNode = document.querySelector(`#${dropID}`);
+                
+                if( selectNode.style.display === 'flex' ) {
+                    selectNode.style.display = 'none';
+                } else {
+                    selectNode.style.display = 'flex';
+                }
+
+                e.stopPropagation(); // to Prevent Event Bubbling
+
+            })
+
+        });
+
+        document.addEventListener('click', (e) => {
+            
+            const editor = document.querySelector('.mogl3d-content');
+            let target = e.target;
+            
+            if( target.id !== 'mogl3d-fontsize' && target.id !== 'mogl3d-fontfamily' ) {
+                dropdownNodesID.map( id => {
+                    
+                    let node = document.querySelector(`#${id}`);
+                    if( node ) {
+                        if( node.style.display === 'flex' ) node.style.display = 'none';
                     }
                     
-                    // if( this.options.on3DLoad ) {
-                    //     this.options.on3DLoad( res, this.threeSceneNum );
-                    // }
-                });
-    
-            } catch ( err ) {
-                console.error('파일 로딩 에러:', err);
+                })
             }
-        
-        }
 
-        fileInput.click();
-        this.closeDropDown( 'Menu-dropdown' );
-
-    }
-
-    MOGL3D.prototype.saveCurrentRange = function() {
-        if (window.getSelection().rangeCount > 0) {
-            return window.getSelection().getRangeAt(0);
-        }
-        return null;
-    }
-
-    MOGL3D.prototype.getModels = function() {
-        
-        if( this.uploadModels.length > 0 ) {
-            return this.uploadModels
-        }
-    }
-
-    MOGL3D.prototype.insert3DModelAtLine = function( modules, res, range ) {
-        
-        this.threeSceneNum++;
-        
-        const editor = this.element;
-        const selection = window.getSelection();
-        // let range;
-
-        // 새 div 요소를 생성하여 3D 씬을 포함하도록 설정합니다.
-        let wrapper = document.createElement('div');
-        wrapper.style.display = 'inline-block';
-
-        let empty_before = document.createElement('span');
-        empty_before.textContent = "\u00A0";
-        
-        let empty_after = document.createElement('span');
-        empty_after.textContent = "\u00A0";
-
-        let sceneContainer = document.createElement('div');
-        sceneContainer.title = `threeSceneNum${this.threeSceneNum}`
-        sceneContainer.className = `three-scene`;
-
-        
-        this.uploadModels.push({
-            [sceneContainer.title]: res
         });
-
-        let container = modules.init( sceneContainer, res );
-        // this.adjustEditorHeight(this.element, container);
-
-        wrapper.appendChild( empty_before );
-        wrapper.appendChild( container );
-        wrapper.appendChild( empty_after );
-
-        // 삽입 전에 커서 위치를 위한 빈 div 추가
-        const emptyLineBefore = document.createElement('div');
-        emptyLineBefore.textContent = "\u00A0";
-        
-        // 새로운 콘텐츠를 임시 div에 추가
-        const tempContent = document.createElement('div');
-        tempContent.appendChild(emptyLineBefore);
-        tempContent.appendChild(wrapper);
-        
-        // 삽입 후 커서 위치를 설정할 빈 div 추가
-        const emptyLineAfter = document.createElement('div');
-        emptyLineAfter.textContent = "\u00A0";
-        tempContent.appendChild(emptyLineAfter);
-
-        if ( !range ) {
-        
-            // 첫 번째 텍스트 라인이 도구 상자가 아닌 경우에만 처리
-            // 커서를 첫 줄로 설정
-            const editorContent = document.querySelector('.mogl3d-content');
-            const range = document.createRange();
-            range.selectNodeContents(emptyLineBefore);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-            editorContent.appendChild( tempContent );
-            // 새로운 콘텐츠 삽입 후 input 이벤트 발생시키기
-            // this.triggerInputEvent(editorContent);
-            
-        } else {
-            
-            // 사용자가 선택한 위치에 삽입
-            range.deleteContents();  // 현재 선택된 컨텐츠를 제거
-            range.insertNode(tempContent);
-            
-            // 삽입된 내용 뒤에 커서 위치 조정
-            let newRange = document.createRange();
-            newRange.setStartAfter(emptyLineAfter);
-            newRange.collapse(true);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(newRange);
-        }
-
-        
-        // if (!selection.rangeCount) {
-        
-        //     // 첫 번째 텍스트 라인이 도구 상자가 아닌 경우에만 처리
-        //     // 커서를 첫 줄로 설정
-        //     const editorContent = document.querySelector('.mogl3d-content');
-        //     const range = document.createRange();
-        //     range.selectNodeContents(emptyLineBefore);
-        //     range.collapse(true);
-        //     selection.removeAllRanges();
-        //     selection.addRange(range);
-        //     editorContent.appendChild( tempContent );
-        //     // 새로운 콘텐츠 삽입 후 input 이벤트 발생시키기
-        //     // this.triggerInputEvent(editorContent);
-            
-        // } else {
-            
-        //     // 사용자가 선택한 위치에 삽입
-        //     const range = selection.getRangeAt(0);
-        //     range.deleteContents();  // 현재 선택된 컨텐츠를 제거
-        //     range.insertNode(tempContent);
-            
-        //     // 삽입된 내용 뒤에 커서 위치 조정
-        //     range.setStartAfter(emptyLineAfter);
-        //     range.collapse(true);
-        //     selection.removeAllRanges();
-        //     selection.addRange(range);
-        //     // this.triggerInputEvent(editorContent);
-        // }
-
-    }
-
-    MOGL3D.prototype.triggerInputEvent = function(element) {
-        // input 이벤트 생성
-        const event = new Event('input', {
-            bubbles: true,
-            cancelable: true,
-        });
-    
-        // 이벤트 디스패치
-        element.dispatchEvent(event);
     };
-
-    // 3D End
 
     MOGL3D.prototype.initMenu = function( button, editor, execArray, name ) {
         let content = document.querySelector(`.${ editor }`);
@@ -767,6 +482,140 @@
 
         return dropdownContainer
     }
+
+
+    /* -------------------- */
+    /******* 3D Funcs *******/
+    /* -------------------- */
+
+    MOGL3D.prototype.threeDFileLoader = function() {
+
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.multiple = true;
+        fileInput.onchange = async e => {
+
+            const files = e.target.files;
+            
+            try {
+                let filesMap = null;
+                let modules = new this.modules({
+                    editor: this.element
+                });
+                
+                modules.loadFiles( files, filesMap, ( res ) => {
+    
+                    const currentRange = this.saveCurrentRange();
+                    if( currentRange ) {
+                        this.insert3DModelAtLine( modules, res, currentRange );
+                    } else {
+                        this.insert3DModelAtLine( modules, res );
+                    }
+                    
+                });
+    
+            } catch ( err ) {
+                console.error('파일 로딩 에러:', err);
+            }
+        
+        }
+
+        fileInput.click();
+        this.closeDropDown( 'Menu-dropdown' );
+
+    }
+
+    MOGL3D.prototype.saveCurrentRange = function() {
+        if (window.getSelection().rangeCount > 0) {
+            return window.getSelection().getRangeAt(0);
+        }
+        return null;
+    }
+
+    MOGL3D.prototype.getModels = function() {
+        
+        if( this.uploadModels.length > 0 ) {
+            return this.uploadModels
+        }
+    }
+
+    MOGL3D.prototype.insert3DModelAtLine = function( modules, res, range ) {
+        
+        this.threeSceneNum++;
+        
+        const editor = this.element;
+        const selection = window.getSelection();
+
+        // Create a new div element and set it to include a 3D scene.
+        let wrapper = document.createElement('div');
+        wrapper.style.display = 'inline-block';
+
+        let empty_before = document.createElement('span');
+        empty_before.textContent = "\u00A0";
+        
+        let empty_after = document.createElement('span');
+        empty_after.textContent = "\u00A0";
+
+        let sceneContainer = document.createElement('div');
+        sceneContainer.title = `threeSceneNum${this.threeSceneNum}`
+        sceneContainer.className = `three-scene`;
+
+        
+        this.uploadModels.push({
+            [sceneContainer.title]: res
+        });
+
+        let container = modules.init( sceneContainer, res );
+
+        wrapper.appendChild( empty_before );
+        wrapper.appendChild( container );
+        wrapper.appendChild( empty_after );
+
+        // Add empty div for cursor position before insertion
+        const emptyLineBefore = document.createElement('div');
+        emptyLineBefore.textContent = "\u00A0";
+        
+        // Add new content to temporary div
+        const tempContent = document.createElement('div');
+        tempContent.appendChild(emptyLineBefore);
+        tempContent.appendChild(wrapper);
+        
+        // Add an empty div to set the cursor position after insertion
+        const emptyLineAfter = document.createElement('div');
+        emptyLineAfter.textContent = "\u00A0";
+        tempContent.appendChild(emptyLineAfter);
+
+        if ( !range ) {
+        
+            // Process only if the first text line is not a toolbox
+            // Set cursor to the first line
+            const editorContent = document.querySelector('.mogl3d-content');
+            const range = document.createRange();
+            range.selectNodeContents(emptyLineBefore);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            editorContent.appendChild( tempContent );
+            
+        } else {
+            
+            // Insert in the user's selected location
+            range.deleteContents();
+            range.insertNode(tempContent);
+            
+            // Adjust cursor position behind inserted content
+            let newRange = document.createRange();
+            newRange.setStartAfter(emptyLineAfter);
+            newRange.collapse(true);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(newRange);
+        }
+
+    }
+
+    /* --------------------------- */
+    /******* Img Upload Func *******/
+    /* --------------------------- */
 
     MOGL3D.prototype.createIMGFileBox = function( accept ) {
         const fileInput = document.createElement('input');
@@ -812,34 +661,44 @@
         return fileInput
     }
 
+
+    // Add more methods as needed
+    // MOGL3D.prototype.insertImageToEditor = function (imageUrl) {
+
+    //     const imgTag = `<img src="${imageUrl}" alt="Loaded Image"/>`;
+    //     document.querySelector('.mogl3d-content').innerHTML += imgTag;
+
+    // };
+
+    /* --------------------------- */
+    /******* Zip Upload Func *******/
+    /* --------------------------- */
     MOGL3D.prototype.createZipFile = function() {
         const mogl3d = this
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
-        fileInput.accept = '.zip'; // ZIP 파일만 허용
+        fileInput.accept = '.zip'; // Allow ZIP files only
     
         fileInput.onchange = (e) => {
             
             const file = e.target.files[0];
         
             if (file) {
-                // ZIP 파일에 대한 참조를 에디터 내에 삽입
                 
-                // 컨테이너 div를 생성합니다.
                 const container = document.createElement('div');
-                container.contentEditable = false; // 파일 컨테이너는 편집 불가능하도록 설정
-                container.style.display = 'inline-block'; // 인라인 블록으로 표시
-                container.style.margin = '5px'; // 여백 추가
+                container.contentEditable = false; 
+                container.style.display = 'inline-block'; 
+                container.style.margin = '5px';
     
                 const fileNameSpan = document.createElement('span');
-                fileNameSpan.textContent = file.name + " "; // 파일 이름 표시
+                fileNameSpan.textContent = file.name + " ";
                 container.appendChild( fileNameSpan );
     
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'x';
                 removeButton.style.marginLeft = '5px';
                 removeButton.onclick = () => {
-                    container.remove(); // 컨테이너를 에디터에서 삭제
+                    container.remove();
                 };
                 container.appendChild(removeButton);
     
@@ -849,27 +708,29 @@
                 if ( selection.rangeCount > 0 ) {
         
                     range = selection.getRangeAt(0);
-                    range.deleteContents(); // 현재 커서 위치의 내용을 제거
-                    range.insertNode( container ); // 파일 이름과 제거 버튼을 포함하는 컨테이너 삽입
+                    range.deleteContents(); 
+                    range.insertNode( container );
         
                 } else {
-                // 선택된 범위가 없는 경우, 에디터의 첫 부분에 삽입
+                // no selected range:: insert it at the beginning of the editor
                     const editor = document.querySelector('.mogl3d-content');
                     editor.insertBefore( container, editor.firstChild );
                 }
-                // 파일 입력 요소를 문서에서 제거합니다.
+                // Remove the file entry element from the document.
                 fileInput.remove();
             }
     
         };
     
-        fileInput.click(); // 파일 선택기 열기
+        fileInput.click();
         return fileInput
     }
 
+    /* ----------------------------- */
+    /******* Video Upload Func *******/
+    /* ----------------------------- */
     MOGL3D.prototype.createModal = function( type ) {
 
-        // 현재 선택된 Range 저장
         let currentRange;
         if (window.getSelection().rangeCount > 0) {
             currentRange = window.getSelection().getRangeAt(0);
@@ -880,12 +741,11 @@
         modal.setAttribute('class', 'modal');
         modal.id = 'videoModal';
     
-        // 모달 콘텐츠를 위한 Div
         const modalContent = document.createElement('div');
         modalContent.setAttribute('class', 'modal-content');
         modal.appendChild(modalContent);
     
-        // 닫기 버튼
+        // Close Function
         const closeButton = document.createElement('span');
         closeButton.setAttribute('class', 'modalClose');
         closeButton.id = 'videoModalClose';
@@ -910,7 +770,7 @@
         document.body.appendChild( modal );
         modal.style.display = "block";
 
-        // 이벤트 캡처링과 버블링을 막기
+        // Prevent event capture and bubbling
         modal.addEventListener('mousedown', function(e) {
             e.stopPropagation();
         }, true);
@@ -952,16 +812,17 @@
     }
 
     MOGL3D.prototype.insertVideoFromModal = function( modal, range ) {
+
         const mogl3d = this;
         const url = document.getElementById('videoUrlInput').value;
         const fileInput = document.getElementById('videoFileInput');
         const file = fileInput.files[0];
 
         if (url) {
-            // URL로 iframe 생성
+            // Creating iframe with URL
             mogl3d.insertVideoIframe( url, range );
-        } else if (file && file.size <= 30 * 1024 * 1024) { // 30 MB 제한
-            // 파일로 비디오 태그 생성
+        } else if (file && file.size <= 30 * 1024 * 1024) { // File Size: Limit to 30 MB
+            // Creating video Tag with file
             mogl3d.insertVideoFile( file );
         } else if (file) {
             alert('File is too large. Maximum size is 30MB.');
@@ -971,6 +832,7 @@
     }
 
     MOGL3D.prototype.convertToEmbedUrl = function(url) {
+
         let embedUrl = url;
         if (url.includes('youtube.com/watch?v=')) {
             const videoId = url.split('v=')[1].split('&')[0];
@@ -980,6 +842,7 @@
             embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
         }
         return embedUrl;
+
     }
 
     MOGL3D.prototype.insertVideoIframe = function( url, range ) {
@@ -1006,8 +869,8 @@
             editorContent.insertBefore( wrapper, editorContent.firstChild );
         } else {
             
-            range.deleteContents(); // 현재 커서 위치의 내용을 제거
-            range.insertNode(wrapper); // iframe 삽입
+            range.deleteContents();
+            range.insertNode(wrapper);
         }
 
         // return iframe;
@@ -1032,7 +895,7 @@
     
         const afterSpace = document.createElement('p');
         afterSpace.contentEditable = true;
-        afterSpace.innerHTML = "<br>";  // 비디오 아래에 텍스트 입력 공간
+        afterSpace.innerHTML = "<br>";  // Text entry space under video
 
         wrapper.appendChild( video );
         wrapper.style.whiteSpace = 'pre';
@@ -1040,14 +903,10 @@
         let range;
 
         if ( selection.rangeCount > 0 ) {
-
             range = selection.getRangeAt(0);
-            range.deleteContents(); // 현재 커서 위치의 내용을 제거
-            range.insertNode( wrapper ); // 파일 이름과 제거 버튼을 포함하는 컨테이너 삽입
-
-        } else {
-        // 선택된 범위가 없는 경우, 에디터의 첫 부분에 삽입
-            
+            range.deleteContents(); 
+            range.insertNode( wrapper ); 
+        } else {    
             editorContent.insertBefore( wrapper, editorContent.firstChild );
         }
 
@@ -1066,6 +925,34 @@
             
         })
     }
+
+    /* ---------------------- */
+    /******* Font Funcs *******/
+    /* ---------------------- */
+
+    // Setting Google Font
+    MOGL3D.prototype.addFonts = function() {
+
+        // first Link for preconnect
+       var link1 = document.createElement('link');
+       link1.rel = 'preconnect';
+       link1.href = 'https://fonts.googleapis.com';
+       document.head.appendChild(link1);
+
+       // second Link for preconnect:: CrosOrgin
+       var link2 = document.createElement('link');
+       link2.rel = 'preconnect';
+       link2.href = 'https://fonts.gstatic.com';
+       link2.crossOrigin = 'anonymous';
+       document.head.appendChild(link2);
+
+       // Google Fonts Style
+       var link3 = document.createElement('link');
+       link3.rel = 'stylesheet';
+       link3.href = 'https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Lora:ital,wght@0,400..700;1,400..700&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poetsen+One&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Sedan+SC&family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap';
+       document.head.appendChild(link3);
+
+   }
 
     MOGL3D.prototype.initFontTypeListener = function() {
 
@@ -1086,7 +973,6 @@
 
     }
 
-    // 초기화 함수에서 이벤트 리스너 설정
     MOGL3D.prototype.initFontSizeListener = function() {
 
         const select = document.getElementById('mogl3d-fontsize');
@@ -1149,14 +1035,14 @@
             range.deleteContents();
             let newRange = document.createRange();
             
-            //선택된 노드 내부의 빈 태그 존재시 > 삭제
+            // If empty tags exist inside the selected node > Remove
             this.removeEmptyNodes( startMotherNode );
             this.removeEmptyNodes( endMotherNode );
             
             let firstNode = cloneNodes.firstChild;
             let lastNode = cloneNodes.lastChild;
 
-            // 선택된 range범위 내 mogl3d-font-span태그가 포함된 경우 삭제
+            // If the selected range contains the mgl3d-font-span tag > Remove
             if ( type === 'font-size' ) {
                 this.removeChildNode( firstNode, 'span', 'mogl3d-font-span' );
                 this.removeChildNode( lastNode, 'span', 'mogl3d-font-span' );
@@ -1166,15 +1052,12 @@
                 this.removeChildNode( lastNode, 'span', 'mogl3d-fontfamily-span' );
             }
 
-            // this.removeChildNode( firstNode, 'span', 'mogl3d-font-span' );
-            // this.removeChildNode( lastNode, 'span', 'mogl3d-font-span' );
-
-            // 선택 첫 노드
+            // First node of selection
             let firstWrapper = document.createElement('span');
             firstWrapper.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
             firstWrapper.style[styleProperty] = value;
 
-            // 선택 중간 노드 부분 
+            // Select Intermediate Node Part
             let midWrappers = [];
             
             let tmpMidClone = cloneNodes.cloneNode( true );
@@ -1183,38 +1066,32 @@
 
                 if( idx !== 0 && idx !== midNodeLength ) {
                     
-                    // 1] 선택된 노드 내부의 빈 태그 존재시 > 삭제
                     this.removeEmptyNodes( midNode );
 
-                    // 2] 중간 노드 받아서 하위 mogl3d-font-span태그 포함되면 모두 삭제
                     ( type === 'font-size' )
                         ? this.removeChildNode( midNode, 'span', 'mogl3d-font-span' )
                         : this.removeChildNode( midNode, 'span', 'mogl3d-fontfamily-span' )
-                    // this.removeChildNode( midNode, 'span', 'mogl3d-font-span' );
-                    
-                    // 3] div wrapper를 span으로 변경하기
+
                     let midWrapper = document.createElement('span');
                     midWrapper.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
                     midWrapper.style[styleProperty] = value;
 
-                    // 4] div wrapper만들어서 span을 상위에 덮어쓰기
                     let midNodeSpan = this.changeNodeToNode( midNode, midWrapper );
                     let tmpDiv = document.createElement('div');
                     tmpDiv.appendChild( midNodeSpan );
 
-                    // 5] midWrapper 배열에 넣기
                     midWrappers.push( tmpDiv );
 
                 }
 
             })
 
-            // 선택 마지막 노드
+            // Last node of selection
             let lastWrapper = document.createElement('span');
             lastWrapper.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
             lastWrapper.style[styleProperty] = value;
 
-            //선택된 노드의 wrapper(보통 div)껍데기를 fontSpan으로 변경함
+            //Change the wrapper (usually div) shell of the selected node to fontSpan
             let firstNodeSpan = this.changeNodeToNode( firstNode, firstWrapper );
             let lastNodeSpan = this.changeNodeToNode( lastNode, lastWrapper );
             firstNodeSpan.normalize();
@@ -1223,13 +1100,12 @@
             startMotherNode.appendChild( firstNodeSpan );
             endMotherNode.insertBefore( lastNodeSpan, endMotherNode.firstChild );
 
-            // 6] midWrapper 배열에서 노드를 꺼내서 motherNode의 lastNode앞에 집어넣기
             midWrappers.map( midNode => {
                 midNode.normalize();
                 rootNode.insertBefore( midNode, endMotherNode );
             })
 
-            // 범위 재설정
+            //reset range
             newRange.setStartBefore( firstNodeSpan );
             newRange.setEndAfter( lastNodeSpan );
             selection.removeAllRanges();
@@ -1242,18 +1118,17 @@
 
         if (!node) return;
 
-        // 모든 자식 노드를 순회
+        // Naviagate all child nodes
         for (let i = 0; i < node.childNodes.length; i++) {
             const child = node.childNodes[i];
 
-            // 재귀적으로 자식 노드의 빈 노드를 확인
             this.removeEmptyNodes(child);
 
-            // 자식이 빈 텍스트 노드이거나 빈 요소인 경우 제거
+            // Remove a child if it is an empty text node or an empty element
             if ((child.nodeType === Node.ELEMENT_NODE && child.innerHTML === '') ||
                 (child.nodeType === Node.TEXT_NODE && child.textContent.trim() === '')) {
                 node.removeChild(child);
-                i--; // 노드가 제거된 후 인덱스 조정
+                i--; // Adjust the index after the node is removed
             }
         }
     }
@@ -1273,7 +1148,6 @@
 
     MOGL3D.prototype.findChildIndex = function ( parent, element ) {
 
-        // 부모 노드의 모든 자식 노드를 배열로 변환
         let children = Array.prototype.slice.call(parent.childNodes);
         // let index = children.indexOf( element ) + 1;
         let index = children.indexOf( element );
@@ -1285,11 +1159,11 @@
     MOGL3D.prototype.extractText = function( node ) {
         
         let text = '';
-        // 노드가 텍스트 노드인 경우, 텍스트를 추가
+        // If the node is a text node, add text
         if (node.nodeType === Node.TEXT_NODE) {
             text += node.nodeValue;
         } else if (node.nodeType === Node.ELEMENT_NODE) {
-            // 요소 노드인 경우, 모든 자식 노드를 재귀적으로 처리
+            // If element nodes, process all child nodes recursively
             node.childNodes.forEach(child => {
                 text += this.extractText(child);
             });
@@ -1373,16 +1247,14 @@
     MOGL3D.prototype.removeUpToTagName = function( startNode, tagName ) {
 
         let parent;
-        // 부모 노드 탐색하여 지정된 tagName의 직접적인 자식 요소 찾기
+
         while ( startNode.parentNode && startNode.parentNode.nodeName !== tagName.toUpperCase()) {
             startNode = startNode.parentNode;
         }
 
-        // 찾은 요소가 지정된 태그의 직접적인 자식인지 확인하고, 조건을 만족하면 제거
         if ( startNode.parentNode && startNode.parentNode.nodeName === tagName.toUpperCase()) {
             
             parent = startNode.parentNode;
-            // console.log(`div발견 ${parent.outerHTML }, startNode ${startNode.outerHTML } 제거`)
             startNode.parentNode.removeChild(startNode);
         }
 
@@ -1391,8 +1263,7 @@
     }
 
     MOGL3D.prototype.removeParentNode = function( node, tag ){
-        // console.log(`${tag}노드 제거`)
-        // console.log('node name: ', node.tagName );
+        
         while ( node !== null && node.tagName !== tag ) {
             node = node.parentNode;
         }
@@ -1404,7 +1275,7 @@
             while (node.firstChild) {
                 parent.insertBefore(node.firstChild, node);
             }
-            // 모든 자식을 이동한 후, 원래의 'span' 노드 삭제
+            
             parent.removeChild(node);
         }
 

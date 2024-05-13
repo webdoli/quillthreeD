@@ -6,7 +6,6 @@
     <title>Document</title>
     <link rel="stylesheet" href="./css/mogl3d_styles.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
-    <!-- <script src="./lib/mogl3dEditor_.js" type="module"></script> -->
     <script type="importmap">
         {
             "imports": {
@@ -45,32 +44,9 @@
             //     'italic',
             //     'bold',
             //     'fontMenu',
-            //     'textColorMenu',
-            //     'alignMenu',
-            //     'filesMenu',
-            //     'threeLogEditor',
             // ],
             onChange: function ( html, models ) {
                 
-                // let textOutput = document.getElementById('text-output');
-                // let htmlOutput = document.getElementById('html-output')
-                // textOutput.innerHTML = html
-                // htmlOutput.textContent = html
-
-                // if( models.length > 0 ) {
-                //     models.map( model => {
-                //         for( let item in model ) {
-                //             let node = textOutput.querySelector(`[title="${item}"]`);
-                //             let obj = model[item];
-                //             let cloneObj = obj.clone();
-                //             console.log('node: ', node );
-                //             let threeModules = new ThreeModules({
-                //                 editor: document.querySelector('#editor')
-                //             });
-                //             threeModules.init( node, cloneObj );
-                //         }
-                //     })
-                // }
 
             },
             plugins: [{
@@ -112,27 +88,6 @@
                 }
                 
             });
-
-            // // 전체화면 Evt
-            // document.addEventListener('fullscreenchange', () => {
-
-            //     const guiElements = document.querySelectorAll('.three-scene-btn');
-            //     const fullscreenElement = document.fullscreenElement;
-
-            //     guiElements.forEach( btn => {
-            //         // 전체화면 모드일 때
-            //         if (fullscreenElement) {
-            //             btn.style.display = 'none';  // 버튼들을 숨깁니다
-            //         } else {
-            //             btn.style.display = 'block'; // 버튼들을 다시 보여줍니다
-            //         }
-            //         // if (document.fullscreenElement) {
-            //         //    btn.innerText = 'Ave';
-            //         // } else {
-            //         //    btn.innerText = 'Full';
-            //         // }
-            //     });
-            // });
 
     </script>
 
