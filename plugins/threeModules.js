@@ -76,15 +76,18 @@ export class ThreeModules {
 
     init( scn, obj ) {
 		// console.log(`scn: ${scn}, obj: ${obj}`);
-		console.log('scn: ', scn );
 
         let scnContainer = scn;
 		if( scnContainer.firstChild ) scnContainer.removeChild( scnContainer.firstChild );
 		
 		const scene = new THREE.Scene();
+		const aspectRatio = 16 / 9;
 
-        let width = 720;
-        let height = 480;
+		const content_node = this.editor.querySelector('.mogl3d-content');
+        const content_rect = content_node.getBoundingClientRect();
+
+        let width = content_rect.width * .78;
+        let height = width / aspectRatio;
 
         const camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
 		camera.position.set( 1.2, .6, 1.3 );
@@ -186,11 +189,17 @@ export class ThreeModules {
 		
 		// Resize
 		window.addEventListener('resize', function() {
-			let width = window.innerWidth * .72;
-			let height = window.innerHeight * .48;
+
+			const content_node = this.editor.querySelector('.mogl3d-content');
+			const content_rect = content_node.getBoundingClientRect();
+
+        	let width = content_rect.width * .78;
+			let height = width / aspectRatio;
+				// let width = window.innerWidth * .72;
+				// let height = window.innerHeight * .48;
 			camera.aspect = width / height;
 			camera.updateProjectionMatrix();
-			renderer.setSize(width, height);
+			renderer.setSize( width, height );
 		});
 
 		fullscreenBtn.addEventListener('click', () => {
