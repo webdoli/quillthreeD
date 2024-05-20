@@ -173,10 +173,10 @@ export class ThreeModules {
 		editModeBtn.contentEditable = false;
 		editModeBtn.id = 'three-scene-edit-btn';
 		editModeBtn.addEventListener('click', () => {
-			
+			console.log('edit mode: ', editModeBtn );
 			if( tooltip.style.display === '' || tooltip.style.display === 'none') {
-				let editMenuBtn = document.querySelector(`[title="3D Scene Editor"]`);
-				editMenuBtn.click();
+				// let editMenuBtn = document.querySelector(`[title="3D Scene Editor"]`);
+				// editMenuBtn.click();
         		tooltip.textContent = 'Getting ready..';
 				tooltip.style.display = 'block';
 
