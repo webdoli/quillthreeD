@@ -547,57 +547,16 @@
         const selection = window.getSelection();
 
         // Create a new div element and set it to include a 3D scene.
-        let wrapper = document.createElement('div');
-        wrapper.className = 'wrapper-three-scene';
-        
-
-        let empty_before = document.createElement('span');
-        empty_before.textContent = "\u00A0";
-        
-        let empty_after = document.createElement('span');
-        empty_after.textContent = "\u00A0";
-
-        let sceneContainer = document.createElement('div');
+        let sceneContainer = document.createElement('p');
         sceneContainer.title = `threeSceneNum${this.threeSceneNum}`
         sceneContainer.className = `three-scene`;
-
         
         this.uploadModels.push({
             [sceneContainer.title]: res
         });
 
         let container = modules.init( sceneContainer, res );
-
-        let textNode = document.createElement('div');
-        textNode.contentEditable = true;
-        textNode.innerHTML = '&nbsp;';
-
-        // wrapper.appendChild( empty_before );
-        wrapper.appendChild( container );
-        wrapper.appendChild( textNode );
-        // wrapper.appendChild( empty_after );
-
-        // Add empty div for cursor position before insertion
-        // const emptyLineBefore = document.createElement('span');
-        // emptyLineBefore.textContent = "\u00A0";
-        const emptyLineBefore = document.createElement('div');
-        emptyLineBefore.innerHTML = "<br>";
-
-        const emptyLineAfter = document.createElement('div');
-        emptyLineAfter.innerHTML = "<br>";
-
-        // Add new content to temporary div
-        const tempContent = document.createElement('div');
-        tempContent.className = 'tempContent';
-        tempContent.style.width = '100%';
-        tempContent.contentEditable = true;
-        // tempContent.appendChild(emptyLineBefore);
-        tempContent.appendChild(wrapper);
-        
-        // Add an empty div to set the cursor position after insertion
-        // const emptyLineAfter = document.createElement('span');
-        // emptyLineAfter.textContent = "\u00A0";
-        // tempContent.appendChild(emptyLineAfter);
+    
 
         if ( !range ) {
         
@@ -605,28 +564,25 @@
             // Set cursor to the first line
             const editorContent = document.querySelector('.mogl3d-content');
             const range = document.createRange();
-            range.selectNodeContents(emptyLineBefore);
-            range.collapse(true);
+            range.selectNodeContents( container );
+            range.collapse( true );
             selection.removeAllRanges();
-            selection.addRange(range);
-            editorContent.appendChild( tempContent );
+            selection.addRange( range );
+            editorContent.appendChild( container );
             
         } else {
             
             // Insert in the user's selected location
             
             range.deleteContents();
-            range.insertNode(tempContent);
+            range.insertNode( container );
             // Adjust cursor position behind inserted content
             let newRange = document.createRange();
-            newRange.setStartAfter(emptyLineAfter);
-            newRange.collapse(true);
+            newRange.setStartAfter( container );
+            newRange.collapse( true );
             window.getSelection().removeAllRanges();
-            window.getSelection().addRange(newRange);
+            window.getSelection().addRange( newRange );
         }
-
-        let br = document.createElement('br');
-        tempContent.parentNode.insertBefore(br, tempContent.nextSibling);
 
     }
 
