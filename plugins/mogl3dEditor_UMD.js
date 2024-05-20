@@ -568,9 +568,14 @@
 
         let container = modules.init( sceneContainer, res );
 
-        wrapper.appendChild( empty_before );
+        let textNode = document.createElement('div');
+        textNode.contentEditable = true;
+        textNode.innerHTML = '&nbsp;';
+
+        // wrapper.appendChild( empty_before );
         wrapper.appendChild( container );
-        wrapper.appendChild( empty_after );
+        wrapper.appendChild( textNode );
+        // wrapper.appendChild( empty_after );
 
         // Add empty div for cursor position before insertion
         // const emptyLineBefore = document.createElement('span');
@@ -583,15 +588,16 @@
 
         // Add new content to temporary div
         const tempContent = document.createElement('div');
+        tempContent.className = 'tempContent';
+        tempContent.style.width = '100%';
         tempContent.contentEditable = true;
-        tempContent.appendChild(emptyLineBefore);
+        // tempContent.appendChild(emptyLineBefore);
         tempContent.appendChild(wrapper);
-        // tempContent.appendChild( container );
         
         // Add an empty div to set the cursor position after insertion
         // const emptyLineAfter = document.createElement('span');
         // emptyLineAfter.textContent = "\u00A0";
-        tempContent.appendChild(emptyLineAfter);
+        // tempContent.appendChild(emptyLineAfter);
 
         if ( !range ) {
         
@@ -618,6 +624,9 @@
             window.getSelection().removeAllRanges();
             window.getSelection().addRange(newRange);
         }
+
+        let br = document.createElement('br');
+        tempContent.parentNode.insertBefore(br, tempContent.nextSibling);
 
     }
 
