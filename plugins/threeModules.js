@@ -89,6 +89,9 @@ export class ThreeModules {
         let width = content_rect.width * .78;
         let height = width / aspectRatio;
 
+		scnContainer.style.width = `${width}px`;
+		scnContainer.style.height = `${height}px`;
+
         const camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
 		camera.position.set( 1.2, .6, 1.3 );
        
@@ -119,6 +122,8 @@ export class ThreeModules {
 		scnContainer.appendChild(tooltip); 
 
         let fullscreenBtn = document.createElement('button');
+		fullscreenBtn.tabIndex = '-1';
+		fullscreenBtn.contentEditable = false;
         fullscreenBtn.innerText = 'Full';
 		fullscreenBtn.id = 'fullscreen-btn'
 		fullscreenBtn.className = 'three-scene-btn';
@@ -135,6 +140,7 @@ export class ThreeModules {
 
 		let customColorBtn = document.createElement('button');
 		customColorBtn.className = 'three-scene-btn';
+		customColorBtn.contentEditable = false;
 		customColorBtn.textContent = 'BG';
 		customColorBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
 		customColorBtn.style.color = '#333'; 
@@ -151,6 +157,7 @@ export class ThreeModules {
 		let gridToggleBtn = document.createElement('button');
 		gridToggleBtn.textContent = 'Grid';
 		gridToggleBtn.className = 'three-scene-btn';
+		gridToggleBtn.contentEditable = false;
 		gridToggleBtn.id = 'three-scene-grid-btn'
 		gridToggleBtn.addEventListener('click', () => {
 			
@@ -162,9 +169,10 @@ export class ThreeModules {
 		let editModeBtn = document.createElement('button');
 		editModeBtn.textContent = 'Edit';
 		editModeBtn.className = 'three-scene-btn';
+		editModeBtn.contentEditable = false;
 		editModeBtn.id = 'three-scene-edit-btn';
 		editModeBtn.addEventListener('click', () => {
-			console.log('tooltip.style.display: ', tooltip.style.display );
+			
 			if( tooltip.style.display === '' || tooltip.style.display === 'none') {
 				let editMenuBtn = document.querySelector(`[title="3D Scene Editor"]`);
 				editMenuBtn.click();
@@ -189,12 +197,15 @@ export class ThreeModules {
 		
 		// Resize
 		window.addEventListener('resize', function() {
-
-			const content_node = this.editor.querySelector('.mogl3d-content');
+			
+			let content_node = document.querySelector('.mogl3d-content');
+			// const content_node = this.editor.querySelector('.mogl3d-content');
 			const content_rect = content_node.getBoundingClientRect();
 
         	let width = content_rect.width * .78;
 			let height = width / aspectRatio;
+			scnContainer.style.width = `${width}px`;
+			scnContainer.style.height = `${height}px`;
 				// let width = window.innerWidth * .72;
 				// let height = window.innerHeight * .48;
 			camera.aspect = width / height;

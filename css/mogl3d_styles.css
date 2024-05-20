@@ -100,12 +100,16 @@ span.divider {
     border-left:1px solid #888;;
 }
 
+.wrapper-three-scene {
+    display: flex;
+}
+
 .three-scene {
     border: 1px solid #555;
     clear: both;
     position: relative;
-    width: 100%; 
-    height: 100%; 
+    /* width: 100%; 
+    height: 100%;  */
 }
 
 .three-scene-btn-wrapper {
@@ -124,7 +128,8 @@ span.divider {
     border: none;
     cursor: pointer;
     border-radius: 5px;
-    width: auto; 
+    width: auto;
+    user-select: none;
 }
 
 #three-scene-btn-bg {

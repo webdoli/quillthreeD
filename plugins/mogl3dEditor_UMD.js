@@ -548,7 +548,8 @@
 
         // Create a new div element and set it to include a 3D scene.
         let wrapper = document.createElement('div');
-        wrapper.style.display = 'inline-block';
+        wrapper.className = 'wrapper-three-scene';
+        
 
         let empty_before = document.createElement('span');
         empty_before.textContent = "\u00A0";
@@ -572,17 +573,24 @@
         wrapper.appendChild( empty_after );
 
         // Add empty div for cursor position before insertion
+        // const emptyLineBefore = document.createElement('span');
+        // emptyLineBefore.textContent = "\u00A0";
         const emptyLineBefore = document.createElement('div');
-        emptyLineBefore.textContent = "\u00A0";
-        
+        emptyLineBefore.innerHTML = "<br>";
+
+        const emptyLineAfter = document.createElement('div');
+        emptyLineAfter.innerHTML = "<br>";
+
         // Add new content to temporary div
         const tempContent = document.createElement('div');
+        tempContent.contentEditable = true;
         tempContent.appendChild(emptyLineBefore);
         tempContent.appendChild(wrapper);
+        // tempContent.appendChild( container );
         
         // Add an empty div to set the cursor position after insertion
-        const emptyLineAfter = document.createElement('div');
-        emptyLineAfter.textContent = "\u00A0";
+        // const emptyLineAfter = document.createElement('span');
+        // emptyLineAfter.textContent = "\u00A0";
         tempContent.appendChild(emptyLineAfter);
 
         if ( !range ) {
@@ -600,9 +608,9 @@
         } else {
             
             // Insert in the user's selected location
+            
             range.deleteContents();
             range.insertNode(tempContent);
-            
             // Adjust cursor position behind inserted content
             let newRange = document.createRange();
             newRange.setStartAfter(emptyLineAfter);
