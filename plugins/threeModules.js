@@ -78,6 +78,7 @@ export class ThreeModules {
 		// console.log(`scn: ${scn}, obj: ${obj}`);
 
         let scnContainer = scn;
+		const cls = this;
 		if( scnContainer.firstChild ) scnContainer.removeChild( scnContainer.firstChild );
 		
 		const scene = new THREE.Scene();
@@ -196,21 +197,20 @@ export class ThreeModules {
         scnContainer.appendChild( btnWrapper );
 		
 		// Resize
-		window.addEventListener('resize', function() {
+		window.addEventListener('resize', function(e) {
 			
-			let content_node = document.querySelector('.mogl3d-content');
-			// const content_node = this.editor.querySelector('.mogl3d-content');
-			const content_rect = content_node.getBoundingClientRect();
+			if( !document.fullscreenElement ) {
 
-        	let width = content_rect.width * .78;
-			let height = width / aspectRatio;
-			scnContainer.style.width = `${width}px`;
-			scnContainer.style.height = `${height}px`;
-				// let width = window.innerWidth * .72;
-				// let height = window.innerHeight * .48;
-			camera.aspect = width / height;
-			camera.updateProjectionMatrix();
-			renderer.setSize( width, height );
+				const content_rect = content_node.getBoundingClientRect();
+				let width = content_rect.width * .78;
+				let height = width / aspectRatio;
+				scnContainer.style.width = `${width}px`;
+				scnContainer.style.height = `${height}px`;
+				cls.updateSize( renderer, camera, width, height );
+
+			} else {
+				cls.updateSize(renderer, camera, screen.width, screen.height);
+			}
 		});
 
 		fullscreenBtn.addEventListener('click', () => {
@@ -219,11 +219,17 @@ export class ThreeModules {
 				
 				renderer.domElement.requestFullscreen().catch(err => {
 					alert(`Failed to Full Screen: ${err.message}`);
-				});
+				})
+				// .then( () => {
+				// 		this.updateSize( renderer, camera, screen.width, screen.height )
+				// });
 
             } else {
 				if ( document.exitFullscreen ) {
-            		document.exitFullscreen();
+            		document.exitFullscreen()
+					// .then(() => {
+					// 		this.updateSize( renderer, camera, width, height );
+					// });
 					scnContainer.appendChild( btnWrapper );
 					
         		}
@@ -242,6 +248,16 @@ export class ThreeModules {
     
         animate();
         return scnContainer;
+    }
+
+	updateSize(renderer, camera, width, height ) {
+		
+        const aspectRatio = width / height;
+        camera.aspect = aspectRatio;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
     }
 
     loadItemList( items ) {
