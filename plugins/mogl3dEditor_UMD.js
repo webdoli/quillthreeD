@@ -564,11 +564,18 @@
             // Set cursor to the first line
             const editorContent = document.querySelector('.mogl3d-content');
             const range = document.createRange();
+            let beforeDiv = document.createElement('div');
+            beforeDiv.textContent = "\u00A0";
+            let afterDiv = document.createElement('div');
+            afterDiv.textContent = "\u00A0";
+            
             range.selectNodeContents( container );
             range.collapse( true );
             selection.removeAllRanges();
             selection.addRange( range );
             editorContent.appendChild( container );
+            editorContent.insertBefore( beforeDiv, container );
+            editorContent.appendChild( afterDiv );
             
         } else {
             
