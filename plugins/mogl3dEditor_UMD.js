@@ -69,7 +69,7 @@
     MOGL3D.prototype.dropdownActions = function () {
         return {
             fontColor: {
-                icon: '<img src="./css/icons/icons-type-color.png" class="mogl3d-icons-type">',
+                icon: '<i class="fas fa-highlighter"></i>',
                 result: () => this.createColorInput( 'color', 'foreColor', 'Menu-dropdown' ),
                 title: 'Font Color'
             },
@@ -114,12 +114,12 @@
                 title: 'Font Color'
             },
             highlight: {
-                icon: '<img src="./css/icons/icons-type-bg.png" class="mogl3d-icons-type">',
+                icon: '<i class="fas fa-fill-drip"></i>',
                 result: () => this.createColorInput( 'color', 'backColor', 'Menu-dropdown' ),
                 title: 'Highlight Text'
             },
             removeHighlight: {
-                icon: '<img src="./css/icons/icons-type-erase.png" class="mogl3d-icons-type">',
+                icon: '<i class="fas fa-eraser"></i>',
                 result: () => { 
                     this.exec('backColor', 'transparent')
                     this.closeDropDown( 'Menu-dropdown' );
@@ -127,7 +127,7 @@
                 title: 'Remove Highlight'
             },
             leftAlign: {
-                icon: '&#x21E4;',
+                icon: '<i class="fas fa-align-left"></i>',
                 result: () => { 
                     this.exec( 'justifyLeft' ); 
                     this.closeDropDown( 'Menu-dropdown' );
@@ -135,7 +135,7 @@
                 title: 'LeftAlign'
             },
             rightAlign: {
-                icon: '&#x21E5;',
+                icon: '<i class="fas fa-align-right"></i>',
                 result: () => {
                     this.exec( 'justifyRight' );
                     this.closeDropDown( 'Menu-dropdown' );
@@ -143,7 +143,7 @@
                 title: 'RightAlign'
             },
             centerAlign: {
-                icon: '&#x21C5;',
+                icon: '<i class="fas fa-align-center"></i>',
                 result: () => {
                     this.exec( 'justifyCenter' )
                     this.closeDropDown( 'Menu-dropdown' );
@@ -151,7 +151,7 @@
                 title: 'CenterAlign'
             },
             image: {
-                icon: '<img src="./css/icons/icons-image-file-add.png" class="mogl3d-icons-type">',
+                icon: '<i class="fas fa-file-image"></i>',
                 result: () => {
                     this.createIMGFileBox( 'image/*' );
                     this.closeDropDown( 'Menu-dropdown' );
@@ -159,7 +159,7 @@
                 title: 'Image',
             },
             files: {
-                icon: '<img src="./css/icons/icons-zip.png" class="mogl3d-icons-type">',
+                icon: '<i class="fas fa-file-archive"></i>',
                 result: () => {
                     this.createZipFile();
                     this.closeDropDown( 'Menu-dropdown' );
@@ -167,12 +167,12 @@
                 title: 'files',
             },
             video: {
-                icon: '<img src="./css/icons/icons-video-upload_.png" class="mogl3d-icons-type">',
+                icon: '<i class="fas fa-file-video"></i>',
                 result: () => this.createModal( 'video' ),
                 title: 'Video'
             },
             load3DModel: {
-                icon: '<img src="./css/icons/icons-3d_.png" class="mogl3d-icons-type">',
+                icon: '<i class="fas fa-cube"></i>',
                 result: () => this.threeDFileLoader(),
                 title: 'Load 3D Model'
             },
@@ -206,7 +206,7 @@
                 title: 'Strike-through',
             },
             fontMenu: {
-                icon: '<img src="./css/icons/icons-font_menus.png" class="mogl3d-icons font-menu">',
+                icon: '<i class="fas fa-text-height"></i>',
                 result: () => {},
                 init: ( button ) => {
                     this.initMenu( 
@@ -222,7 +222,7 @@
                 title: 'FontDropDown',
             },
             textColorMenu: {
-                icon: '<img src="./css/icons/icons-type-Menus.png" class="mogl3d-icons">',
+                icon: '<i class="fas fa-font"></i>',
                 result: () => {},
                 init: ( button ) => {
                     this.initMenu( 
@@ -239,7 +239,7 @@
                 title: 'TextColorDropDown',
             },
             alignMenu: {
-                icon: 'Ξ',
+                icon: '<i class="fas fa-align-justify"></i>',
                 result: () => {},
                 init: ( button ) => {
                     this.initMenu( 
@@ -277,7 +277,7 @@
                 title: 'Unordered List',
             },
             filesMenu: {
-                icon: '<img src="./css/icons/icons-upload_menus_.png" class="mogl3d-icons">',
+                icon: '<i class="fas fa-upload"></i>',
                 result: () => {},
                 init: ( button ) => {
                     this.initMenu( 

@@ -17,7 +17,6 @@ div {
 }
 
 .mogl3d {
-    /* border: 1px solid rgba(10, 10, 10, 0.1); */
     box-sizing: border-box;
 }
 
@@ -41,12 +40,12 @@ div {
     display: flex;
     max-width: 1080px;
     margin: 20px auto;
-    border: 1px solid #dadde6; /* 에디터 테두리 */
+    border: 1px solid #dadde6;
     border-radius: 4px;
-    background-color: #fff; /* 에디터 배경색 */
+    background-color: #fff;
     /* color: #FAFAFF;
     caret-color: #FAFAFF; */
-    /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */ /* 3D 효과를 위한 그림자 */
+    /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */
     font-family: 'Arial', sans-serif;
 }
 
@@ -70,16 +69,11 @@ div {
     background-color: #474747; /* Button background color */
     color: #c7c7c7;
     padding: 8px 12px;
-    margin: 1px;
     border: none; 
     cursor: pointer; 
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
     /*box-shadow: 0 2px 0 rgba(255, 255, 255, 0.2), 0 3px 5px rgba(0, 0, 0, 0.3); *//* Button 3D Effect */
     border-radius: 3px;
-}
-
-.mogl3d-button[title='Load 3D Model'] {
-    padding: 10px 0;
 }
 
 .mogl3d-button:hover {
@@ -155,8 +149,9 @@ span.divider {
     border-radius: 2px;
     z-index: 100; 
 }
-  
+
 .Menu-dropdown button {
+    margin-right:1px;
     color: #fff;
     text-decoration: none; 
     display: block;
@@ -164,7 +159,7 @@ span.divider {
     width: 100%; 
     box-sizing: border-box; 
 }
-  
+
 .Menu-dropdown .mogl3d-button:hover {
     background-color: #474747;
 }
@@ -177,126 +172,6 @@ span.divider {
 .mogl3d-icons-type {
     width: 18px;
     height: 18px;
-}
-
-#FileMenu-dropdown button {
-    padding: 4px 8px;
-}
-
-[title="Font Color"] {
-    padding: 6px 8px;
-}
-
-[title="Highlight Text"] {
-    padding: 6px 8px;
-    
-}
-
-[title="Remove Highlight"] {
-    padding: 6px 8px;
-}
-
-[title="TextColorDropDown"] {
-    padding: 2px 5px;
-}
-
-[title="TextColorDropDown"]::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 4px;
-    height: 4px;
-    border-left: 1px solid #c7c7c7;
-    border-bottom: 1px solid #c7c7c7;
-    transform: translate(-60%, -60%) rotate(270deg);
-}
-
-[title="TextAlignDropDown"] {
-    padding: 7px 12px;
-}
-
-[title="TextAlignDropDown"]::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 4px;
-    height: 4px;
-    border-left: 1px solid #c7c7c7;
-    border-bottom: 1px solid #c7c7c7;
-    transform: translate(-60%, -60%) rotate(270deg);
-}
-
-[title="FontDropDown"] {
-    padding: 3px 5px;
-}
-
-[title="FilesDropDown"] {
-    padding: 4px 6px;
-}
-
-[title="FilesDropDown"]::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 4px;
-    height: 4px;
-    border-left: 1px solid #c7c7c7;
-    border-bottom: 1px solid #c7c7c7;
-    transform: translate(-50%, -50%) rotate(270deg);
-}
-
-[title="Italic"] {
-    padding: 6px 14px;
-}
-
-[title="Underline"],
-[title="Bold"],
-[title="Strike-through"] {
-    padding: 6px 10px;
-}
-
-[title="Paragraph"],
-[title="Ordered List"] {
-    padding: 6px 12px;
-}
-
-[title="Horizontal Line"],
-[title="Quote"] {
-    padding: 6px 8px;
-}
-
-[title="Unordered List"] {
-    padding: 6px 14px;
-}
-
-[title="Image"] img {
-    margin-top: 3px;
-    margin-bottom: 1px;
-}
-
-[title="files"] img {
-    margin-top: 3px;
-    margin-bottom: 1px;
-}
-
-[title="Video"] img {
-    margin-top: 4px;
-}
-
-[title="Load 3D Model"] img {
-    margin-top: 4px;
-}
-
-[title="3D Scene Editor"] {
-    margin-top:6px;
-    padding: 8px;
-}
-
-[title="Code"] {
-    padding: 8px 4px;
 }
 
 /* Modal */
