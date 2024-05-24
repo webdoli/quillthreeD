@@ -28,7 +28,10 @@
         this.options = options;
         this.threeSceneNum = 0;
         this.uploadModels = [];
-
+        if( this.options.gui ) {
+            this.height = ( this.options.gui.height ) ? this.options.gui.height : null;
+        }
+        
         if( this.options.plugins && this.options.plugins.length > 0 ) {
             let mogl3d = this;
             this.options.plugins.map( plugin => {
@@ -302,10 +305,13 @@
         const actionbar = document.createElement('div');
         actionbar.className = this.classes.actionbar;
         this.element.appendChild( actionbar );
+        actionbar.style.height = ( this.height ) ? `${ this.height }px` : '720px';
 
         const content = document.createElement('div');
         content.contentEditable = true;
         content.className = this.classes.content;
+        content.style.height = ( this.height ) ? `${ this.height }px` : '720px';
+        
 
         const defaultParagraphSeparator = this.options[this.defaultParagraphSeparatorString] || 'div';
 
