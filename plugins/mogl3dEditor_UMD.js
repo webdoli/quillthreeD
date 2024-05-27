@@ -219,8 +219,8 @@
                 result: () => {},
                 init: ( button ) => {
                     this.initMenu( 
-                        button, 
-                        'mogl3d-content', 
+                        button,
+                        this.editorName,
                         [ 
                             this.dropdownActions().fontType, 
                             this.dropdownActions().fontSize, 
@@ -236,7 +236,7 @@
                 init: ( button ) => {
                     this.initMenu( 
                         button, 
-                        'mogl3d-content', 
+                        this.editorName, 
                         [ 
                             this.dropdownActions().fontColor, 
                             this.dropdownActions().highlight, 
@@ -253,7 +253,7 @@
                 init: ( button ) => {
                     this.initMenu( 
                         button, 
-                        'mogl3d-content', 
+                        this.editorName, 
                         [
                             this.dropdownActions().leftAlign, 
                             this.dropdownActions().rightAlign, 
@@ -291,7 +291,7 @@
                 init: ( button ) => {
                     this.initMenu( 
                         button, 
-                        'mogl3d-content', 
+                        this.editorName, 
                         [
                             this.dropdownActions().image, 
                             this.dropdownActions().files, 
@@ -380,7 +380,6 @@
             actionbar: 'mogl3d-actionbar',
             button: 'mogl3d-button',
             content: editorName,
-            // content: 'mogl3d-content', @@
             selected: 'mogl3d-button-selected',
         };
     };
@@ -617,7 +616,7 @@
         
             // Process only if the first text line is not a toolbox
             // Set cursor to the first line
-            const editorContent = document.querySelector('.mogl3d-content');
+            const editorContent = document.querySelector(`.${ this.editorName }`);
             const range = document.createRange();
             let beforeDiv = document.createElement('div');
             beforeDiv.textContent = "\u00A0";
@@ -706,7 +705,7 @@
             
                     } else {
                     // 선택된 범위가 없는 경우, 에디터의 첫 부분에 삽입
-                        const editor = document.querySelector('.mogl3d-content');
+                        const editor = document.querySelector(`.${ this.editorName }`);
                         editor.insertBefore( imgWrapper, editor.firstChild );
                         // editor.insertBefore( img, editor.firstChild );
                     }
@@ -724,15 +723,6 @@
         fileInput.click(); // 파일 선택기 열기
         return fileInput
     }
-
-
-    // Add more methods as needed
-    // MOGL3D.prototype.insertImageToEditor = function (imageUrl) {
-
-    //     const imgTag = `<img src="${imageUrl}" alt="Loaded Image"/>`;
-    //     document.querySelector('.mogl3d-content').innerHTML += imgTag;
-
-    // };
 
     /* --------------------------- */
     /******* Zip Upload Func *******/
@@ -794,7 +784,7 @@
         
                 } else {
                 // no selected range:: insert it at the beginning of the editor
-                    const editor = document.querySelector('.mogl3d-content');
+                    const editor = document.querySelector(`.${ this.editorName }`);
                     editor.insertBefore( container, editor.firstChild );
                 }
                 // Remove the file entry element from the document.
@@ -929,7 +919,7 @@
     MOGL3D.prototype.insertVideoIframe = function( url, range ) {
         
         let embedUrl = this.convertToEmbedUrl( url );
-        const editorContent = document.querySelector('.mogl3d-content');
+        const editorContent = document.querySelector(`.${ this.editorName }`);
         let tmpTextNode = document.createTextNode('');
         const wrapper = document.createElement('span');
         wrapper.innerHTML = " ";
@@ -959,7 +949,7 @@
 
     MOGL3D.prototype.insertVideoFile = function( file ) {
         
-        const editorContent = document.querySelector('.mogl3d-content');
+        const editorContent = document.querySelector(`.${ this.editorName }`);
 
         let tmpTextNode = document.createTextNode('');
         const wrapper = document.createElement('span');
@@ -1372,6 +1362,64 @@
         Array.from(node.childNodes).forEach(child => this.collectNode( child, tag, arr ));
         return arr;
         
+    }
+
+    MOGL3D.prototype.cleanNode = function( node ) {
+        while ( node.firstChild ) {
+            node.removeChild( node.firstChild );
+        }
+    }
+
+    MOGL3D.prototype.processFiles = function ( files ) {
+
+        let mogl3dContent = document.querySelector(`.${this.editorName}`);
+        let contentNode = document.createElement('div');
+        contentNode.innerHTML = mogl3dContent.innerHTML;
+
+        return files.map( file => {
+
+            return new Promise( resolve => {
+
+                let node = contentNode.querySelector(`.${file.className}`);
+                node.parentNode.className = file.className;
+
+                this.cleanNode( node.parentNode ); // Node cleaning improved
+                resolve({ 'data': file, 'code': contentNode.innerHTML });
+
+            });
+        });
+
+    }
+
+    MOGL3D.prototype.getDatas = async function() {
+
+        let fileDatas = [];
+        let outputCodes = null;
+        let files = this.getFiles();
+        let promises = this.processFiles( files );
+        let results = await Promise.allSettled( promises );
+
+        results.forEach( result => {
+
+            if ( result.status === 'fulfilled' ) {
+
+                fileDatas.push( result.value.data );
+                outputCodes = result.value.code;
+            }
+
+        });
+
+        return {
+            'code': outputCodes,
+            'files': fileDatas 
+        }
+        // console.log(`output Code: ${ outputCodes }, fileDatas: ${ fileDatas }`)
+        
+    }
+
+    MOGL3D.prototype.getOutputData = async function( editor ) {
+        const res = await editor.getDatas();
+        return res;
     }
 
     // Continue to add more prototype methods...
