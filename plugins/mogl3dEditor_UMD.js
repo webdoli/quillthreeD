@@ -18,17 +18,20 @@
     'use strict';
     
     // The actual constructor of the MOGL3D class
-    function MOGL3D(element, options = {}) {
+    function MOGL3D( options = {}) {
 
         this.addFonts();
         this.name = 'MOGL3D Library';
         this.loader = null;
         this.modules = null;
-        this.element = element;
+        // this.element = element;
+        this.element = options.element;
+        this.editorName = options.editorName;
         this.content = null;
         this.options = options;
         this.threeSceneNum = 0;
         this.imgFileNum = 0;
+        this.filesNum = 0;
         this.uploadFiles = [];
         this.uploadModels = [];
         if( this.options.gui ) {
@@ -59,7 +62,7 @@
             )
             : Object.keys( this.defaultActions() ).map( action => this.defaultActions()[ action ] );
         
-        this.classes = { ...this.defaultClasses(), ...this.options.classes };
+        this.classes = { ...this.defaultClasses( this.editorName ), ...this.options.classes };
         this.formatBlock = 'formatBlock';
         this.defaultParagraphSeparatorString = 'defaultParagraphSeparator';
         
@@ -172,11 +175,11 @@
                 },
                 title: 'files',
             },
-            video: {
-                icon: '<i class="fas fa-file-video"></i>',
-                result: () => this.createModal( 'video' ),
-                title: 'Video'
-            },
+            // video: {
+            //     icon: '<i class="fas fa-file-video"></i>',
+            //     result: () => this.createModal( 'video' ),
+            //     title: 'Video'
+            // },
             load3DModel: {
                 icon: '<i class="fas fa-cube"></i>',
                 result: () => this.threeDFileLoader(),
@@ -292,7 +295,7 @@
                         [
                             this.dropdownActions().image, 
                             this.dropdownActions().files, 
-                            this.dropdownActions().video, 
+                            // this.dropdownActions().video, 
                             this.dropdownActions().load3DModel
                         ], 
                         'FileMenu-dropdown' 
@@ -372,11 +375,12 @@
         });
     };
 
-    MOGL3D.prototype.defaultClasses = function () {
+    MOGL3D.prototype.defaultClasses = function ( editorName ) {
         return {
             actionbar: 'mogl3d-actionbar',
             button: 'mogl3d-button',
-            content: 'mogl3d-content',
+            content: editorName,
+            // content: 'mogl3d-content', @@
             selected: 'mogl3d-button-selected',
         };
     };
@@ -455,7 +459,7 @@
 
         document.addEventListener('click', (e) => {
             
-            const editor = document.querySelector('.mogl3d-content');
+            const editor = document.querySelector(`.${this.editorName}`);
             let target = e.target;
             
             if( target.id !== 'mogl3d-fontsize' && target.id !== 'mogl3d-fontfamily' ) {
@@ -591,9 +595,10 @@
         let sceneContainer = document.createElement('p');
         sceneContainer.title = `threeSceneNum${this.threeSceneNum}_${pureFileName}`
         sceneContainer.className = `three-scene`;
+        sceneContainer.classList.add(`mogl3d_three_scene_${this.threeSceneNum}_${pureFileName}`);
 
         let uploadFile = {
-            'className': sceneContainer.title,
+            'className': `mogl3d_three_scene_${this.threeSceneNum}_${pureFileName}`,
             'type': fileTypeDescription,
             'data': res,
             'three': ext
@@ -741,11 +746,20 @@
         fileInput.onchange = (e) => {
             
             const file = e.target.files[0];
+            const fileType = file.type;
+            let fileTypeDescription = '';
+            const fileName = file.name;
+            const fileParts = fileName.split('.');
+            const fileExtension = fileParts.pop(); // 확장자를 추출합니다.
+            const pureFileName = fileParts.join('.'); // 확장자를 제외한 순수 파일명을 얻습니다.
+            fileTypeDescription = 'file';
         
             if (file) {
                 
+                this.filesNum++;
                 const container = document.createElement('div');
-                container.contentEditable = false; 
+                container.contentEditable = false;
+                container.className = `mogl3d_file${this.filesNum}_${pureFileName}`;
                 container.style.display = 'inline-block'; 
                 container.style.margin = '5px';
     
@@ -760,6 +774,14 @@
                     container.remove();
                 };
                 container.appendChild(removeButton);
+
+                let uploadFile = {
+                    'className': container.className,
+                    'type': fileTypeDescription,
+                    'data': file,
+                    'ext': fileExtension
+                }
+                this.uploadFiles.push( uploadFile );
     
                 const selection = document.getSelection();
                 let range;

@@ -43,12 +43,33 @@
         let datas = null;
         let models_ = null;
         const editorElement = document.getElementById('editor');
-        const myEditor = new MOGL3D( editorElement, {
+        // const myEditor = new MOGL3D( editorElement, {
+        //     // actions:[
+        //     //     'italic',
+        //     //     'bold',
+        //     //     'fontMenu',
+        //     // ],
+        //     onChange: function ( html, models ) {
+        //         datas = html;
+        //         if( models ) models_ = models;
+        //         // document.getElementById('html-output').textContent = html;
+        //     },
+        //     plugins: [{
+        //         'threeModules': ThreeModules,
+        //     }],
+        //     on3DLoad: function( obj, num ) {
+        //             // console.log('obj: ', obj);
+        //         }
+        //     });    
+    
+        const myEditor = new MOGL3D( {
             // actions:[
             //     'italic',
             //     'bold',
             //     'fontMenu',
             // ],
+            element: editorElement,
+            editorName: 'mogl3d-content',
             onChange: function ( html, models ) {
                 datas = html;
                 if( models ) models_ = models;
@@ -60,8 +81,8 @@
             on3DLoad: function( obj, num ) {
                     // console.log('obj: ', obj);
                 }
-            });    
-    
+            });  
+            
             const textOutputArea = document.querySelector('#text-output'); 
             const htmlOutputArea = document.querySelector('#html-output');
             const publishBtn = document.querySelector('#publish-button');
@@ -70,13 +91,13 @@
             publishBtn.addEventListener('click', e => {
 
                 let models = myEditor.getModels();
-                
+
                 textOutputArea.innerHTML = mogl3dContent.innerHTML;
 
                 if( models ) {
-
+                
                     models.map( model => {
-
+                    
                         for( let item in model ) {
                         
                             let node = textOutputArea.querySelector(`[title="${item}"]`);
@@ -90,90 +111,62 @@
                             threeModules.init( node, obj );
                         }
                     })
-
-                }
                 
+                }
+
             });
 
-            document.getElementById('data-button').addEventListener('click', e => {
-                
-                // let models = myEditor.getModels();
-                
+            function cleanNode( node ) {
+                while ( node.firstChild ) {
+                    node.removeChild( node.firstChild );
+                }
+            }
+
+            function processFiles( files, editorContent ) {
+
+                return files.map( file => {
+
+                    return new Promise( resolve => {
+
+                        let node = editorContent.querySelector(`.${file.className}`);
+                        node.parentNode.className = file.className;
+
+                        cleanNode( node.parentNode ); // Node cleaning improved
+                        resolve({ 'data': file, 'code': editorContent.innerHTML });
+
+                    });
+                });
+
+            }
+
+            document.getElementById('data-button').addEventListener('click', async e => {
+
                 const files = myEditor.getFiles();
                 let editorData = document.createElement('div');
                 editorData.innerHTML = mogl3dContent.innerHTML;
 
-                if( files ) {
+                try {
 
-                    let promises = files.map( file => {
+                    let promises = processFiles( files, editorData );
+                    let results = await Promise.allSettled( promises );
 
-                        return new Promise((resolve) => {
+                    results.forEach(result => {
 
-                            if( file.three ) {
+                        if (result.status === 'fulfilled') {
 
-                                let node = editorData.querySelector(`[title="${file.className}"]`);
-                                let parentNode = node.parentNode;
-                                parentNode.className = file.className;
-
-                                while (parentNode.firstChild) {
-                                    parentNode.removeChild(parentNode.firstChild);
-                                }
-
-                                resolve({
-                                    'data': file,
-                                    'code': editorData.innerHTML
-                                });
-
-                            } else {
-                                
-                                let className = file.className;
-                                let node = editorData.querySelector(`.${className}`);
-                                
-                                while( node.firstChild ) {
-                                    node.removeChild( node.firstChild );
-                                }
-
-                                resolve({
-                                    'data': file,
-                                    'code': editorData.innerHTML
-                                });
-                            
-                            }
-
-                        });
+                            fileDatas.push( result.value.data );
+                            outputCodes = result.value.code;
+                        }
 
                     });
 
-                    Promise.all( promises )
-                        .then( results => {
+                    console.log(`output Code: ${ outputCodes }, fileDatas: ${ fileDatas }`)
 
-                            results.forEach( res => {
-
-                                if( res ) {
-                                    fileDatas.push( res );
-                                    outputCodes = res.code;
-                                }
-
-                            });
-
-                            // to transfer server
-                            console.log(`output Code: ${ outputCodes }, fileDatas: ${ fileDatas }`)
-
-                        })
-                        .catch( err => {
-
-                            console.error( err );
-                        
-                        });
-
-                } else {
-
-                    // to transfer server
-                    console.log('No files, just text datas: ', editorData.innerHTML )
-
+                } catch (err) {
+                    console.error('Error processing files:', err);
                 }
 
-            })
+            });
 
     </script>
 
