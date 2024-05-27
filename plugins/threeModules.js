@@ -291,7 +291,7 @@ export class ThreeModules {
 			for ( let i = 0; i < files.length; i ++ ) {
 
 				fileExt.map( ext => {
-                                                        // ** caution:: scope
+                    // ** caution:: scope
 					if( files[i].name.endsWith( ext ) ) this.loadFile( files[ i ], manager, cb );
 				
 				})
@@ -320,6 +320,7 @@ export class ThreeModules {
 
 			case 'fbx':
 			{
+				// console.log('fbx loaded');
 				reader.addEventListener( 'load', async function ( event ) {
 
 					const contents = event.target.result;
@@ -327,6 +328,7 @@ export class ThreeModules {
 
 					const loader = new FBXLoader( manager );
 					const object = loader.parse( contents );
+					object.name = filename;
                     cb( object );
 
 				}, false );

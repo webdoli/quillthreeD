@@ -219,3 +219,13 @@ span.divider {
     color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
+
+.html-output {
+    max-width: 720px;
+    overflow-x: none;
+    padding: 10px;
+    border: 1px solid tomato;
+    margin: 0 auto;
+    min-height: 200px;
+    white-space: normal;
+}

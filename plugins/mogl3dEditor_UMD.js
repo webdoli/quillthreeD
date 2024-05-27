@@ -25,8 +25,11 @@
         this.loader = null;
         this.modules = null;
         this.element = element;
+        this.content = null;
         this.options = options;
         this.threeSceneNum = 0;
+        this.imgFileNum = 0;
+        this.uploadFiles = [];
         this.uploadModels = [];
         if( this.options.gui ) {
             this.height = ( this.options.gui.height ) ? this.options.gui.height : null;
@@ -311,11 +314,32 @@
         content.contentEditable = true;
         content.className = this.classes.content;
         content.style.height = ( this.height ) ? `${ this.height }px` : '720px';
-        
 
         const defaultParagraphSeparator = this.options[this.defaultParagraphSeparatorString] || 'div';
 
+        content.oninput = ({ target: { firstChild } }) => {
+
+            if ( firstChild && firstChild.nodeType === 3 ) this.exec( 'formatBlock', `<${defaultParagraphSeparator}>`)
+            else if ( content.innerHTML === '<br>' ) content.innerHTML = ''
+            
+            if ( this.options.onChange ) { 
+                
+                ( this.uploadModels ) 
+                ? this.options.onChange( content.innerHTML, this.uploadModels )
+                : this.options.onChange( content.innerHTML );
+            
+            }
+        }
+            
+        content.onkeydown = event => {
+            if ( event.key === 'Enter' && this.queryCommandValue( 'formatBlock' ) === 'blockquote' ) {
+                setTimeout(() => this.exec( 'formatBlock', `<${defaultParagraphSeparator}>`), 0)
+            }
+        }
+
         this.element.appendChild( content );
+        this.content = content;
+
         this.actions.forEach( actionKey => {
             
             const button = document.createElement('button');
@@ -540,22 +564,42 @@
 
     MOGL3D.prototype.getModels = function() {
         
-        if( this.uploadModels.length > 0 ) {
-            return this.uploadModels
-        }
+        if( this.uploadModels.length > 0 ) return this.uploadModels
+        
+    }
+
+    MOGL3D.prototype.getFiles = function() {
+
+        if( this.uploadFiles.length > 0 ) return this.uploadFiles
+    
     }
 
     MOGL3D.prototype.insert3DModelAtLine = function( modules, res, range ) {
         
         this.threeSceneNum++;
-        
+        let fileTypeDescription = '3D';
         const editor = this.element;
         const selection = window.getSelection();
 
+        // 파일 타입 확인
+        let fileName = res.name;
+        let fileParts = fileName.split('.');
+        let ext = fileParts.pop();
+        let pureFileName = fileParts.join('.');
+
         // Create a new div element and set it to include a 3D scene.
         let sceneContainer = document.createElement('p');
-        sceneContainer.title = `threeSceneNum${this.threeSceneNum}`
+        sceneContainer.title = `threeSceneNum${this.threeSceneNum}_${pureFileName}`
         sceneContainer.className = `three-scene`;
+
+        let uploadFile = {
+            'className': sceneContainer.title,
+            'type': fileTypeDescription,
+            'data': res,
+            'three': ext
+        }
+
+        this.uploadFiles.push( uploadFile );
         
         this.uploadModels.push({
             [sceneContainer.title]: res
@@ -610,27 +654,56 @@
         fileInput.onchange = (e) => {
             
             const file = e.target.files[0];
+            const fileType = file.type;
+            let fileTypeDescription = '';
+            const fileName = file.name;
+            const fileParts = fileName.split('.');
+            const fileExtension = fileParts.pop(); // 확장자를 추출합니다.
+            const pureFileName = fileParts.join('.'); // 확장자를 제외한 순수 파일명을 얻습니다.
+
+            // 파일 타입 확인
+            if (fileType.startsWith('image/')) {
+                fileTypeDescription = 'Image';
+            } else if (fileType === 'application/zip') {
+                fileTypeDescription = 'Zip';
+            } else {
+                fileTypeDescription = 'Unknown';
+            }
         
             if (file) {
+
+                this.imgFileNum++;
                 const reader = new FileReader();
                 reader.onload = (e) => {
-            
+                    // console.log(`fileName: ${pureFileName}, fileType:${fileExtension}`);
+                
+                    const imgWrapper = document.createElement('span');
+                    imgWrapper.className = `mogl3d_image${this.imgFileNum}_${pureFileName}`;
                     const img = document.createElement('img');
                     img.src = e.target.result;
-    
+                    
+                    imgWrapper.appendChild( img );
+                    let uploadFile = {
+                        'className': imgWrapper.className,
+                        'type': fileTypeDescription,
+                        'data' : file,
+                    }
+                    this.uploadFiles.push( uploadFile );
                     const selection = document.getSelection();
                     let range;
     
                     if ( selection.rangeCount > 0 ) {
-            
+                        // console.log('img class name: ', imgWrapper.className );
                         range = selection.getRangeAt(0);
-                        range.deleteContents(); // 현재 커서 위치의 내용을 제거
-                        range.insertNode(img); // 파일 이름과 제거 버튼을 포함하는 컨테이너 삽입
+                        range.deleteContents();
+                        range.insertNode( imgWrapper );
+                        // range.insertNode(img);
             
                     } else {
                     // 선택된 범위가 없는 경우, 에디터의 첫 부분에 삽입
                         const editor = document.querySelector('.mogl3d-content');
-                        editor.insertBefore( img, editor.firstChild );
+                        editor.insertBefore( imgWrapper, editor.firstChild );
+                        // editor.insertBefore( img, editor.firstChild );
                     }
     
                 };

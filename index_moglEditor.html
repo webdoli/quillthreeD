@@ -28,8 +28,8 @@
         </div>
         
         <div>
-            <h3>HTML output</h3>
-            <pre id="html-output"></pre>
+            <h3>HTML output: <button id='data-button'>Data</button></h3>
+            <pre id="html-output" class="html-output"></pre>
         </div>
     
     </div>
@@ -38,6 +38,10 @@
         import { OrbitControls } from 'https://unpkg.com/three@0.159.0/examples/jsm/controls/OrbitControls.js';
         import * as THREE from 'three';
 
+        let fileDatas = [];
+        let outputCodes = null;
+        let datas = null;
+        let models_ = null;
         const editorElement = document.getElementById('editor');
         const myEditor = new MOGL3D( editorElement, {
             // actions:[
@@ -46,8 +50,9 @@
             //     'fontMenu',
             // ],
             onChange: function ( html, models ) {
-                
-
+                datas = html;
+                if( models ) models_ = models;
+                // document.getElementById('html-output').textContent = html;
             },
             plugins: [{
                 'threeModules': ThreeModules,
@@ -58,6 +63,7 @@
             });    
     
             const textOutputArea = document.querySelector('#text-output'); 
+            const htmlOutputArea = document.querySelector('#html-output');
             const publishBtn = document.querySelector('#publish-button');
             const mogl3dContent = document.querySelector('.mogl3d-content');
 
@@ -88,6 +94,86 @@
                 }
                 
             });
+
+            document.getElementById('data-button').addEventListener('click', e => {
+                
+                // let models = myEditor.getModels();
+                
+                const files = myEditor.getFiles();
+                let editorData = document.createElement('div');
+                editorData.innerHTML = mogl3dContent.innerHTML;
+
+                if( files ) {
+
+                    let promises = files.map( file => {
+
+                        return new Promise((resolve) => {
+
+                            if( file.three ) {
+
+                                let node = editorData.querySelector(`[title="${file.className}"]`);
+                                let parentNode = node.parentNode;
+                                parentNode.className = file.className;
+
+                                while (parentNode.firstChild) {
+                                    parentNode.removeChild(parentNode.firstChild);
+                                }
+
+                                resolve({
+                                    'data': file,
+                                    'code': editorData.innerHTML
+                                });
+
+                            } else {
+                                
+                                let className = file.className;
+                                let node = editorData.querySelector(`.${className}`);
+                                
+                                while( node.firstChild ) {
+                                    node.removeChild( node.firstChild );
+                                }
+
+                                resolve({
+                                    'data': file,
+                                    'code': editorData.innerHTML
+                                });
+                            
+                            }
+
+                        });
+
+                    });
+
+                    Promise.all( promises )
+                        .then( results => {
+
+                            results.forEach( res => {
+
+                                if( res ) {
+                                    fileDatas.push( res );
+                                    outputCodes = res.code;
+                                }
+
+                            });
+
+                            // to transfer server
+                            console.log(`output Code: ${ outputCodes }, fileDatas: ${ fileDatas }`)
+
+                        })
+                        .catch( err => {
+
+                            console.error( err );
+                        
+                        });
+
+                } else {
+
+                    // to transfer server
+                    console.log('No files, just text datas: ', editorData.innerHTML )
+
+                }
+
+            })
 
     </script>
 
