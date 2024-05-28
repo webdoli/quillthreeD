@@ -1396,6 +1396,7 @@
         let fileDatas = [];
         let outputCodes = null;
         let files = this.getFiles();
+        if( !files ) return null;
         let promises = this.processFiles( files );
         let results = await Promise.allSettled( promises );
 
@@ -1418,8 +1419,12 @@
     }
 
     MOGL3D.prototype.getOutputData = async function( editor ) {
-        const res = await editor.getDatas();
+
+        let res = await editor.getDatas();
+        if( !res ) res = document.querySelector(`.${this.editorName}`);
+        
         return res;
+
     }
 
     // Continue to add more prototype methods...

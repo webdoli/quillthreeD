@@ -71,8 +71,8 @@
             element: editorElement,
             editorName: 'mogl3d-content',
             onChange: function ( html, models ) {
-                datas = html;
-                if( models ) models_ = models;
+                
+                console.log(`datas: ${html}, models: ${models}`)
                 // document.getElementById('html-output').textContent = html;
             },
             plugins: [{
@@ -116,67 +116,12 @@
 
             });
 
-            function cleanNode( node ) {
-                while ( node.firstChild ) {
-                    node.removeChild( node.firstChild );
-                }
-            }
-
-            function processFiles( files, editorContent ) {
-
-                return files.map( file => {
-
-                    return new Promise( resolve => {
-
-                        let node = editorContent.querySelector(`.${file.className}`);
-                        node.parentNode.className = file.className;
-
-                        cleanNode( node.parentNode ); // Node cleaning improved
-                        resolve({ 'data': file, 'code': editorContent.innerHTML });
-
-                    });
-                });
-
-            }
-
             document.getElementById('data-button').addEventListener('click', async (e) => {
 
-                // myEditor.getDatas().then( res => {
-                //     console.log('outputDatas: ', res );
-                // });
                 const outputDatas = await myEditor.getOutputData( myEditor );
-                console.log('이게 돼? ', outputDatas );
+                console.log('Output: ', outputDatas );
 
             });
-
-            // document.getElementById('data-button').addEventListener('click', async e => {
-
-            //     const files = myEditor.getFiles();
-            //     let editorData = document.createElement('div');
-            //     editorData.innerHTML = mogl3dContent.innerHTML;
-
-            //     try {
-
-            //         let promises = processFiles( files, editorData );
-            //         let results = await Promise.allSettled( promises );
-
-            //         results.forEach(result => {
-
-            //             if (result.status === 'fulfilled') {
-
-            //                 fileDatas.push( result.value.data );
-            //                 outputCodes = result.value.code;
-            //             }
-
-            //         });
-
-            //         console.log(`output Code: ${ outputCodes }, fileDatas: ${ fileDatas }`)
-
-            //     } catch (err) {
-            //         console.error('Error processing files:', err);
-            //     }
-
-            // });
 
     </script>
 
