@@ -529,7 +529,8 @@
         fileInput.onchange = async e => {
 
             const files = e.target.files;
-            
+            console.log( 'files[before]: ', files );
+
             try {
                 let filesMap = null;
                 let modules = new this.modules({
@@ -540,9 +541,9 @@
     
                     const currentRange = this.saveCurrentRange();
                     if( currentRange ) {
-                        this.insert3DModelAtLine( modules, res, currentRange );
+                        this.insert3DModelAtLine( modules, res, currentRange, files );
                     } else {
-                        this.insert3DModelAtLine( modules, res );
+                        this.insert3DModelAtLine( modules, res, null, files );
                     }
                     
                 });
@@ -573,11 +574,15 @@
 
     MOGL3D.prototype.getFiles = function() {
 
-        if( this.uploadFiles.length > 0 ) return this.uploadFiles
+        if( this.uploadFiles.length > 0 ) {
+            return new Promise( resolve => {
+                resolve( this.uploadFiles )
+            })
+        }
     
     }
 
-    MOGL3D.prototype.insert3DModelAtLine = function( modules, res, range ) {
+    MOGL3D.prototype.insert3DModelAtLine = function( modules, res, range, files ) {
         
         this.threeSceneNum++;
         let fileTypeDescription = '3D';
@@ -599,7 +604,8 @@
         let uploadFile = {
             'className': `mogl3d_three_scene_${this.threeSceneNum}_${pureFileName}`,
             'type': fileTypeDescription,
-            'data': res,
+            // 'data': res,
+            'data': files,
             'three': ext
         }
 
@@ -1376,6 +1382,8 @@
         let contentNode = document.createElement('div');
         contentNode.innerHTML = mogl3dContent.innerHTML;
 
+        console.log('files: ', files );
+
         return files.map( file => {
 
             return new Promise( resolve => {
@@ -1395,7 +1403,7 @@
 
         let fileDatas = [];
         let outputCodes = null;
-        let files = this.getFiles();
+        let files = await this.getFiles();
         if( !files ) return null;
         let promises = this.processFiles( files );
         let results = await Promise.allSettled( promises );
