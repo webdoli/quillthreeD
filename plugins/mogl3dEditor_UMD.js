@@ -590,6 +590,7 @@
         const selection = window.getSelection();
 
         // 파일 타입 확인
+        let fileType = res.type;
         let fileName = res.name;
         let fileParts = fileName.split('.');
         let ext = fileParts.pop();
