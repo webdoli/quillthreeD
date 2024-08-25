@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/mypageTest.css">
+</head>
+<body>
+    <div class="mypage-container">
+        <div class="member-profile">
+
+            <div class="section-header">
+
+                <!-- 프로필 커버 부분 -->
+                <div class="profile-cover">
+                    <img 
+                        src="https://firebasestorage.googleapis.com/v0/b/mogl3d.appspot.com/o/main%2Fmypage%2Fprofile%2Fcover_image.jpg?alt=media&amp;token=db875751-ad21-463c-93dc-356516f6b5a1" 
+                        alt="" 
+                        class="profile-background-img"
+                    >
+                    <div class="edit-photo custom-upload">
+                        <div class="file-btn"> 
+                            Edit Photo <i class="icofont-camera"></i>
+                        </div>
+                        <input type="file" id="profile-cover-pic">
+                    </div>
+                </div>
+    
+                <!-- 프로필 사용자 정보(아바타 포함) 부분 -->
+                <div class="profile-info">
+                    <!-- 아바타 사진 -->
+                    <div class="profile-pic">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/mogl3d.appspot.com/o/main%2Fmypage%2Fprofile%2Foctopus.png?alt=media&amp;token=807b8de4-d802-4029-8602-41ae08046cd4" alt="DP">
+                        <div class="custom-upload">
+                            <div class="file-btn">
+                                <span class="edit-pic">
+                                    Edit 
+                                    <i class="icofont-camera"></i>
+                                    <i class="icofont-plus"></i>
+                                </span>
+                                <span class="avatar-space"></span>
+                            </div>
+                            <input type="file" id="profile-avatar">
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 프로필 이름 -->
+                <div class="profile-name">
+                    <h4></h4>
+                    <p></p>
+                </div>
+    
+            </div>
+    
+            <!-- 프로필 하단 중심 메뉴 -->
+            <div class="section-article">
+    
+                <!-- 상단 매뉴 -->
+                <nav class="profile-nav">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="profile-sub-btn" id="nav-about-tab">About</button>
+                        <button class="profile-sub-btn" id="nav-assets-tab">My Assets</button>
+                        <button class="profile-sub-btn active" id="nav-posting-tab">Posting <span class="item-number">11</span></button>
+                        <button class="profile-sub-btn" id="nav-activity-tab">Activity</button>
+                        <button class="profile-sub-btn" id="nav-talk-tab">Talk <span class="item-number">145</span></button>
+                    </div>
+                </nav>
+    
+    
+                <div class="inner-content"></div>
+                <div class="inner-side"></div>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>
