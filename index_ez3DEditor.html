@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="./css/mogl3d_styles.css">
+    <link rel="stylesheet" href="./css/ez3d.style.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
     <script type="importmap">
         {
@@ -13,14 +13,14 @@
             }
         }
     </script>
-    <script src="./plugins/mogl3dEditor_UMD.js" type="module"></script>
+    <script src="./plugins/EZ3D_Editor_UMD.js" type="module"></script>
 </head>
 <body>
     
     <div class="content">
     
-        <h1>Mogl3D Editor</h1>
-        <div id="editor" class="mogl3d"></div>
+        <h1>EZ3D Editor</h1>
+        <div id="editor" class="ez3d"></div>
 
         <div>
             <h3>Text output: <button id='publish-button'>Publish</button></h3>
@@ -34,7 +34,7 @@
     
     </div>
     <script type="module">
-        import { ThreeModules } from './plugins/threeModules.js';
+        import { EZ3D_Module_THREE } from './plugins/EZ3D_Editor.plugin.three.js';
         import { OrbitControls } from 'https://unpkg.com/three@0.159.0/examples/jsm/controls/OrbitControls.js';
         import * as THREE from 'three';
 
@@ -43,7 +43,7 @@
         let datas = null;
         let models_ = null;
         const editorElement = document.getElementById('editor');
-        // const myEditor = new MOGL3D( editorElement, {
+        // const myEditor = new EZ3D( editorElement, {
         //     // actions:[
         //     //     'italic',
         //     //     'bold',
@@ -55,28 +55,28 @@
         //         // document.getElementById('html-output').textContent = html;
         //     },
         //     plugins: [{
-        //         'threeModules': ThreeModules,
+        //         'threeModules': EZ3D_Module_THREE,
         //     }],
         //     on3DLoad: function( obj, num ) {
         //             // console.log('obj: ', obj);
         //         }
         //     });    
     
-        const myEditor = new MOGL3D( {
+        const myEditor = new EZ3D( {
             // actions:[
             //     'italic',
             //     'bold',
             //     'fontMenu',
             // ],
             element: editorElement,
-            editorName: 'mogl3d-content',
+            editorName: 'ez3d-content',
             onChange: function ( html, models ) {
                 
                 console.log(`datas: ${html}, models: ${models}`)
                 // document.getElementById('html-output').textContent = html;
             },
             plugins: [{
-                'threeModules': ThreeModules,
+                'threeModules': EZ3D_Module_THREE,
             }],
             // on3DLoad: function( obj, num ) {
             //         // console.log('obj: ', obj);
@@ -86,7 +86,7 @@
             const textOutputArea = document.querySelector('#text-output'); 
             const htmlOutputArea = document.querySelector('#html-output');
             const publishBtn = document.querySelector('#publish-button');
-            const mogl3dContent = document.querySelector('.mogl3d-content');
+            const ez3dContent = document.querySelector('.ez3d-content');
 
             publishBtn.addEventListener('click', async e => {
 
@@ -103,7 +103,7 @@
 
                 
                 /*@@
-                textOutputArea.innerHTML = mogl3dContent.innerHTML;
+                textOutputArea.innerHTML = ez3dContent.innerHTML;
 
                 if( models ) {
                 

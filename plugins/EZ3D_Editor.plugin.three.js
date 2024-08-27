@@ -64,7 +64,7 @@ const LoaderUtils = {
 
 };
 
-export class ThreeModules {
+export class EZ3D_Module_THREE {
 
     constructor( opt ) {
 
@@ -97,7 +97,7 @@ export class ThreeModules {
 		const scene = new THREE.Scene();
 		const aspectRatio = 16 / 9;
 
-		const content_node = ( this.editor ) ? this.editor.querySelector('.mogl3d-content') : null;
+		const content_node = ( this.editor ) ? this.editor.querySelector('.ez3d-content') : null;
         const content_rect = ( content_node ) ? content_node.getBoundingClientRect() : null;
 
         let width = ( content_rect ) ? content_rect.width * .78 : 640 ;

@@ -1,27 +1,8 @@
-(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define([], function() {
-            return factory();
-        });
-        
-    } else if (typeof module === 'object' && module.exports) {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        module.exports = factory();
-    
-    } else {
-        // Browser globals (root is window)
-        root.MOGL3D = factory();
-    }
-}(typeof self !== 'undefined' ? self : this, function () {
-    'use strict';
-    
-    // The actual constructor of the MOGL3D class
-    function MOGL3D( options = {}) {
+
+    function EZ3D( options = {}) {
 
         this.addFonts();
-        this.name = 'MOGL3D Library';
+        this.name = 'EZ3D Library';
         this.loader = null;
         this.modules = null;
         this.element = options.element;
@@ -49,10 +30,10 @@
         }
         
         if( this.options.plugins && this.options.plugins.length > 0 ) {
-            let mogl3d = this;
+            let ez3d = this;
             this.options.plugins.map( plugin => {
                 for( let key in plugin ) {
-                    if( key === 'threeModules' ) mogl3d.modules = plugin[key] 
+                    if( key === 'threeModules' ) ez3d.modules = plugin[key] 
                 }
             })
         }
@@ -85,7 +66,7 @@
     /* ------------------------- */
     /******* Buttons Funcs *******/
     /* ------------------------- */
-    MOGL3D.prototype.dropdownActions = function () {
+    EZ3D.prototype.dropdownActions = function () {
         return {
             fontColor: {
                 icon: '<i class="fas fa-highlighter"></i>',
@@ -95,7 +76,7 @@
             fontType: {
                 icon: `
                     <label for="fontfamily">font family:</label>
-                    <select id="mogl3d-fontfamily">
+                    <select id="ez3d-fontfamily">
                     <option data-type="placeholder" selected> </option>
                         <option value='"Noto Sans KR", sans-serif'>Nano</option>
                         <option value='"Roboto", sans-serif'>Roboto</option>
@@ -119,7 +100,7 @@
             fontSize: {
                 icon: `
                     <label for="fontsize">size:</label>
-                    <select id="mogl3d-fontsize">
+                    <select id="ez3d-fontsize">
                         <option data-type="placeholder" selected> </option>
                         <option value="12px">Small</option>
                         <option value="16px">Medium</option>
@@ -198,7 +179,7 @@
         }
     };
 
-    MOGL3D.prototype.defaultActions = function () {
+    EZ3D.prototype.defaultActions = function () {
         return {
             italic: {
                 icon: '<i>I</i>',
@@ -315,9 +296,9 @@
         }
     };
 
-    MOGL3D.prototype.init = function () {
+    EZ3D.prototype.init = function () {
 
-        const mogl3d = this;
+        const ez3d = this;
         const actionbar = document.createElement('div');
         actionbar.className = this.classes.actionbar;
         this.element.appendChild( actionbar );
@@ -353,9 +334,9 @@
             }
         }
 
-        content.addEventListener('keyup', () => { mogl3d.saveSelection(); });
-        content.addEventListener('mouseup', () => { mogl3d.saveSelection() });
-        content.addEventListener('focus', () => { mogl3d.saveSelection() });
+        content.addEventListener('keyup', () => { ez3d.saveSelection(); });
+        content.addEventListener('mouseup', () => { ez3d.saveSelection() });
+        content.addEventListener('focus', () => { ez3d.saveSelection() });
 
         this.element.appendChild( content );
         this.content = content;
@@ -368,9 +349,9 @@
                         
                         if( node.nodeType === 1 && ( node.nodeName === 'DIV' || node.nodeName === 'P' )) {
                             
-                            let chkThreeScn = ( ( node.className === 'mogl3d-three-scene' ) )
+                            let chkThreeScn = ( ( node.className === 'ez3d-three-scene' ) )
                                 ? node 
-                                : node.querySelector(`.mogl3d-three-scene`);
+                                : node.querySelector(`.ez3d-three-scene`);
 
                             if( chkThreeScn ) {
                                 let removeScene = confirm('Do you remove 3D Scene?')
@@ -395,7 +376,7 @@
         this.actions.forEach( actionKey => {
             
             const button = document.createElement('button');
-            button.className = mogl3d.classes.button;
+            button.className = ez3d.classes.button;
             button.innerHTML = actionKey.icon;
             button.setAttribute('type', 'button');
             button.title = actionKey.title;
@@ -406,7 +387,7 @@
             })
 
             if( actionKey.state ) {
-                const handler = () => button.classList[actionKey.state() ? 'add' : 'remove'](mogl3d.classes.selected);
+                const handler = () => button.classList[actionKey.state() ? 'add' : 'remove'](ez3d.classes.selected);
                 content.addEventListener( 'keyup', handler );
                 content.addEventListener( 'mouseup', handler );
                 button.addEventListener( 'click', handler );
@@ -424,47 +405,47 @@
         });
     };
 
-    MOGL3D.prototype.saveSelection = function() {
+    EZ3D.prototype.saveSelection = function() {
         const selection = document.getSelection();
         if (selection.rangeCount > 0) {
             this.savedRange = selection.getRangeAt(0);
         }
     }
 
-    MOGL3D.prototype.defaultClasses = function ( editorName ) {
+    EZ3D.prototype.defaultClasses = function ( editorName ) {
         return {
-            actionbar: 'mogl3d-actionbar',
-            button: 'mogl3d-button',
+            actionbar: 'ez3d-actionbar',
+            button: 'ez3d-button',
             content: editorName,
-            selected: 'mogl3d-button-selected',
+            selected: 'ez3d-button-selected',
         };
     };
 
-    MOGL3D.prototype.exec = function( command, value = null ) {
+    EZ3D.prototype.exec = function( command, value = null ) {
         document.execCommand( command, false, value );
     }
 
-    MOGL3D.prototype.queryCommandState = function( command ) {
+    EZ3D.prototype.queryCommandState = function( command ) {
         return document.queryCommandState( command );
     }
 
-    MOGL3D.prototype.queryCommandValue = function( command ) {
+    EZ3D.prototype.queryCommandValue = function( command ) {
         return document.queryCommandValue( command );
     }
 
-    MOGL3D.prototype.closeDropDown = function( elName ) {
+    EZ3D.prototype.closeDropDown = function( elName ) {
         const dropdowns = document.querySelectorAll(`.${ elName }`);
         dropdowns.forEach( dropdown => {
             dropdown.style.display = 'none'; // Hode All Dropdown menus
         });
     }
 
-    MOGL3D.prototype.createColorInput = function( type, execName, closeNodeName ) {
+    EZ3D.prototype.createColorInput = function( type, execName, closeNodeName ) {
         const input = document.createElement('input');
-        const mogl3d = this;
+        const ez3d = this;
         input.type = type;
         input.oninput = (e) => {
-            mogl3d.exec( execName, e.target.value );
+            ez3d.exec( execName, e.target.value );
             input.remove();
         };
         input.click();
@@ -474,7 +455,7 @@
     /* -------------------------- */
     /******* DropDown Funcs *******/
     /* -------------------------- */
-    MOGL3D.prototype.initDropdownMenu = function () {
+    EZ3D.prototype.initDropdownMenu = function () {
         let dropdownWrap = document.querySelectorAll('.dropdown');
         let dropdownNodesID = [ 'TextMenu-dropdown', 'AlignMenu-dropdown', 'FileMenu-dropdown', 'FontMenu-dropdown' ]
 
@@ -517,7 +498,7 @@
             const editor = document.querySelector(`.${this.editorName}`);
             let target = e.target;
             
-            if( target.id !== 'mogl3d-fontsize' && target.id !== 'mogl3d-fontfamily' ) {
+            if( target.id !== 'ez3d-fontsize' && target.id !== 'ez3d-fontfamily' ) {
                 dropdownNodesID.map( id => {
                     
                     let node = document.querySelector(`#${id}`);
@@ -531,14 +512,14 @@
         });
     };
 
-    MOGL3D.prototype.initMenu = function( button, editor, execArray, name ) {
+    EZ3D.prototype.initMenu = function( button, editor, execArray, name ) {
         let content = document.querySelector(`.${ editor }`);
         let dropdownContainer = this.createDropDownMenu( button, execArray, content, name );
         button.parentNode.replaceChild( dropdownContainer, button );
     }
 
-    MOGL3D.prototype.createDropDownMenu = function( button, itemsArray, content, id ) {
-        const mogl3d = this;
+    EZ3D.prototype.createDropDownMenu = function( button, itemsArray, content, id ) {
+        const ez3d = this;
         const dropdownContainer = document.createElement('div');
         dropdownContainer.className = 'dropdown';
 
@@ -554,14 +535,14 @@
         Array.from( itemsArray ).forEach( action => {
             
             const button = document.createElement('button');
-            button.className = 'mogl3d-button';
+            button.className = 'ez3d-button';
             button.innerHTML = action.icon;
             button.title = action.title;
             button.setAttribute('type', 'button');
             button.onclick = () => action.result() && content.focus()
         
             dropdown.appendChild( button );
-            // mogl3d.appendChild( dropdown, button )
+            // ez3d.appendChild( dropdown, button )
 
         });
 
@@ -610,20 +591,20 @@
         return newFileGroup;
     }
 
-    MOGL3D.prototype.resetDT = function() {
+    EZ3D.prototype.resetDT = function() {
         console.log('reset DT');
         this.sceneModelSum = 0;
         this.dt = null;
         this.dt = new DataTransfer();
     }
 
-    MOGL3D.prototype.getDT = function() {
+    EZ3D.prototype.getDT = function() {
         console.log('get DT');
         if( this.dt ) return this.dt;
         else return new DataTransfer();
     }
 
-    MOGL3D.prototype.removeModal = function() {
+    EZ3D.prototype.removeModal = function() {
         const modal = document.getElementById('modal');
         if (modal) {
             modal.remove();
@@ -631,7 +612,7 @@
     }
 
     // Hanguel, cheching RegExt
-    MOGL3D.prototype.containsKoreanOrSpecialChars = function ( fileName ) {
+    EZ3D.prototype.containsKoreanOrSpecialChars = function ( fileName ) {
         
         const koreanRegex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
         const specialCharRegex = /[~`!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/]/;
@@ -640,7 +621,7 @@
     }
 
     // fileName > convert time zone
-    MOGL3D.prototype.getFormattedDate = function () {
+    EZ3D.prototype.getFormattedDate = function () {
 
         const date = new Date();
         const year = date.getFullYear();
@@ -654,7 +635,7 @@
 
     }
 
-    MOGL3D.prototype.threeDFileLoader = function() {
+    EZ3D.prototype.threeDFileLoader = function() {
         
         let dt = this.getDT();
         console.log('시작 dt.files: ', dt.files );
@@ -789,7 +770,7 @@
     }
 
     /*
-    MOGL3D.prototype.threeDFileLoader = function() {
+    EZ3D.prototype.threeDFileLoader = function() {
 
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
@@ -828,20 +809,20 @@
     }
     */
 
-    MOGL3D.prototype.saveCurrentRange = function() {
+    EZ3D.prototype.saveCurrentRange = function() {
         if (window.getSelection().rangeCount > 0) {
             return window.getSelection().getRangeAt(0);
         }
         return null;
     }
 
-    MOGL3D.prototype.getModels = function() {
+    EZ3D.prototype.getModels = function() {
         return new Promise( resolve => {
             resolve( this.uploadModels )
         })
     }
 
-    MOGL3D.prototype.getEditThreeScenes = function() {
+    EZ3D.prototype.getEditThreeScenes = function() {
 
         return new Promise( resolve => {
             resolve( this.editThreeScenes )
@@ -849,7 +830,7 @@
             
     }
 
-    MOGL3D.prototype.getThreeDScenes = function() {
+    EZ3D.prototype.getThreeDScenes = function() {
 
         return new Promise( resolve => {
             resolve( this.threeDScenes )
@@ -857,7 +838,7 @@
             
     }
 
-    MOGL3D.prototype.getFiles = function() {
+    EZ3D.prototype.getFiles = function() {
 
         if( this.uploadFiles ) {
             return new Promise( resolve => {
@@ -867,12 +848,12 @@
     
     }
 
-    MOGL3D.prototype.setEditThreeScenes = function( files ) {
+    EZ3D.prototype.setEditThreeScenes = function( files ) {
         this.editThreeScenes = files;
         this.threeDScenes = files;
     }
 
-    MOGL3D.prototype.getIMGFiles = function() {
+    EZ3D.prototype.getIMGFiles = function() {
 
         return new Promise( resolve => {
             resolve( this.imgUploadFiles )
@@ -880,7 +861,7 @@
     
     }
 
-    MOGL3D.prototype.getZipFiles = function() {
+    EZ3D.prototype.getZipFiles = function() {
 
         return new Promise( resolve => {
             resolve( this.zipUploadFiles )
@@ -888,21 +869,21 @@
     
     }
 
-    MOGL3D.prototype.encodeFileName = function ( fileName ) {
+    EZ3D.prototype.encodeFileName = function ( fileName ) {
         return encodeURIComponent( fileName );
     }
     
-    MOGL3D.prototype.decodeFileName = function ( encodedFileName ) {
+    EZ3D.prototype.decodeFileName = function ( encodedFileName ) {
         return decodeURIComponent( encodedFileName );
     }
 
-    MOGL3D.prototype.setUploadFiles = function( threeDFiles, imgFiles, zipFiles ) {
+    EZ3D.prototype.setUploadFiles = function( threeDFiles, imgFiles, zipFiles ) {
         
         this.uploadFiles = threeDFiles;
 
     }
 
-    MOGL3D.prototype.insert3DModelAtLine = function( modules, res, range, files, sceneInfo ) {
+    EZ3D.prototype.insert3DModelAtLine = function( modules, res, range, files, sceneInfo ) {
         console.log('인서트 3D 실행');
         console.log('insert files: ', files );
         console.log('res: ', res );
@@ -936,11 +917,11 @@
 
         if( !editMode ) {
             sceneContainer.id = ( chkFileName )
-            ? `mogl3d_three_scene_${this.threeSceneNum}_${date}`
-            : `mogl3d_three_scene_${this.threeSceneNum}_${date}_${pureFileName}`;
+            ? `ez3d_three_scene_${this.threeSceneNum}_${date}`
+            : `ez3d_three_scene_${this.threeSceneNum}_${date}_${pureFileName}`;
 
             sceneContainer.title = sceneContainer.id;
-            sceneContainer.className = (`mogl3d-three-scene`);
+            sceneContainer.className = (`ez3d-three-scene`);
             if( !sameScene ) this.threeDScenes.push( sceneContainer.id );
         
         }
@@ -1032,7 +1013,7 @@
 
     }
 
-    MOGL3D.prototype.remove3DModelAtLine = function(sceneId) {
+    EZ3D.prototype.remove3DModelAtLine = function(sceneId) {
 
         console.log('remove3DModelAtLine 메서드 실행, sceneId: ', sceneId );
         // Find the scene element by its ID
@@ -1054,7 +1035,7 @@
     };
 
     /*
-    MOGL3D.prototype.insert3DModelAtLine = function( modules, res, range, files ) {
+    EZ3D.prototype.insert3DModelAtLine = function( modules, res, range, files ) {
         
         this.threeSceneNum++;
         let fileTypeDescription = '3D';
@@ -1072,10 +1053,10 @@
         let sceneContainer = document.createElement('p');
         sceneContainer.title = `threeSceneNum${this.threeSceneNum}_${pureFileName}`
         sceneContainer.className = `three-scene`;
-        sceneContainer.classList.add(`mogl3d_three_scene_${this.threeSceneNum}_${pureFileName}`);
+        sceneContainer.classList.add(`ez3d_three_scene_${this.threeSceneNum}_${pureFileName}`);
 
         let uploadFile = {
-            'className': `mogl3d_three_scene_${this.threeSceneNum}_${pureFileName}`,
+            'className': `ez3d_three_scene_${this.threeSceneNum}_${pureFileName}`,
             'type': fileTypeDescription,
             // 'data': res,
             'data': files,
@@ -1130,7 +1111,7 @@
     /* --------------------------- */
     /******* Img Upload Func *******/
     /* --------------------------- */
-    MOGL3D.prototype.createIMGFileBox = function( accept ) {
+    EZ3D.prototype.createIMGFileBox = function( accept ) {
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = accept //'image/*';
@@ -1165,17 +1146,17 @@
                     const container = document.createElement('div');
                     container.contentEditable = false;
                     container.setAttribute('data-filename', encodedFileName );
-                    container.className = `mogl3d_img_wrapper`;
+                    container.className = `ez3d_img_wrapper`;
                     // container.className = ( chkFileName ) 
-                    //     ? `mogl3d_zipFile${this.imgFileNum}_${ date }`
-                    //     : `mogl3d_zipFile${this.imgFileNum}_${ pureFileName }`;
+                    //     ? `ez3d_zipFile${this.imgFileNum}_${ date }`
+                    //     : `ez3d_zipFile${this.imgFileNum}_${ pureFileName }`;
                     container.style.display = 'inline-block'; 
                     container.style.margin = '5px';
 
                     const imgWrapper = document.createElement('span');
                     imgWrapper.className = ( chkFileName ) 
-                        ? `mogl3d_image${this.imgFileNum}_${date}`
-                        : `mogl3d_image${this.imgFileNum}_${pureFileName}`;
+                        ? `ez3d_image${this.imgFileNum}_${date}`
+                        : `ez3d_image${this.imgFileNum}_${pureFileName}`;
 
                     const img = document.createElement('img');
                     img.src = e.target.result;
@@ -1232,7 +1213,7 @@
     }
 
     /*
-    MOGL3D.prototype.createIMGFileBox = function( accept ) {
+    EZ3D.prototype.createIMGFileBox = function( accept ) {
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = accept //'image/*';
@@ -1263,7 +1244,7 @@
                     // console.log(`fileName: ${pureFileName}, fileType:${fileExtension}`);
                 
                     const imgWrapper = document.createElement('span');
-                    imgWrapper.className = `mogl3d_image${this.imgFileNum}_${pureFileName}`;
+                    imgWrapper.className = `ez3d_image${this.imgFileNum}_${pureFileName}`;
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     
@@ -1310,9 +1291,9 @@
     /******* Zip Upload Func *******/
     /* --------------------------- */
 
-    MOGL3D.prototype.createZipFile = function() {
+    EZ3D.prototype.createZipFile = function() {
         
-        const mogl3d = this;
+        const ez3d = this;
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = '.zip'; // Allow ZIP files only
@@ -1339,8 +1320,8 @@
                 container.contentEditable = false;
                 container.setAttribute('data-filename', encodedFileName );
                 container.className = ( chkFileName ) 
-                    ? `mogl3d_zipFile${this.zipFileNum}_${ date }`
-                    : `mogl3d_zipFile${this.zipFileNum}_${ pureFileName }`;
+                    ? `ez3d_zipFile${this.zipFileNum}_${ date }`
+                    : `ez3d_zipFile${this.zipFileNum}_${ pureFileName }`;
                 container.style.display = 'inline-block'; 
                 container.style.margin = '5px';
     
@@ -1385,8 +1366,8 @@
     }
 
     /*
-    MOGL3D.prototype.createZipFile = function() {
-        const mogl3d = this
+    EZ3D.prototype.createZipFile = function() {
+        const ez3d = this
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = '.zip'; // Allow ZIP files only
@@ -1407,7 +1388,7 @@
                 this.filesNum++;
                 const container = document.createElement('div');
                 container.contentEditable = false;
-                container.className = `mogl3d_file${this.filesNum}_${pureFileName}`;
+                container.className = `ez3d_file${this.filesNum}_${pureFileName}`;
                 container.style.display = 'inline-block'; 
                 container.style.margin = '5px';
     
@@ -1459,7 +1440,7 @@
     /* ----------------------------- */
     /******* Video Upload Func *******/
     /* ----------------------------- */
-    MOGL3D.prototype.createModal = function( type ) {
+    EZ3D.prototype.createModal = function( type ) {
 
         let currentRange;
         if (window.getSelection().rangeCount > 0) {
@@ -1508,7 +1489,7 @@
         return modal;
     }
 
-    MOGL3D.prototype.videoForm = function( modalContent, modal, range ) {
+    EZ3D.prototype.videoForm = function( modalContent, modal, range ) {
         
         const header = document.createElement('h2');
         header.textContent = 'Add Video';
@@ -1536,24 +1517,24 @@
         return modalContent
     }
 
-    MOGL3D.prototype.closeModal = function( modal ) {
+    EZ3D.prototype.closeModal = function( modal ) {
         modal.style.display = "none";
         modal.remove();
     }
 
-    MOGL3D.prototype.insertVideoFromModal = function( modal, range ) {
+    EZ3D.prototype.insertVideoFromModal = function( modal, range ) {
 
-        const mogl3d = this;
+        const ez3d = this;
         const url = document.getElementById('videoUrlInput').value;
         const fileInput = document.getElementById('videoFileInput');
         const file = fileInput.files[0];
 
         if (url) {
             // Creating iframe with URL
-            mogl3d.insertVideoIframe( url, range );
+            ez3d.insertVideoIframe( url, range );
         } else if (file && file.size <= 30 * 1024 * 1024) { // File Size: Limit to 30 MB
             // Creating video Tag with file
-            mogl3d.insertVideoFile( file );
+            ez3d.insertVideoFile( file );
         } else if (file) {
             alert('File is too large. Maximum size is 30MB.');
         }
@@ -1561,7 +1542,7 @@
         this.closeModal( modal );
     }
 
-    MOGL3D.prototype.convertToEmbedUrl = function(url) {
+    EZ3D.prototype.convertToEmbedUrl = function(url) {
 
         let embedUrl = url;
         if (url.includes('youtube.com/watch?v=')) {
@@ -1575,7 +1556,7 @@
 
     }
 
-    MOGL3D.prototype.insertVideoIframe = function( url, range ) {
+    EZ3D.prototype.insertVideoIframe = function( url, range ) {
         
         let embedUrl = this.convertToEmbedUrl( url );
         const editorContent = document.querySelector(`.${ this.editorName }`);
@@ -1606,7 +1587,7 @@
         // return iframe;
     }
 
-    MOGL3D.prototype.insertVideoFile = function( file ) {
+    EZ3D.prototype.insertVideoFile = function( file ) {
         
         const editorContent = document.querySelector(`.${ this.editorName }`);
 
@@ -1643,7 +1624,7 @@
         return editorContent;
     }
 
-    MOGL3D.prototype.chkDropID = function( el ) {
+    EZ3D.prototype.chkDropID = function( el ) {
         return new Promise( resolve => {
             
             for( let i = 0; i < el.childNodes.length; i++ ) {
@@ -1661,7 +1642,7 @@
     /* ---------------------- */
 
     // Setting Google Font
-    MOGL3D.prototype.addFonts = function() {
+    EZ3D.prototype.addFonts = function() {
 
         // first Link for preconnect
        var link1 = document.createElement('link');
@@ -1684,9 +1665,9 @@
 
    }
 
-    MOGL3D.prototype.initFontTypeListener = function() {
+   EZ3D.prototype.initFontTypeListener = function() {
 
-        const select = document.getElementById('mogl3d-fontfamily');
+        const select = document.getElementById('ez3d-fontfamily');
         if( !select ) return;
 
         select.removeEventListener( 'change', this.handleFontTypeChange );
@@ -1703,9 +1684,9 @@
 
     }
 
-    MOGL3D.prototype.initFontSizeListener = function() {
+    EZ3D.prototype.initFontSizeListener = function() {
 
-        const select = document.getElementById('mogl3d-fontsize');
+        const select = document.getElementById('ez3d-fontsize');
         if (!select) return;
 
         select.removeEventListener('change', this.handleFontSizeChange); // 기존 리스너 제거
@@ -1723,7 +1704,7 @@
     
     };
 
-    MOGL3D.prototype.wrapTextWithSpan = function( selection, styleProperty, value, type  ) {
+    EZ3D.prototype.wrapTextWithSpan = function( selection, styleProperty, value, type  ) {
 
         let range = selection.getRangeAt(0);
         // const selectedNode = range.cloneContents();
@@ -1737,14 +1718,14 @@
             let motherNode = this.findParentNode( commonNode, 'DIV' );
             
             ( type === 'font-size' ) 
-                ? this.removeChildNode( extractContents, 'span', 'mogl3d-font-span' )
-                : this.removeChildNode( extractContents, 'span', 'mogl3d-fontfamily-span' );
-            // this.removeChildNode( extractContents, 'span', 'mogl3d-font-span' );
+                ? this.removeChildNode( extractContents, 'span', 'ez3d-font-span' )
+                : this.removeChildNode( extractContents, 'span', 'ez3d-fontfamily-span' );
+            // this.removeChildNode( extractContents, 'span', 'ez3d-font-span' );
 
             let newSpan = document.createElement('span');
             newSpan.style[styleProperty] = value;
             
-            newSpan.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
+            newSpan.className = ( type === 'font-size' ) ? 'ez3d-font-span' : 'ez3d-fontfamily-span';
             newSpan.appendChild( extractContents );
             newSpan.normalize();
 
@@ -1774,17 +1755,17 @@
 
             // If the selected range contains the mgl3d-font-span tag > Remove
             if ( type === 'font-size' ) {
-                this.removeChildNode( firstNode, 'span', 'mogl3d-font-span' );
-                this.removeChildNode( lastNode, 'span', 'mogl3d-font-span' );
+                this.removeChildNode( firstNode, 'span', 'ez3d-font-span' );
+                this.removeChildNode( lastNode, 'span', 'ez3d-font-span' );
             }
             else if ( type === 'font-family') {
-                this.removeChildNode( firstNode, 'span', 'mogl3d-fontfamily-span' );
-                this.removeChildNode( lastNode, 'span', 'mogl3d-fontfamily-span' );
+                this.removeChildNode( firstNode, 'span', 'ez3d-fontfamily-span' );
+                this.removeChildNode( lastNode, 'span', 'ez3d-fontfamily-span' );
             }
 
             // First node of selection
             let firstWrapper = document.createElement('span');
-            firstWrapper.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
+            firstWrapper.className = ( type === 'font-size' ) ? 'ez3d-font-span' : 'ez3d-fontfamily-span';
             firstWrapper.style[styleProperty] = value;
 
             // Select Intermediate Node Part
@@ -1799,11 +1780,11 @@
                     this.removeEmptyNodes( midNode );
 
                     ( type === 'font-size' )
-                        ? this.removeChildNode( midNode, 'span', 'mogl3d-font-span' )
-                        : this.removeChildNode( midNode, 'span', 'mogl3d-fontfamily-span' )
+                        ? this.removeChildNode( midNode, 'span', 'ez3d-font-span' )
+                        : this.removeChildNode( midNode, 'span', 'ez3d-fontfamily-span' )
 
                     let midWrapper = document.createElement('span');
-                    midWrapper.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
+                    midWrapper.className = ( type === 'font-size' ) ? 'ez3d-font-span' : 'ez3d-fontfamily-span';
                     midWrapper.style[styleProperty] = value;
 
                     let midNodeSpan = this.changeNodeToNode( midNode, midWrapper );
@@ -1818,7 +1799,7 @@
 
             // Last node of selection
             let lastWrapper = document.createElement('span');
-            lastWrapper.className = ( type === 'font-size' ) ? 'mogl3d-font-span' : 'mogl3d-fontfamily-span';
+            lastWrapper.className = ( type === 'font-size' ) ? 'ez3d-font-span' : 'ez3d-fontfamily-span';
             lastWrapper.style[styleProperty] = value;
 
             //Change the wrapper (usually div) shell of the selected node to fontSpan
@@ -1844,7 +1825,7 @@
 
     }
 
-    MOGL3D.prototype.removeEmptyNodes = function( node ) {
+    EZ3D.prototype.removeEmptyNodes = function( node ) {
 
         if (!node) return;
 
@@ -1863,7 +1844,7 @@
         }
     }
 
-    MOGL3D.prototype.changeNodeToNode = function( target, convert ) {
+    EZ3D.prototype.changeNodeToNode = function( target, convert ) {
         
         // console.log('target: ', target );
         let cloneTarget = target.cloneNode(true);
@@ -1876,7 +1857,7 @@
 
     }
 
-    MOGL3D.prototype.findChildIndex = function ( parent, element ) {
+    EZ3D.prototype.findChildIndex = function ( parent, element ) {
 
         let children = Array.prototype.slice.call(parent.childNodes);
         // let index = children.indexOf( element ) + 1;
@@ -1886,7 +1867,7 @@
 
     }
 
-    MOGL3D.prototype.extractText = function( node ) {
+    EZ3D.prototype.extractText = function( node ) {
         
         let text = '';
         // If the node is a text node, add text
@@ -1902,7 +1883,7 @@
 
     }
 
-    MOGL3D.prototype.findParentNode = function( node, tag ) {
+    EZ3D.prototype.findParentNode = function( node, tag ) {
         
         while( node !== null && node.tagName !== tag ) {
             node = node.parentNode;
@@ -1911,7 +1892,7 @@
         return node;
     }
 
-    MOGL3D.prototype.removeChildNode = function( node, tag, className ) {
+    EZ3D.prototype.removeChildNode = function( node, tag, className ) {
         
         let class_ = ( className ) ? className : null;
         const nodes = node.querySelectorAll( tag );
@@ -1932,7 +1913,7 @@
 
     }
 
-    MOGL3D.prototype.removeNullNode = function( node ) {
+    EZ3D.prototype.removeNullNode = function( node ) {
 
         Array.from( node.childNodes ).forEach( child => {
 
@@ -1946,7 +1927,7 @@
 
     }
 
-    MOGL3D.prototype.isNodeEmpty = function ( node ) {
+    EZ3D.prototype.isNodeEmpty = function ( node ) {
 
         if (node.nodeType === Node.ELEMENT_NODE) {
             
@@ -1962,7 +1943,7 @@
 
     }
 
-    MOGL3D.prototype.areAllChildrenEmpty = function( node ) {
+    EZ3D.prototype.areAllChildrenEmpty = function( node ) {
 
         for (let i = 0; i < node.childNodes.length; i++) {
             if (! this.isNodeEmpty( node.childNodes[i]) ) {
@@ -1974,7 +1955,7 @@
     
     }
 
-    MOGL3D.prototype.removeUpToTagName = function( startNode, tagName ) {
+    EZ3D.prototype.removeUpToTagName = function( startNode, tagName ) {
 
         let parent;
 
@@ -1992,7 +1973,7 @@
 
     }
 
-    MOGL3D.prototype.removeParentNode = function( node, tag ){
+    EZ3D.prototype.removeParentNode = function( node, tag ){
         
         while ( node !== null && node.tagName !== tag ) {
             node = node.parentNode;
@@ -2013,7 +1994,7 @@
 
     }
 
-    MOGL3D.prototype.collectNode = function( node, tag, arr ) {
+    EZ3D.prototype.collectNode = function( node, tag, arr ) {
         
         if (node.nodeType === Node.ELEMENT_NODE && node.tagName === tag) {
             arr.push(node);
@@ -2023,13 +2004,13 @@
         
     }
 
-    MOGL3D.prototype.cleanNode = function( node ) {
+    EZ3D.prototype.cleanNode = function( node ) {
         while ( node.firstChild ) {
             node.removeChild( node.firstChild );
         }
     }
 
-    MOGL3D.prototype.processFiles = function ( files ) {
+    EZ3D.prototype.processFiles = function ( files ) {
 
         return files.map( file => {
             
@@ -2048,11 +2029,11 @@
     }
 
     /*
-    MOGL3D.prototype.processFiles = function ( files ) {
+    EZ3D.prototype.processFiles = function ( files ) {
 
-        let mogl3dContent = document.querySelector(`.${this.editorName}`);
+        let ez3dContent = document.querySelector(`.${this.editorName}`);
         let contentNode = document.createElement('div');
-        contentNode.innerHTML = mogl3dContent.innerHTML;
+        contentNode.innerHTML = ez3dContent.innerHTML;
 
         console.log('files: ', files );
 
@@ -2072,15 +2053,15 @@
     }
     */
 
-    MOGL3D.prototype.getModule = function () {
+    EZ3D.prototype.getModule = function () {
         return this.modules;
     }
 
-    MOGL3D.prototype.getElement = function() {
+    EZ3D.prototype.getElement = function() {
         return this.element;
     }
 
-    MOGL3D.prototype.getDatas = async function() {
+    EZ3D.prototype.getDatas = async function() {
 
         let fileDatas = [];
         let copy_outputCodes = document.querySelector(`.${this.editorName}`).cloneNode(true);
@@ -2178,7 +2159,7 @@
         
     }
 
-    MOGL3D.prototype.getOutputData = async function() {
+    EZ3D.prototype.getOutputData = async function() {
 
         let res = await this.getDatas();
         console.log('res: ', res );
@@ -2190,7 +2171,7 @@
     }
 
     /*
-    MOGL3D.prototype.getDatas = async function() {
+    EZ3D.prototype.getDatas = async function() {
 
         let fileDatas = [];
         let outputCodes = null;
@@ -2218,7 +2199,7 @@
     }
     
 
-    MOGL3D.prototype.getOutputData = async function( editor ) {
+    EZ3D.prototype.getOutputData = async function( editor ) {
 
         let res = await editor.getDatas();
         if( !res ) res = document.querySelector(`.${this.editorName}`);
@@ -2230,5 +2211,4 @@
 
     // Continue to add more prototype methods...
 
-    return MOGL3D;
-}));
+    export default EZ3D;
