@@ -24,16 +24,26 @@
         this.name = 'MOGL3D Library';
         this.loader = null;
         this.modules = null;
-        // this.element = element;
         this.element = options.element;
         this.editorName = options.editorName;
         this.content = null;
         this.options = options;
+        this.savedRange = null;
         this.threeSceneNum = 0;
         this.imgFileNum = 0;
+        this.zipFileNum = 0;
         this.filesNum = 0;
+        this.sceneModelSum = 0;
         this.uploadFiles = [];
         this.uploadModels = [];
+        this.zipUploadFiles = [];
+        this.imgUploadFiles = [];
+        this.scenes = [];
+        this.threeDScenes = [];
+        this.editThreeScenes;
+        this.lastScene = null;
+        this.dt= new DataTransfer();
+
         if( this.options.gui ) {
             this.height = ( this.options.gui.height ) ? this.options.gui.height : null;
         }
@@ -333,15 +343,54 @@
             
             }
         }
-            
+
+        /*---------------- */
+        /*      Event      */
+        /*-----------------*/
         content.onkeydown = event => {
             if ( event.key === 'Enter' && this.queryCommandValue( 'formatBlock' ) === 'blockquote' ) {
                 setTimeout(() => this.exec( 'formatBlock', `<${defaultParagraphSeparator}>`), 0)
             }
         }
 
+        content.addEventListener('keyup', () => { mogl3d.saveSelection(); });
+        content.addEventListener('mouseup', () => { mogl3d.saveSelection() });
+        content.addEventListener('focus', () => { mogl3d.saveSelection() });
+
         this.element.appendChild( content );
         this.content = content;
+
+        // 3D Scene Remove Event
+        const observerCallback = ( mutationsList ) => {
+            for( let mutation of mutationsList ) {
+                if( mutation.type === 'childList' ) {
+                    mutation.removedNodes.forEach( node => {
+                        
+                        if( node.nodeType === 1 && ( node.nodeName === 'DIV' || node.nodeName === 'P' )) {
+                            
+                            let chkThreeScn = ( ( node.className === 'mogl3d-three-scene' ) )
+                                ? node 
+                                : node.querySelector(`.mogl3d-three-scene`);
+
+                            if( chkThreeScn ) {
+                                let removeScene = confirm('Do you remove 3D Scene?')
+                                if( removeScene ) {
+                                    this.remove3DModelAtLine( chkThreeScn.id );
+                                } else {
+                                    return;
+                                }
+                            }
+                        }
+                        
+                        
+                    })
+                }
+            }
+        }
+
+        const observerOptions = { childList: true, subtree: true };
+        const editorObserver = new MutationObserver( observerCallback );
+        editorObserver.observe( content, observerOptions );
 
         this.actions.forEach( actionKey => {
             
@@ -374,6 +423,13 @@
             }
         });
     };
+
+    MOGL3D.prototype.saveSelection = function() {
+        const selection = document.getSelection();
+        if (selection.rangeCount > 0) {
+            this.savedRange = selection.getRangeAt(0);
+        }
+    }
 
     MOGL3D.prototype.defaultClasses = function ( editorName ) {
         return {
@@ -520,7 +576,219 @@
     /* -------------------- */
     /******* 3D Funcs *******/
     /* -------------------- */
+    function createFileGroup() {
+        const newFileGroup = document.createElement('div');
+        newFileGroup.className = 'three-file-file-group';
+    
+        const newModelUpload = document.createElement('div');
+        newModelUpload.className = 'three-file-file-upload';
+        const newModelLabel = document.createElement('label');
+        newModelLabel.textContent = '3D Models(fbx,gltf,obj):';
+        const newModelInput = document.createElement('input');
+        newModelInput.type = 'file';
+        newModelInput.name = 'modelFile';
+        newModelInput.multiple = true;
+        newModelInput.accept = '.obj,.fbx,.gltf,.glb,.bin';
+        newModelUpload.appendChild(newModelLabel);
+        newModelUpload.appendChild(newModelInput);
+    
+        const newTextureUpload = document.createElement('div');
+        newTextureUpload.className = 'three-file-file-upload';
+        const newTextureLabel = document.createElement('label');
+        newTextureLabel.textContent = 'Texture files:';
+        const newTextureInput = document.createElement('input');
+        newTextureInput.type = 'file';
+        newTextureInput.name = 'textureFile';
+        newTextureInput.accept = '.jpg,.png,.tif,.targa';
+        newTextureInput.multiple = true;
+        newTextureUpload.appendChild(newTextureLabel);
+        newTextureUpload.appendChild(newTextureInput);
 
+        newFileGroup.appendChild(newModelUpload);
+        newFileGroup.appendChild(newTextureUpload);
+    
+        return newFileGroup;
+    }
+
+    MOGL3D.prototype.resetDT = function() {
+        console.log('reset DT');
+        this.sceneModelSum = 0;
+        this.dt = null;
+        this.dt = new DataTransfer();
+    }
+
+    MOGL3D.prototype.getDT = function() {
+        console.log('get DT');
+        if( this.dt ) return this.dt;
+        else return new DataTransfer();
+    }
+
+    MOGL3D.prototype.removeModal = function() {
+        const modal = document.getElementById('modal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    // Hanguel, cheching RegExt
+    MOGL3D.prototype.containsKoreanOrSpecialChars = function ( fileName ) {
+        
+        const koreanRegex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+        const specialCharRegex = /[~`!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/]/;
+        
+        return koreanRegex.test(fileName) || specialCharRegex.test(fileName);
+    }
+
+    // fileName > convert time zone
+    MOGL3D.prototype.getFormattedDate = function () {
+
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+
+        return `${year}${month}${day}${hours}${minutes}${seconds}`
+
+    }
+
+    MOGL3D.prototype.threeDFileLoader = function() {
+        
+        let dt = this.getDT();
+        console.log('시작 dt.files: ', dt.files );
+        // 모달 생성
+        const modal = document.createElement('div');
+        modal.id = 'modal';
+        modal.className = 'three-file-modal';
+
+        // 모달 콘텐츠 생성
+        const modalContent = document.createElement('div');
+        modalContent.className = 'three-file-modal-content';
+
+        // 닫기 버튼 생성
+        const closeButton = document.createElement('span');
+        closeButton.className = 'three-file-close-button';
+        closeButton.innerHTML = '&times;';
+        closeButton.addEventListener('click', () => {
+            this.removeModal();
+            // modal.style.display = 'none';
+        });
+
+        // 첫 번째 파일 그룹 생성
+        const fileGroup = createFileGroup();
+
+        // 파일 그룹 추가 버튼 생성
+        const addFileGroupButton = document.createElement('button');
+        addFileGroupButton.type = 'button';
+        addFileGroupButton.id = 'addFileGroup';
+        addFileGroupButton.textContent = '파일 그룹 추가';
+        addFileGroupButton.addEventListener('click', () => {
+            const newFileGroup = createFileGroup();
+            modalContent.insertBefore(newFileGroup, addFileGroupButton);
+        });
+
+        // Create Upload button
+        const submitButton = document.createElement('button');
+        submitButton.type = 'button';
+        submitButton.textContent = 'UPLOAD';
+        submitButton.addEventListener('click', () => {
+
+            let fileMappings = [];
+            const fileGroups = document.querySelectorAll('.three-file-file-group');
+            // const testFiles = document.querySelector('input[name="testFiles"]').files;
+        
+            fileGroups.forEach((group, index) => {
+                const modelFile = group.querySelector('input[name="modelFile"]').files;
+                const textureFile = group.querySelector('input[name="textureFile"]').files;
+
+                console.log('modelFile: ', modelFile );
+                console.log('textureFile: ', textureFile );
+            
+                if ( modelFile ) {
+                    
+                    let texturesArray;
+                    let modelsArray = Array.from( modelFile );
+
+                    if( textureFile.length > 0 ) texturesArray = Array.from( textureFile );
+                    fileMappings.push({
+                        model: modelsArray,
+                        texture: texturesArray
+                    });
+                }
+            });
+
+            
+
+            if( fileMappings.length > 0 ) {
+
+                let copy_filesMapping = fileMappings;
+                console.log('fileMapping: ', fileMappings );
+
+                fileMappings.forEach( mapping => {
+                    if( mapping.model ) mapping.model.forEach( model => dt.items.add( model ) );
+                    if( mapping.texture ) mapping.texture.forEach( texture => dt.items.add( texture ) )
+                });
+
+                try {
+                    let filesMap = null;
+                    let modules = new this.modules({
+                        editor: this.element
+                    });
+                    
+                    modules.loadFiles( dt.files, filesMap, ( res ) => {
+                        console.log('원본 fileMappings: ', fileMappings );
+                        const currentRange = this.saveCurrentRange();
+                        if( currentRange ) {
+                            // this.insert3DModelAtLine( modules, res, currentRange, dt.files );
+                            this.insert3DModelAtLine( 
+                                modules, 
+                                res, 
+                                currentRange, 
+                                fileMappings 
+                            );
+                        } else {
+                            // this.insert3DModelAtLine( modules, res, null, dt.files );
+                            this.insert3DModelAtLine( 
+                                modules, 
+                                res, 
+                                null,
+                                fileMappings
+                            );
+                        }
+                        
+                    });
+                
+                    // this.sceneModelSum = 0;
+        
+                } catch ( err ) {
+                    console.error('파일 로딩 에러:', err);
+                }
+            
+            }
+            this.resetDT();
+            // fileMappings = [];
+            this.removeModal(); // 모달 제거
+            modal.style.display = 'none';
+
+        });
+
+        // Add Modal
+        modalContent.appendChild( closeButton );
+        modalContent.appendChild( fileGroup );
+        modalContent.appendChild( addFileGroupButton );
+        modalContent.appendChild( submitButton );
+
+        modal.appendChild( modalContent );
+        this.element.appendChild( modal );
+
+        // fileInput.click();
+        this.closeDropDown( 'Menu-dropdown' );
+
+    }
+
+    /*
     MOGL3D.prototype.threeDFileLoader = function() {
 
         const fileInput = document.createElement('input');
@@ -558,6 +826,7 @@
         this.closeDropDown( 'Menu-dropdown' );
 
     }
+    */
 
     MOGL3D.prototype.saveCurrentRange = function() {
         if (window.getSelection().rangeCount > 0) {
@@ -567,14 +836,30 @@
     }
 
     MOGL3D.prototype.getModels = function() {
-        
-        if( this.uploadModels.length > 0 ) return this.uploadModels
-        
+        return new Promise( resolve => {
+            resolve( this.uploadModels )
+        })
+    }
+
+    MOGL3D.prototype.getEditThreeScenes = function() {
+
+        return new Promise( resolve => {
+            resolve( this.editThreeScenes )
+        })
+            
+    }
+
+    MOGL3D.prototype.getThreeDScenes = function() {
+
+        return new Promise( resolve => {
+            resolve( this.threeDScenes )
+        })
+            
     }
 
     MOGL3D.prototype.getFiles = function() {
 
-        if( this.uploadFiles.length > 0 ) {
+        if( this.uploadFiles ) {
             return new Promise( resolve => {
                 resolve( this.uploadFiles )
             })
@@ -582,6 +867,193 @@
     
     }
 
+    MOGL3D.prototype.setEditThreeScenes = function( files ) {
+        this.editThreeScenes = files;
+        this.threeDScenes = files;
+    }
+
+    MOGL3D.prototype.getIMGFiles = function() {
+
+        return new Promise( resolve => {
+            resolve( this.imgUploadFiles )
+        })        
+    
+    }
+
+    MOGL3D.prototype.getZipFiles = function() {
+
+        return new Promise( resolve => {
+            resolve( this.zipUploadFiles )
+        })        
+    
+    }
+
+    MOGL3D.prototype.encodeFileName = function ( fileName ) {
+        return encodeURIComponent( fileName );
+    }
+    
+    MOGL3D.prototype.decodeFileName = function ( encodedFileName ) {
+        return decodeURIComponent( encodedFileName );
+    }
+
+    MOGL3D.prototype.setUploadFiles = function( threeDFiles, imgFiles, zipFiles ) {
+        
+        this.uploadFiles = threeDFiles;
+
+    }
+
+    MOGL3D.prototype.insert3DModelAtLine = function( modules, res, range, files, sceneInfo ) {
+        console.log('인서트 3D 실행');
+        console.log('insert files: ', files );
+        console.log('res: ', res );
+        // console.log('시작 sceneModelSum: ', this.sceneModelSum );
+        let editMode = ( sceneInfo ) ? true : false;
+
+        this.sceneModelSum++;
+        if ( this.sceneModelSum === 1 ) this.threeSceneNum++
+        let sameScene = ( this.sceneModelSum !== 1 ) ? true : false;
+        let fileTypeDescription = '3D';
+        const editor = this.element;
+        const selection = window.getSelection();
+        // console.log( 'this.savedRange: ', this.savedRange );
+        
+        // 파일 타입 확인
+        let fileName = ( !res ) 
+            ? (files.models[0].name)
+                ? files.models[0].name
+                : 'undefined.fbx'
+            : res.name;
+        let fileParts = fileName.split('.');
+        let ext = fileParts.pop();
+        let pureFileName = fileParts.join('.');
+        const chkFileName = this.containsKoreanOrSpecialChars( pureFileName );
+        const date = this.getFormattedDate();
+
+        // Create a new div element and set it to include a 3D scene.
+        let sceneContainer = ( editMode ) 
+            ? sceneInfo[0].querySelector(`.${ sceneInfo[1] }`)
+            : document.createElement('p');
+
+        if( !editMode ) {
+            sceneContainer.id = ( chkFileName )
+            ? `mogl3d_three_scene_${this.threeSceneNum}_${date}`
+            : `mogl3d_three_scene_${this.threeSceneNum}_${date}_${pureFileName}`;
+
+            sceneContainer.title = sceneContainer.id;
+            sceneContainer.className = (`mogl3d-three-scene`);
+            if( !sameScene ) this.threeDScenes.push( sceneContainer.id );
+        
+        }
+        
+        this.lastScene = ( sameScene ) ? this.lastScene : sceneContainer.id;
+
+        let uploadFile = {
+            'className': sceneContainer.className,
+            'id': sceneContainer.id,
+            'sceneSerial': this.lastScene,
+            'sceneName': (sameScene) ? null : sceneContainer.id,
+            'type': fileTypeDescription,
+            // 'data': res,
+            'data': files,
+            'three': ext
+        }
+
+        this.uploadFiles.push( uploadFile );
+        
+        this.uploadModels.push({
+            [ sceneContainer.id ]: res,
+            'sceneSerial': this.lastScene
+        });
+
+        console.log('계산후 sceneModelSum: ', this.sceneModelSum );
+        let container;
+        if ( this.sceneModelSum === 1) {
+            console.log('첫 씬 생성');
+            container = modules.init( sceneContainer, res )
+        } else {
+            console.log('씬 오브젝트 추가 res: ', res );
+            modules.addObject( res );
+        }
+
+        if ( !this.savedRange && container ) {
+            
+            insertEmptySelection( selection, this.editorName, container );
+            
+        } else if( container && this.savedRange ){
+            
+            const startContainer = this.savedRange.startContainer;
+            const commonAncestorContainer = this.savedRange.commonAncestorContainer;
+            const startContainerClassName = (startContainer.className) ? startContainer.className : null;
+        
+            if( startContainer.nodeType === 3 || startContainerClassName ) {
+
+                insertEmptySelection( selection, this.editorName, container )
+                
+            } else {
+
+                let br = document.createElement('br');
+                let div = document.createElement('div');
+                div.appendChild( br );
+
+                let parentNode = commonAncestorContainer.parentNode;
+                if ( parentNode.nodeType !== Node.ELEMENT_NODE ) parentNode = parentNode.parentNode;
+
+                this.savedRange.deleteContents();
+                this.savedRange.insertNode( container );
+                this.savedRange.collapse( false );
+                this.savedRange.insertNode( div );
+                
+                ( this.savedRange.endContainer.nextSibling )
+                    ? parentNode.insertBefore( div, this.savedRange.endContainer.nextSibling )
+                    : parentNode.appendChild( div );
+                
+            }
+            
+        }
+
+        function insertEmptySelection( selection_, editorName, container_ ) {
+
+            const editorContent = document.querySelector(`.${ editorName }`);
+            const range = document.createRange();
+            let beforeDiv = document.createElement('div');
+            beforeDiv.textContent = "\u00A0";
+            let afterDiv = document.createElement('div');
+            afterDiv.textContent = "\u00A0";
+            
+            range.selectNodeContents( container_ );
+            range.collapse( true );
+            selection_.removeAllRanges();
+            selection_.addRange( range );
+            editorContent.appendChild( container_ );
+            editorContent.insertBefore( beforeDiv, container_ );
+            editorContent.appendChild( afterDiv );
+
+        }
+
+    }
+
+    MOGL3D.prototype.remove3DModelAtLine = function(sceneId) {
+
+        console.log('remove3DModelAtLine 메서드 실행, sceneId: ', sceneId );
+        // Find the scene element by its ID
+        console.log( 'this.uploadFiles: ', this.uploadFiles );
+        console.log( 'this.uploadModels: ', this.uploadModels );
+        console.log('this.threeDScenes: ', this.threeDScenes );
+
+        this.threeDScenes = this.threeDScenes.filter( file => file != sceneId );
+        this.uploadFiles = this.uploadFiles.filter( file => file.sceneSerial !== sceneId );
+        this.uploadModels = this.uploadModels.filter( model => {
+            const sceneSerial = Object.values( model )[1];
+            return sceneSerial !== sceneId
+        });
+
+        console.log('after this.threeDScenes: ', this.threeDScenes );
+        console.log('after this.uploadFiles: ', this.uploadFiles );
+        console.log('after this.uploadModels: ', this.uploadModels );
+
+    };
+
+    /*
     MOGL3D.prototype.insert3DModelAtLine = function( modules, res, range, files ) {
         
         this.threeSceneNum++;
@@ -653,11 +1125,113 @@
         }
 
     }
+    */
 
     /* --------------------------- */
     /******* Img Upload Func *******/
     /* --------------------------- */
+    MOGL3D.prototype.createIMGFileBox = function( accept ) {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = accept //'image/*';
+        fileInput.onchange = (e) => {
 
+            const file = e.target.files[0];
+            const fileType = file.type;
+            let fileTypeDescription = '';
+            const fileName = file.name;
+            const fileParts = fileName.split('.');
+            const encodedFileName = this.encodeFileName( fileName );
+            const fileExtension = fileParts.pop(); // 확장자를 추출합니다.
+            const pureFileName = fileParts.join('.'); // 확장자를 제외한 순수 파일명을 얻습니다.
+            const chkFileName = this.containsKoreanOrSpecialChars( pureFileName );
+            const date = this.getFormattedDate();
+
+            // 파일 타입 확인
+            if (fileType.startsWith('image/')) {
+                fileTypeDescription = 'Image';
+            }
+            else {
+                alert('not image file, allow to image file!')
+                return
+            }
+        
+            if (file) {
+
+                this.imgFileNum++;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // console.log(`fileName: ${pureFileName}, fileType:${fileExtension}`);
+                    const container = document.createElement('div');
+                    container.contentEditable = false;
+                    container.setAttribute('data-filename', encodedFileName );
+                    container.className = `mogl3d_img_wrapper`;
+                    // container.className = ( chkFileName ) 
+                    //     ? `mogl3d_zipFile${this.imgFileNum}_${ date }`
+                    //     : `mogl3d_zipFile${this.imgFileNum}_${ pureFileName }`;
+                    container.style.display = 'inline-block'; 
+                    container.style.margin = '5px';
+
+                    const imgWrapper = document.createElement('span');
+                    imgWrapper.className = ( chkFileName ) 
+                        ? `mogl3d_image${this.imgFileNum}_${date}`
+                        : `mogl3d_image${this.imgFileNum}_${pureFileName}`;
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    
+                    imgWrapper.appendChild( img );
+                    container.appendChild( imgWrapper );
+
+                    let uploadFile = {
+                        'className': imgWrapper.className,
+                        'type': fileTypeDescription,
+                        'data' : file,
+                    }
+                    this.imgUploadFiles.push( uploadFile );
+                    
+                    console.log('savedRange: ', this.savedRange );
+
+                    if( this.savedRange ) {
+                        console.log('saveRange: ', this.savedRange );
+                        this.savedRange.deleteContents();
+                        this.savedRange.insertNode( container );
+                        this.savedRange.collapse(false); 
+                        // Add this line to move the cursor after the inserted node
+                        // 삽입 후 편집기를 다시 선택 상태로 만듦
+                        
+                        // const selection = document.getSelection();
+                        // selection.removeAllRanges();
+                        // selection.addRange( this.savedRange );
+                    } else {
+                        console.log('saveRange 없음')
+                        const editor = document.querySelector(`.${ this.editorName }`);
+                        editor.insertBefore( container, editor.firstChild );
+                    }
+
+                    // Move the cursor to the end of the imgWrapper
+                    const range = document.createRange();
+                    range.setStartAfter(imgWrapper);
+                    range.collapse(true);
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+    
+                };
+    
+                reader.readAsDataURL(file);
+    
+            }
+    
+            fileInput.remove(); // 파일 입력 요소 제거
+    
+        };
+    
+        fileInput.click(); // 파일 선택기 열기
+        return fileInput
+    }
+
+    /*
     MOGL3D.prototype.createIMGFileBox = function( accept ) {
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
@@ -730,10 +1304,87 @@
         fileInput.click(); // 파일 선택기 열기
         return fileInput
     }
+    */
 
     /* --------------------------- */
     /******* Zip Upload Func *******/
     /* --------------------------- */
+
+    MOGL3D.prototype.createZipFile = function() {
+        
+        const mogl3d = this;
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = '.zip'; // Allow ZIP files only
+    
+        fileInput.onchange = (e) => {
+            
+            const file = e.target.files[0];
+            const fileType = file.type;
+            let fileTypeDescription = '';
+            const fileName = file.name;
+            const encodedFileName = this.encodeFileName( fileName );
+
+            const fileParts = fileName.split('.');
+            const fileExtension = fileParts.pop(); // 확장자를 추출합니다.
+            const pureFileName = fileParts.join('.'); // 확장자를 제외한 순수 파일명을 얻습니다.
+            const chkFileName = this.containsKoreanOrSpecialChars( fileName );
+            fileTypeDescription = 'zip';
+            const date = this.getFormattedDate();
+        
+            if (file) {
+                console.log('encodedFileName: ', encodedFileName );
+                this.zipFileNum++;
+                const container = document.createElement('div');
+                container.contentEditable = false;
+                container.setAttribute('data-filename', encodedFileName );
+                container.className = ( chkFileName ) 
+                    ? `mogl3d_zipFile${this.zipFileNum}_${ date }`
+                    : `mogl3d_zipFile${this.zipFileNum}_${ pureFileName }`;
+                container.style.display = 'inline-block'; 
+                container.style.margin = '5px';
+    
+                const fileNameSpan = document.createElement('span');
+                fileNameSpan.textContent = file.name + " ";
+                container.appendChild( fileNameSpan );
+    
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'x';
+                removeButton.style.marginLeft = '5px';
+                removeButton.onclick = () => {
+                    container.remove();
+                };
+                container.appendChild(removeButton);
+
+                let uploadFile = {
+                    'originalName': fileName,
+                    'className': container.className,
+                    'type': fileTypeDescription,
+                    'data': file,
+                    'ext': fileExtension
+                }
+                this.zipUploadFiles.push( uploadFile );
+
+                if( this.savedRange ) {
+                    
+                    this.savedRange.deleteContents();
+                    this.savedRange.insertNode( container );
+                    
+                } else {
+                    const editor = document.querySelector(`.${ this.editorName }`);
+                    editor.insertBefore( container, editor.firstChild );
+                }
+                // Remove the file entry element from the document.
+                fileInput.remove();
+            }
+    
+        };
+    
+        fileInput.click();
+        return fileInput
+    }
+
+    /*
     MOGL3D.prototype.createZipFile = function() {
         const mogl3d = this
         const fileInput = document.createElement('input');
@@ -803,6 +1454,7 @@
         fileInput.click();
         return fileInput
     }
+    */
 
     /* ----------------------------- */
     /******* Video Upload Func *******/
@@ -1379,6 +2031,25 @@
 
     MOGL3D.prototype.processFiles = function ( files ) {
 
+        return files.map( file => {
+            
+            return new Promise( resolve => {
+
+                // console.log('processFiles, file: ', file );
+                if( !file.sceneName ) {
+                    resolve( null );
+                } else {
+                    resolve({ 'id':file.id, 'className':file.className, 'data': file });
+                }
+
+            });
+        });
+
+    }
+
+    /*
+    MOGL3D.prototype.processFiles = function ( files ) {
+
         let mogl3dContent = document.querySelector(`.${this.editorName}`);
         let contentNode = document.createElement('div');
         contentNode.innerHTML = mogl3dContent.innerHTML;
@@ -1399,7 +2070,124 @@
         });
 
     }
+    */
 
+    MOGL3D.prototype.getModule = function () {
+        return this.modules;
+    }
+
+    MOGL3D.prototype.getElement = function() {
+        return this.element;
+    }
+
+    MOGL3D.prototype.getDatas = async function() {
+
+        let fileDatas = [];
+        let outputCodes = document.querySelector(`.${this.editorName}`);
+        console.log('1] 변경전 outputCodes: ', outputCodes );
+
+        if (!outputCodes) {
+            console.error(`Element with class ${this.editorName} not found`);
+            return null;
+        }
+        
+        let files = await this.getFiles();
+        let imgFiles = await this.getIMGFiles();
+        let zipFiles = await this.getZipFiles();
+        let threeDScenes = await this.getThreeDScenes();
+        let models = await this.getModels();
+        let editedScenes = await this.getEditThreeScenes();
+
+        if ( threeDScenes ) {
+
+            threeDScenes.forEach( scn => {
+                console.log('threeDScenes: ', threeDScenes );
+                let node = outputCodes.querySelector(`#${scn}`);
+                console.log('파일없음 node: ', node );
+                if( !node ) {
+                    console.error(`Node with id ${scn} not found`);
+                    return;
+                }
+
+                this.cleanNode( node );
+                this.scenes.push( scn );
+
+            })
+
+        }
+
+        console.log('editedScenes:  ', editedScenes );
+        console.log('threeDScenes: ', threeDScenes );
+
+        // console.log('this.editorName: ', this.editorName );
+        console.log('after outputCodes: ', outputCodes );
+        // console.log('getDatas(), files: ', files );
+        // console.log('zipFiles: ', zipFiles );
+
+        if( imgFiles.length > 0 ) {
+            
+            imgFiles.forEach( imgFile => {
+    
+                let imgWrapper = outputCodes.querySelector(`.${imgFile.className}`);
+                if (imgWrapper) {
+                    let img = imgWrapper.querySelector('img');
+                    if (img) {
+                        img.src = '';
+                    }
+                }
+            })
+            
+        }
+
+        if( files.length > 0 ) {
+            console.log('files scene class changed')
+            let promises = this.processFiles( files );
+            let results = await Promise.allSettled( promises );
+
+            results.forEach( result => {
+
+                if ( result.status === 'fulfilled' && result.value ) {
+                    console.log( `result: ${ result }`);
+                    fileDatas.push( result.value.data );
+                }
+
+            });
+        }
+        
+        let contentNode = document.createElement('div');
+        contentNode.innerHTML = outputCodes.innerHTML;
+        outputCodes = contentNode.innerHTML;
+
+        console.log('[2] fileDatas: ', fileDatas );
+        console.log('uploading outputCodes: ', outputCodes );
+
+        return {
+            'code': outputCodes,
+            'files': fileDatas,
+            'imgFiles': imgFiles,
+            'zipFiles': zipFiles,
+            'scenes': threeDScenes,
+            // 'scenes': this.scenes,
+            'threeDScenes': threeDScenes,
+            'models': models,
+            'editedScenes': editedScenes
+        }
+        // console.log(`output Code: ${ outputCodes }, fileDatas: ${ fileDatas }`)
+        
+    }
+
+    MOGL3D.prototype.getOutputData = async function() {
+
+        let res = await this.getDatas();
+        console.log('res: ', res );
+        if( !res ) res = null;
+        // if( !res ) res = document.querySelector(`.${this.editorName}`);
+        
+        return res;
+
+    }
+
+    /*
     MOGL3D.prototype.getDatas = async function() {
 
         let fileDatas = [];
@@ -1426,6 +2214,7 @@
         // console.log(`output Code: ${ outputCodes }, fileDatas: ${ fileDatas }`)
         
     }
+    
 
     MOGL3D.prototype.getOutputData = async function( editor ) {
 
@@ -1435,6 +2224,7 @@
         return res;
 
     }
+    */
 
     // Continue to add more prototype methods...
 
